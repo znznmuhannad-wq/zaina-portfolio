@@ -191,6 +191,22 @@
         .sticker-drop-shadow {
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
+
+        .skill-note {
+    animation: cardFloat 6s ease-in-out infinite;
+}
+
+.skill-note:nth-child(2){ animation-delay:1s }
+.skill-note:nth-child(3){ animation-delay:2s }
+.skill-note:nth-child(4){ animation-delay:3s }
+.skill-note:nth-child(5){ animation-delay:4s }
+
+@keyframes cardFloat{
+0%{transform:translateY(0)}
+50%{transform:translateY(-10px)}
+100%{transform:translateY(0)}
+}
+
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -297,7 +313,7 @@
     </section>
 
     <!-- Skills Section (Designer Board Board) -->
-    <section id="skills" class="py-48 px-6 md:px-12 -mt-24 relative z-10 overflow-hidden">
+    <section id="skills" class="py-32 px-6 md:px-12 -mt-24 relative z-10 overflow-hidden">
         <!-- SVG Scribbles behind cards -->
         <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-20 z-0" xmlns="http://www.w3.org/2000/svg">
             <path d="M100,500 Q300,450 400,600 T700,550 Q900,500 1100,650" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-dasharray="8 8" />
@@ -315,7 +331,7 @@
                 <h2 class="text-4xl md:text-5xl font-bold font-space text-charcoal">My Expertise</h2>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 md:gap-10 justify-items-center">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 justify-items-center max-w-6xl mx-auto">
                 
                 <!-- Skill 1: Graphic Designer -->
                 <div class="skill-note pin-teal p-4 rounded-md reveal rotate-1" style="transition-delay: 0.1s">
@@ -439,12 +455,12 @@
     </section>
 
     <!-- Education Section -->
-    <section id="education" class="py-24 px-6 md:px-12 bg-white rounded-[60px] relative z-20">
+    <section id="education" class="py-16 px-6 md:px-12 bg-white rounded-[60px] relative z-20">
         <div class="container mx-auto max-w-4xl reveal">
             <div class="mb-12">
                 <h2 class="text-4xl md:text-5xl font-bold font-fredoka text-charcoal">Education</h2>
             </div>
-            <div class="p-8 md:p-12 rounded-[40px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-sage">
+            <div class="p-6 md:p-8 rounded-[32px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-sage">
                 <div>
                     <h3 class="text-3xl md:text-4xl font-space font-bold mb-2 text-charcoal">Digital Media Design</h3>
                     <p class="text-xl opacity-70">SAE Institute Amman</p>
