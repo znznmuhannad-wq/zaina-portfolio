@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z Creative Studio | Zaina Alissa</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal_primary: '#428A97',
+                        mint: '#65C6BE',
+                        sage: '#B7C7C9',
+                        yellow_gold: '#F2B11C',
+                        coral: '#E36A67',
+                        warm_beige: '#F5EFE6',
+                        charcoal: '#2C2C2C',
+                        subtitle_beige: '#8A7E72',
+                    },
+                    fontFamily: {
+                        space: ['Space Grotesk', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                        fredoka: ['Fredoka', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-slow': 'float 8s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) rotate(var(--tw-rotate))' },
+                            '50%': { transform: 'translateY(-15px) rotate(var(--tw-rotate))' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F5EFE6;
+            color: #2C2C2C;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .blob-animation {
+            animation: blob-bounce 20s infinite alternate;
+        }
+
+        @keyframes blob-bounce {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(30px, -50px) scale(1.1) rotate(5deg); }
+            66% { transform: translate(-20px, 20px) scale(0.9) rotate(-5deg); }
+            100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        }
+
+        .custom-dashed {
+            border-style: dashed;
+            border-width: 2px;
+        }
+
+        .hero-title-stacked {
+            line-height: 0.85;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        /* --- Folder Card Styles --- */
+        .portfolio-card {
+            margin-top: 2rem; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .portfolio-card::before {
+            content: attr(data-tab);
+            position: absolute;
+            top: -24px;
+            left: 0;
+            height: 24px;
+            width: 100px;
+            background-color: inherit;
+            filter: brightness(0.9);
+            border-radius: 12px 12px 0 0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            clip-path: polygon(0% 0%, 80% 0%, 100% 100%, 0% 100%);
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* --- Realistic Pinned Paper Note Styles for Skills --- */
+        #skills {
+            background-color: #f4f2ee;
+            background-image: 
+                linear-gradient(#e5e2de 1px, transparent 1px), 
+                linear-gradient(90deg, #e5e2de 1px, transparent 1px);
+            background-size: 60px 60px;
+            position: relative;
+        }
+
+        .skill-note {
+            background-color: #ffffff;
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            box-shadow: 
+                0 1px 2px rgba(0,0,0,0.07), 
+                0 4px 8px rgba(0,0,0,0.07), 
+                0 12px 24px rgba(0,0,0,0.07);
+            overflow: visible !important;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .skill-note::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 16px;
+            border-radius: 50%;
+            z-index: 50;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.35), 
+                inset -2px -3px 4px rgba(0,0,0,0.3);
+        }
+
+        .pin-teal::after { background: radial-gradient(circle at 35% 35%, #9fd5df 0%, #428A97 50%, #1a3a41 100%); }
+        .pin-coral::after { background: radial-gradient(circle at 35% 35%, #ffb6b4 0%, #E36A67 50%, #6e2523 100%); }
+        .pin-gold::after { background: radial-gradient(circle at 35% 35%, #ffe9b1 0%, #F2B11C 50%, #7c5a08 100%); }
+
+        .skill-inner-panel {
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
+        }
+
+        .skill-note:hover {
+            transform: rotate(0deg) translateY(-15px) scale(1.05) !important;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            z-index: 30;
+        }
+
+        .about-card-shadow {
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Take what you need effect */
+        .tear-tag {
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 50% 100%, 0% 90%);
+        }
+        
+        .sticker-drop-shadow {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 px-6 py-6 flex justify-between items-center backdrop-blur-md bg-warm_beige/80 transition-all duration-300">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-space font-bold text-white text-xl bg-teal_primary">Z</div>
+            <span class="font-space font-bold text-xl tracking-tight text-charcoal">Z Creative Studio</span>
+        </div>
+        
+        <div class="hidden md:flex gap-8 font-space font-medium uppercase text-xs tracking-widest text-subtitle_beige">
+            <a href="#about" class="hover:text-charcoal transition-colors">About</a>
+            <a href="#skills" class="hover:text-charcoal transition-colors">Skills</a>
+            <a href="#portfolio" class="hover:text-charcoal transition-colors">Portfolio</a>
+            <a href="#contact" class="hover:text-charcoal transition-colors">Contact</a>
+        </div>
+
+        <button id="menu-toggle" class="md:hidden text-charcoal">
+            <i data-lucide="menu"></i>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-warm_beige flex-col items-center justify-center gap-8 text-2xl font-space font-bold hidden">
+        <button id="menu-close" class="absolute top-8 right-8"><i data-lucide="x" size="32"></i></button>
+        <a href="#about" class="mobile-link text-charcoal">About</a>
+        <a href="#skills" class="mobile-link text-charcoal">Skills</a>
+        <a href="#portfolio" class="mobile-link text-charcoal">Portfolio</a>
+        <a href="#contact" class="mobile-link text-charcoal">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-24 pb-12 px-6 md:px-12 overflow-hidden">
+        <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full opacity-20 blur-3xl bg-yellow_gold blob-animation"></div>
+        <div class="absolute bottom-20 -left-20 w-80 h-80 rounded-full opacity-20 blur-3xl bg-coral blob-animation" style="animation-delay: -5s;"></div>
+
+        <div class="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10">
+            <div class="reveal">
+                <h1 class="hero-title-stacked text-6xl md:text-8xl lg:text-9xl font-space text-teal_primary mb-10 uppercase">
+                    WHAT<br>DO I<br>CREATE?
+                </h1>
+                
+                <div class="max-w-xl mb-12">
+                    <p class="text-lg md:text-xl font-space font-bold leading-relaxed uppercase tracking-tight text-charcoal">
+                        THIS IS MY VIRTUAL CREATIVE HUB WHERE ALL MY WORK CONVERGES:<br>
+                        FROM <span class="text-teal_primary">PLASTIC & DIGITAL ART</span>,<br>
+                        TO <span class="text-teal_primary">WEB DESIGN</span>, & <span class="text-teal_primary">VIDEO EDITING</span>.
+                    </p>
+                </div>
+                
+                <div class="flex flex-wrap gap-4">
+                    <a href="#portfolio" class="px-8 py-4 rounded-full font-space font-bold text-white shadow-lg bg-teal_primary hover:scale-105 transition-transform text-center">
+                        View Portfolio
+                    </a>
+                </div>
+            </div>
+
+            <div class="relative flex justify-center reveal" style="transition-delay: 0.2s">
+                <div class="relative w-full max-w-lg aspect-square flex items-center justify-center">
+                    <div class="absolute w-[120%] h-[120%] rounded-full opacity-20 bg-teal_primary transform -translate-x-16 translate-y-10"></div>
+                    <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa" class="relative w-full h-auto object-contain drop-shadow-2xl z-10 max-h-[80vh] transform -translate-y-8">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="pt-24 pb-32 px-6 md:px-12 bg-white rounded-[100px] -mt-10 relative z-20 about-card-shadow">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="order-2 lg:order-1 relative reveal">
+                    <div class="relative p-8 rounded-3xl bg-warm_beige">
+                        <img src="https://i.ibb.co/Kx3kLtfV/Z-CREATIVE-ST33.png" alt="Character Style" class="w-full h-auto rounded-xl grayscale hover:grayscale-0 transition-all duration-700">
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 w-32 h-32 rounded-full flex items-center justify-center text-center p-4 text-xs font-bold leading-tight transform rotate-12 bg-yellow_gold text-charcoal shadow-lg">
+                        CREATIVE<br>MINDSET
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 reveal">
+                    <div class="mb-12">
+                        <h3 class="text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Who am I?</h3>
+                        <h2 class="text-4xl md:text-5xl font-bold font-fredoka text-charcoal">About Me</h2>
+                    </div>
+                    <p class="text-2xl font-bold mb-8 leading-relaxed text-teal_primary">
+                        Digital Media Designer and Junior Web Developer with experience in branding, social media design, and website development.
+                    </p>
+                    <p class="text-lg opacity-80 leading-relaxed mb-8">
+                        I create engaging digital experiences through design, content creation, and web development. My approach blends technical precision with artistic flair.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl border border-sage">
+                            <h4 class="font-space font-bold text-3xl mb-1 text-charcoal">2+</h4>
+                            <p class="text-sm opacity-60 uppercase tracking-tighter text-subtitle_beige">Years Experience</p>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-sage">
+                            <h4 class="font-space font-bold text-3xl mb-1 text-charcoal">50+</h4>
+                            <p class="text-sm opacity-60 uppercase tracking-tighter text-subtitle_beige">Projects Delivered</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section (Designer Board Board) -->
+    <section id="skills" class="py-48 px-6 md:px-12 -mt-24 relative z-10 overflow-hidden">
+        <!-- SVG Scribbles behind cards -->
+        <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-20 z-0" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100,500 Q300,450 400,600 T700,550 Q900,500 1100,650" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-dasharray="8 8" />
+            <path d="M1200,800 Q1000,900 800,800 T400,950" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-dasharray="8 8" />
+            <!-- Small Pencil illustration -->
+            <g transform="translate(380,940) rotate(-45)">
+                <rect x="0" y="0" width="4" height="20" fill="#428A97" />
+                <path d="M0,0 L2, -5 L4,0 Z" fill="#2C2C2C" />
+            </g>
+        </svg>
+
+        <div class="container mx-auto pt-10 relative z-10">
+            <div class="mb-20 reveal">
+                <h3 class="text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">What I do best</h3>
+                <h2 class="text-4xl md:text-5xl font-bold font-space text-charcoal">My Expertise</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 md:gap-10">
+                
+                <!-- Skill 1: Graphic Designer -->
+                <div class="skill-note pin-teal p-4 rounded-md reveal rotate-1" style="transition-delay: 0.1s">
+                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-teal_primary/[0.03]">
+                        <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-teal_primary/10 pb-1">Graphic Designer</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Tools</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Illustrator, Photoshop, Canva</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Capabilities</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Brand Identity, Packaging, Marketing, Social Media</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill 2: Social Media Specialist -->
+                <div class="skill-note pin-coral p-4 rounded-md reveal -rotate-1" style="transition-delay: 0.15s">
+                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-coral/[0.03]">
+                        <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-coral/10 pb-1">Social Media</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Platforms</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">IG, FB, LinkedIn, Meta Business Suite</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Tasks</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Planning, Design, Account Management</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill 3: UX/UI Designer -->
+                <div class="skill-note pin-gold p-4 rounded-md reveal rotate-2" style="transition-delay: 0.2s">
+                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-yellow_gold/[0.03]">
+                        <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-yellow_gold/10 pb-1">UX / UI Designer</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Tools</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Figma</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Process</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Wireframes, UI Design, Prototyping, UX Thinking</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill 4: Web Developer -->
+                <div class="skill-note pin-teal p-4 rounded-md reveal -rotate-2" style="transition-delay: 0.25s">
+                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-teal_primary/[0.03]">
+                        <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-teal_primary/10 pb-1">Web Dev (Junior)</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Stack</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">HTML, CSS, JS, Node.js</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Workflow</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">GitHub, VS Code</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill 5: Videographer -->
+                <div class="skill-note pin-coral p-4 rounded-md reveal rotate-1" style="transition-delay: 0.3s">
+                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-coral/[0.03]">
+                        <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-coral/10 pb-1">Videographer</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Tools</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Premiere Pro, CapCut</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Expertise</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Short-form Edits, Social Content</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill 6: Operations -->
+                <div class="skill-note pin-gold p-4 rounded-md reveal -rotate-1" style="transition-delay: 0.35s">
+                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-yellow_gold/[0.03]">
+                        <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-yellow_gold/10 pb-1">Operations</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Systems</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">CRM, Data Handling</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Management</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Project & Operations Coordination</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill 7: Productivity -->
+                <div class="skill-note pin-teal p-4 rounded-md reveal rotate-2" style="transition-delay: 0.4s">
+                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-teal_primary/[0.03]">
+                        <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-teal_primary/10 pb-1">Office Tools</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Tools</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">MS Office, Advanced Excel</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Focus</p>
+                                <p class="text-[11px] leading-tight text-subtitle_beige">Spreadsheets, Data Organization</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="py-24 px-6 md:px-12 bg-white rounded-[60px] relative z-20">
+        <div class="container mx-auto max-w-4xl reveal">
+            <div class="mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold font-fredoka text-charcoal">Education</h2>
+            </div>
+            <div class="p-8 md:p-12 rounded-[40px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-sage">
+                <div>
+                    <h3 class="text-3xl md:text-4xl font-space font-bold mb-2 text-charcoal">Digital Media Design</h3>
+                    <p class="text-xl opacity-70">SAE Institute Amman</p>
+                </div>
+                <div class="flex flex-col items-end">
+                    <img src="https://i.ibb.co/BHkpjXLH/SAE-Institute-Logo.png" alt="SAE Institute Logo" class="h-16 w-auto object-contain">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-24 px-6 md:px-12 relative z-20">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div>
+                    <h3 class="text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Selected Works</h3>
+                    <h2 class="text-4xl md:text-5xl font-bold font-space text-charcoal">Archives & Projects</h2>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-6">
+                    <button class="filter-btn active px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-teal_primary text-white shadow-lg" data-filter="all">All</button>
+                    <button class="filter-btn px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-white opacity-60 hover:opacity-100 text-charcoal" data-filter="design">Graphic Design</button>
+                    <button class="filter-btn px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-white opacity-60 hover:opacity-100 text-charcoal" data-filter="web">Web Design</button>
+                </div>
+            </div>
+
+            <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-y-12">
+                <!-- Project 1 -->
+                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-teal_primary reveal" data-category="design" data-tab="PRJ-2025">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Graphic Design</span>
+                        <h3 class="text-2xl font-space font-bold mb-4">Brand Identity System</h3>
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
+                            <i data-lucide="external-link" size="18"></i>
+                        </div>
+                    </div>
+                    <div class="w-full h-full flex items-center justify-center p-12">
+                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                            <i data-lucide="palette" class="text-white opacity-40 w-12 h-12"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-mint reveal" data-category="web" data-tab="WEB-2024">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Web Design</span>
+                        <h3 class="text-2xl font-space font-bold mb-4">E-Commerce Design</h3>
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
+                            <i data-lucide="external-link" size="18"></i>
+                        </div>
+                    </div>
+                    <div class="w-full h-full flex items-center justify-center p-12">
+                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                            <i data-lucide="layout" class="text-white opacity-40 w-12 h-12"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-coral reveal" data-category="video" data-tab="REEL-24">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Video Editing</span>
+                        <h3 class="text-2xl font-space font-bold mb-4">Creative Reel</h3>
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
+                            <i data-lucide="external-link" size="18"></i>
+                        </div>
+                    </div>
+                    <div class="w-full h-full flex items-center justify-center p-12">
+                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                            <i data-lucide="video" class="text-white opacity-40 w-12 h-12"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-yellow_gold reveal" data-category="design" data-tab="INF-2025">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Graphic Design</span>
+                        <h3 class="text-2xl font-space font-bold mb-4 text-white">Marketplace Infographics</h3>
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
+                            <i data-lucide="external-link" size="18"></i>
+                        </div>
+                    </div>
+                    <div class="w-full h-full flex items-center justify-center p-12">
+                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                            <i data-lucide="palette" class="text-white opacity-40 w-12 h-12"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 5 -->
+                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-teal_primary reveal" data-category="web" data-tab="SYS-24">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Web Design</span>
+                        <h3 class="text-2xl font-space font-bold mb-4 text-white">Design Systems</h3>
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
+                            <i data-lucide="external-link" size="18"></i>
+                        </div>
+                    </div>
+                    <div class="w-full h-full flex items-center justify-center p-12">
+                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                            <i data-lucide="code" class="text-white opacity-40 w-12 h-12"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="pt-24 pb-40 md:pb-52 px-6 md:px-12 bg-charcoal text-white rounded-t-[100px] relative h-auto">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="reveal">
+                    <h3 class="text-sm uppercase tracking-widest font-bold mb-4 text-yellow_gold">Let's Talk</h3>
+                    <h2 class="text-5xl md:text-7xl font-space font-bold mb-12 text-white leading-tight">Ready to start a project?</h2>
+                    
+                    <div class="space-y-6 text-xl text-white">
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-charcoal transition-all">
+                                <i data-lucide="mail" size="20"></i>
+                            </div>
+                            <span>zainaalissah@gmail.com</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
+                                <i data-lucide="map-pin" size="20"></i>
+                            </div>
+                            <span>Amman – Jordan</span>
+                        </div>
+                        <div class="flex items-center gap-4 group cursor-pointer">
+                            <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-charcoal transition-all">
+                                <i data-lucide="download" size="20"></i>
+                            </div>
+                            <span class="border-b border-white/20 group-hover:border-white transition-all">Download My CV</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Creative "Take What You Need" Contact Card -->
+                <div class="bg-yellow_gold rounded-[40px] p-8 md:p-12 text-charcoal reveal relative overflow-visible shadow-2xl h-fit" style="transition-delay: 0.2s">
+                    <div class="relative z-10">
+                        <h3 class="text-3xl font-space font-bold mb-2 uppercase tracking-tighter">Take what you need</h3>
+                        <p class="text-sm font-bold opacity-70 mb-10 italic">Feel free to grab a service to start our journey...</p>
+                        
+                        <div class="grid grid-cols-4 md:grid-cols-7 gap-px bg-charcoal/10 rounded-xl overflow-visible">
+                            <!-- Removable Tags -->
+                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Graphic Design</span>
+                            </div>
+                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Social Media</span>
+                            </div>
+                            <!-- Torn Tag Effect - UX/UI DESIGN -->
+                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20 translate-y-6 rotate-2 shadow-lg z-20">
+                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest text-teal_primary">UX/UI Design</span>
+                            </div>
+                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Web Development</span>
+                            </div>
+                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Video Editing</span>
+                            </div>
+                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Data Ops</span>
+                            </div>
+                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Excel / Office</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 md:px-12 bg-charcoal text-white border-t border-white/5 relative z-30">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center font-space font-bold text-white text-md bg-teal_primary">Z</div>
+                    <span class="font-space font-bold text-lg text-white">Z Creative Studio</span>
+                </div>
+                <p class="text-sm text-subtitle_beige italic">Creative Digital Portfolio &copy; 2026</p>
+            </div>
+
+            <div class="flex gap-6">
+                <a href="#" class="p-3 rounded-full border border-white/10 hover:bg-white hover:text-charcoal transition-all text-white"><i data-lucide="instagram" size="20"></i></a>
+                <a href="#" class="p-3 rounded-full border border-white/10 hover:bg-white hover:text-charcoal transition-all text-white"><i data-lucide="linkedin" size="20"></i></a>
+                <span class="p-3 rounded-full border border-white/10 font-bold text-xs flex items-center justify-center w-11 h-11 text-white">Be</span>
+                <span class="p-3 rounded-full border border-white/10 font-bold text-xs flex items-center justify-center w-11 h-11 text-white">Dr</span>
+            </div>
+
+            <p class="text-xs text-subtitle_beige font-space tracking-widest uppercase">Designed with Passion</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        window.addEventListener("load", reveal);
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuClose = document.getElementById('menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        menuToggle.onclick = () => { mobileMenu.style.display = 'flex'; };
+        menuClose.onclick = () => { mobileMenu.style.display = 'none'; };
+        mobileLinks.forEach(link => { link.onclick = () => { mobileMenu.style.display = 'none'; } });
+
+        // Portfolio Filtering logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioCards = document.querySelectorAll('.portfolio-card');
+
+        filterBtns.forEach(btn => {
+            btn.onclick = () => {
+                // UI Toggle
+                filterBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-teal_primary', 'text-white', 'shadow-lg');
+                    b.classList.add('bg-white', 'opacity-60', 'text-charcoal');
+                });
+                btn.classList.add('active', 'bg-teal_primary', 'text-white', 'shadow-lg');
+                btn.classList.remove('bg-white', 'opacity-60', 'text-charcoal');
+
+                // Filter logic
+                const filter = btn.getAttribute('data-filter');
+                portfolioCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
