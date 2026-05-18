@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Z Creative Studio | Zaina Alissa</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/PZ7PVdpT/22.png">
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
+ 
     <script>
         tailwind.config = {
             theme: {
@@ -49,104 +44,165 @@
             }
         }
     </script>
-
+ 
     <style>
         body {
             background-color: #F5EFE6;
             color: #2C2C2C;
             font-family: 'Inter', sans-serif;
         }
-
+ 
         .reveal {
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.8s ease-out;
         }
-
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
-
-        .blob-animation {
-            animation: blob-bounce 20s infinite alternate;
-        }
-
+ 
+        .blob-animation { animation: blob-bounce 20s infinite alternate; }
         @keyframes blob-bounce {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-            33% { transform: translate(30px, -50px) scale(1.1) rotate(5deg); }
-            66% { transform: translate(-20px, 20px) scale(0.9) rotate(-5deg); }
+            0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33%  { transform: translate(30px, -50px) scale(1.1) rotate(5deg); }
+            66%  { transform: translate(-20px, 20px) scale(0.9) rotate(-5deg); }
             100% { transform: translate(0, 0) scale(1) rotate(0deg); }
         }
-
-        .custom-dashed {
-            border-style: dashed;
-            border-width: 2px;
-        }
-
+ 
+        .custom-dashed { border-style: dashed; border-width: 2px; }
+ 
         .hero-title-stacked {
             line-height: 0.85;
             font-weight: 800;
             letter-spacing: -0.04em;
+            /* Fluid: ~52px on 320px screens → ~144px on 1280px+ */
+            font-size: clamp(3.25rem, 10vw + 1rem, 9rem);
         }
-
-        /* --- Folder Card Styles --- */
-        .portfolio-card {
-            margin-top: 2rem; 
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+ 
+        /* ── Fluid typography tokens ── */
+        .fluid-hero-sub   { font-size: clamp(0.85rem, 1.4vw + 0.4rem,  1.2rem); }
+        .fluid-h2-section { font-size: clamp(1.85rem, 3.2vw + 0.6rem,  3.25rem); }
+        .fluid-h2-contact { font-size: clamp(2.25rem, 4.5vw + 0.5rem,  4.5rem); }
+        .fluid-h3-card    { font-size: clamp(1.5rem,  2.2vw + 0.5rem,  2.25rem); }
+        .fluid-body-lg    { font-size: clamp(1.05rem, 1.4vw + 0.3rem,  1.5rem); }
+        .fluid-body       { font-size: clamp(0.95rem, 1.1vw + 0.25rem, 1.1rem); }
+ 
+        /* ── Fluid section spacing ── */
+        .fluid-section-py { padding-top: clamp(3rem, 7vw, 8rem); padding-bottom: clamp(3rem, 7vw, 8rem); }
+        .fluid-section-px { padding-left: clamp(1.25rem, 4vw, 3rem); padding-right: clamp(1.25rem, 4vw, 3rem); }
+ 
+        /* ── Skill cards: scale down on small screens ── */
+        @media (max-width: 480px) {
+            .skill-note {
+                max-width: 155px;
+                height: 170px;
+            }
         }
-
-        .portfolio-card::before {
-            content: attr(data-tab);
-            position: absolute;
-            top: -24px;
-            left: 0;
-            height: 24px;
-            width: 100px;
-            background-color: inherit;
-            filter: brightness(0.9);
-            border-radius: 12px 12px 0 0;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 10px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            padding-left: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            clip-path: polygon(0% 0%, 80% 0%, 100% 100%, 0% 100%);
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+ 
+        /* ── Folders grid: 2-col on small mobile ── */
+        @media (max-width: 480px) {
+            .folders-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2.5rem 1.25rem;
+                padding-top: 3rem;
+            }
+            .folder-back { width: 96px; height: 76px; }
         }
-
-        .portfolio-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+ 
+        /* ── Contact tear-tags: 4-col on mobile, full 7 on md+ ── */
+        @media (max-width: 767px) {
+            .tear-tags-grid { grid-template-columns: repeat(4, 1fr) !important; }
+            .tear-tag { height: 10rem !important; }
         }
-
-        /* --- Realistic Pinned Paper Note Styles for Skills --- */
+ 
+        /* ── About section rounded corners scale down ── */
+        @media (max-width: 640px) {
+            #about.rounded-section   { border-radius: 3rem; }
+            #education.rounded-sm-section { border-radius: 2rem; }
+        }
+ 
+        /* ── Hero image: don't push too far up on mobile ── */
+        @media (max-width: 1023px) {
+            .hero-img-offset { transform: translateY(-2rem) !important; }
+        }
+        @media (max-width: 640px) {
+            .hero-img-offset { transform: translateY(0) !important; }
+        }
+ 
+        /* ── Gap scaling for about grid ── */
+        @media (max-width: 640px) {
+            .about-grid-gap { gap: 2.5rem; }
+        }
+ 
+        /* Skills Section */
         #skills {
             background-color: #f4f2ee;
-            background-image: 
-                linear-gradient(#e5e2de 1px, transparent 1px), 
+            background-image:
+                linear-gradient(#e5e2de 1px, transparent 1px),
                 linear-gradient(90deg, #e5e2de 1px, transparent 1px);
             background-size: 60px 60px;
             position: relative;
         }
-
+ 
+        /* Keyframe: float in place, respecting the card's own rotation */
+        @keyframes cardFloat {
+            0%   { transform: translateY(0px)   rotate(var(--card-rot, 0deg)); }
+            50%  { transform: translateY(-10px) rotate(var(--card-rot, 0deg)); }
+            100% { transform: translateY(0px)   rotate(var(--card-rot, 0deg)); }
+        }
+ 
+        /* Keyframe: hover lift — separate so it can override cleanly */
+        @keyframes cardHoverLift {
+            from { transform: translateY(-14px) scale(1.05) rotate(var(--card-rot, 0deg)); }
+            to   { transform: translateY(-14px) scale(1.05) rotate(var(--card-rot, 0deg)); }
+        }
+ 
         .skill-note {
+            /* Layout */
             background-color: #ffffff;
             background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            width: 100%;
+            max-width: 220px;
+            height: 220px;
+            display: flex;
             position: relative;
-            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-            box-shadow: 
-                0 1px 2px rgba(0,0,0,0.07), 
-                0 4px 8px rgba(0,0,0,0.07), 
-                0 12px 24px rgba(0,0,0,0.07);
             overflow: visible !important;
             border: 1px solid rgba(0,0,0,0.03);
+            z-index: 1;
+            --card-rot: var(--tw-rotate, 0deg);
+            animation: cardFloat 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+            transition:
+                box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                z-index    0s;
+            box-shadow:
+                0 1px 2px  rgba(0,0,0,0.06),
+                0 4px 8px  rgba(0,0,0,0.06),
+                0 12px 24px rgba(0,0,0,0.06);
+            will-change: transform, box-shadow;
         }
-
+ 
+        .skill-note:nth-child(1) { animation-delay:  0.0s; }
+        .skill-note:nth-child(2) { animation-delay: -0.75s; }
+        .skill-note:nth-child(3) { animation-delay: -1.5s; }
+        .skill-note:nth-child(4) { animation-delay: -2.25s; }
+        .skill-note:nth-child(5) { animation-delay: -3.0s; }
+        .skill-note:nth-child(6) { animation-delay: -3.75s; }
+        .skill-note:nth-child(7) { animation-delay: -4.5s; }
+        .skill-note:nth-child(8) { animation-delay: -5.25s; }
+ 
+        .skill-note:hover {
+            animation-play-state: paused;
+            transform: translateY(-14px) scale(1.05) rotate(var(--card-rot, 0deg));
+            box-shadow:
+                0 20px 40px -8px  rgba(0,0,0,0.14),
+                0 8px  16px -4px  rgba(0,0,0,0.08);
+            z-index: 30;
+            transition:
+                transform  0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+ 
         .skill-note::after {
             content: '';
             position: absolute;
@@ -157,81 +213,212 @@
             height: 16px;
             border-radius: 50%;
             z-index: 50;
-            box-shadow: 
-                0 4px 6px rgba(0, 0, 0, 0.35), 
-                inset -2px -3px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.35), inset -2px -3px 4px rgba(0,0,0,0.3);
+            will-change: auto;
         }
-
-        .pin-teal::after { background: radial-gradient(circle at 35% 35%, #9fd5df 0%, #428A97 50%, #1a3a41 100%); }
+        .pin-teal::after  { background: radial-gradient(circle at 35% 35%, #9fd5df 0%, #428A97 50%, #1a3a41 100%); }
         .pin-coral::after { background: radial-gradient(circle at 35% 35%, #ffb6b4 0%, #E36A67 50%, #6e2523 100%); }
-        .pin-gold::after { background: radial-gradient(circle at 35% 35%, #ffe9b1 0%, #F2B11C 50%, #7c5a08 100%); }
-
+        .pin-gold::after  { background: radial-gradient(circle at 35% 35%, #ffe9b1 0%, #F2B11C 50%, #7c5a08 100%); }
+ 
         .skill-inner-panel {
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
             border: 1px solid rgba(0,0,0,0.05);
             background-image: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
         }
-
-        .skill-note:hover {
-            transform: rotate(0deg) translateY(-15px) scale(1.05) !important;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-            z-index: 30;
-        }
-
-        .about-card-shadow {
-            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Take what you need effect */
+ 
+        .about-card-shadow { box-shadow: 0 40px 80px -20px rgba(0,0,0,0.08); }
+ 
         .tear-tag {
             background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
             clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 50% 100%, 0% 90%);
         }
-        
-        .sticker-drop-shadow {
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+ 
+        /* =============================================
+            ANIMATED FOLDER STYLES
+        ============================================= */
+        .folder-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.3s;
         }
-
-        .skill-note {
-    animation: cardFloat 6s ease-in-out infinite;
-}
-
-.skill-note:nth-child(2){ animation-delay:0.4s }
-.skill-note:nth-child(3){ animation-delay:0.8s }
-.skill-note:nth-child(4){ animation-delay:1.2s }
-.skill-note:nth-child(5){ animation-delay:1.6s }
-.skill-note:nth-child(6){ animation-delay:2s }
-.skill-note:nth-child(7){ animation-delay:2.4s }
-
-@keyframes cardFloat{
-0%{transform:translateY(0)}
-50%{transform:translateY(-10px)}
-100%{transform:translateY(0)}
-}
-
+        .folder-wrap.hidden { display: none; }
+ 
+        .folder-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8A7E72;
+            text-align: center;
+        }
+        .folder-sub {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            color: #B7C7C9;
+            text-align: center;
+            margin-top: -8px;
+        }
+ 
+        .folder {
+            transition: all 0.25s ease-in;
+            cursor: pointer;
+            transform-origin: bottom center;
+        }
+        .folder:hover:not(.open) { transform: translateY(-10px); }
+        .folder:hover:not(.open) .paper { transform: translate(-50%, 0%); }
+        .folder:hover:not(.open) .folder-front { transform: skew(15deg) scaleY(0.6); }
+        .folder:hover:not(.open) .folder-front.right { transform: skew(-15deg) scaleY(0.6); }
+ 
+        .folder.open { transform: translateY(-10px); }
+        .folder.open .paper:nth-child(1) { transform: translate(-120%, -70%) rotateZ(-15deg); }
+        .folder.open .paper:nth-child(1):hover { transform: translate(-120%, -70%) rotateZ(-15deg) scale(1.1); }
+        .folder.open .paper:nth-child(2) { transform: translate(10%, -70%) rotateZ(15deg); height: 80%; }
+        .folder.open .paper:nth-child(2):hover { transform: translate(10%, -70%) rotateZ(15deg) scale(1.1); }
+        .folder.open .paper:nth-child(3) { transform: translate(-50%, -100%) rotateZ(5deg); height: 80%; }
+        .folder.open .paper:nth-child(3):hover { transform: translate(-50%, -100%) rotateZ(5deg) scale(1.1); }
+        .folder.open .folder-front { transform: skew(15deg) scaleY(0.6); }
+        .folder.open .folder-front.right { transform: skew(-15deg) scaleY(0.6); }
+ 
+        .folder-back {
+            position: relative;
+            width: 120px;
+            height: 96px;
+            border-radius: 0 10px 10px 10px;
+        }
+        .folder-back::after {
+            position: absolute;
+            z-index: 0;
+            bottom: 98%;
+            left: 0;
+            content: '';
+            width: 36px;
+            height: 12px;
+            border-radius: 5px 5px 0 0;
+        }
+        .paper {
+            position: absolute;
+            z-index: 2;
+            bottom: 10%;
+            left: 50%;
+            transform: translate(-50%, 10%);
+            width: 70%;
+            height: 80%;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .paper:nth-child(2) { width: 80%; height: 70%; }
+        .paper:nth-child(3) { width: 90%; height: 60%; }
+ 
+        .paper-content {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(0,0,0,0.2);
+            text-align: center;
+            padding: 4px;
+        }
+ 
+        .folder-front {
+            position: absolute;
+            z-index: 3;
+            width: 100%;
+            height: 100%;
+            border-radius: 5px 10px 10px 10px;
+            transform-origin: bottom;
+            transition: all 0.3s ease-in-out;
+        }
+ 
+        /* Folder color themes */
+        .f-teal .folder-back          { background: #2d6874; }
+        .f-teal .folder-back::after   { background: #2d6874; }
+        .f-teal .folder-front         { background: #428A97; }
+        .f-teal .paper:nth-child(1)   { background: #e6f4f5; }
+        .f-teal .paper:nth-child(2)   { background: #f0f8f9; }
+        .f-teal .paper:nth-child(3)   { background: #ffffff; }
+ 
+        .f-coral .folder-back         { background: #b54f4d; }
+        .f-coral .folder-back::after  { background: #b54f4d; }
+        .f-coral .folder-front        { background: #E36A67; }
+        .f-coral .paper:nth-child(1)  { background: #fceeed; }
+        .f-coral .paper:nth-child(2)  { background: #fef4f4; }
+        .f-coral .paper:nth-child(3)  { background: #ffffff; }
+ 
+        .f-gold .folder-back          { background: #c0890f; }
+        .f-gold .folder-back::after   { background: #c0890f; }
+        .f-gold .folder-front         { background: #F2B11C; }
+        .f-gold .paper:nth-child(1)   { background: #fef5e0; }
+        .f-gold .paper:nth-child(2)   { background: #fef9ec; }
+        .f-gold .paper:nth-child(3)   { background: #ffffff; }
+ 
+        .f-mint .folder-back          { background: #43a49d; }
+        .f-mint .folder-back::after   { background: #43a49d; }
+        .f-mint .folder-front         { background: #65C6BE; }
+        .f-mint .paper:nth-child(1)   { background: #e5f8f7; }
+        .f-mint .paper:nth-child(2)   { background: #f0fbfa; }
+        .f-mint .paper:nth-child(3)   { background: #ffffff; }
+ 
+        /* Filter buttons */
+        .filter-btn-folder {
+            padding: 8px 20px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: none;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            background: #fff;
+            color: #2C2C2C;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+        .filter-btn-folder.active {
+            background: #428A97;
+            color: #fff;
+            opacity: 1;
+            box-shadow: 0 4px 12px rgba(66,138,151,0.3);
+        }
+        .filter-btn-folder:hover { opacity: 1; }
+ 
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 3rem 2rem;
+            justify-items: center;
+            padding-top: 4rem;
+            padding-bottom: 2rem;
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
-
+ 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 px-6 py-6 flex justify-between items-center backdrop-blur-md bg-warm_beige/80 transition-all duration-300">
         <div class="flex items-center gap-2">
             <img src="https://i.ibb.co/PZ7PVdpT/22.png" alt="logo" class="w-10 h-10 object-contain">
             <span class="font-space font-bold text-xl tracking-tight text-charcoal">Z Creative Studio</span>
         </div>
-        
         <div class="hidden md:flex gap-8 font-space font-medium uppercase text-xs tracking-widest text-subtitle_beige">
             <a href="#about" class="hover:text-charcoal transition-colors">About</a>
             <a href="#skills" class="hover:text-charcoal transition-colors">Skills</a>
             <a href="#portfolio" class="hover:text-charcoal transition-colors">Portfolio</a>
             <a href="#contact" class="hover:text-charcoal transition-colors">Contact</a>
         </div>
-
         <button id="menu-toggle" class="md:hidden text-charcoal">
             <i data-lucide="menu"></i>
         </button>
     </nav>
-
+ 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-warm_beige flex-col items-center justify-center gap-8 text-2xl font-space font-bold hidden">
         <button id="menu-close" class="absolute top-8 right-8"><i data-lucide="x" size="32"></i></button>
@@ -240,418 +427,437 @@
         <a href="#portfolio" class="mobile-link text-charcoal">Portfolio</a>
         <a href="#contact" class="mobile-link text-charcoal">Contact</a>
     </div>
-
+ 
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center pt-24 pb-12 px-6 md:px-12 overflow-hidden">
-        <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full opacity-20 blur-3xl bg-yellow_gold blob-animation"></div>
-        <div class="absolute bottom-20 -left-20 w-80 h-80 rounded-full opacity-20 blur-3xl bg-coral blob-animation" style="animation-delay: -5s;"></div>
-
-        <div class="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10">
+    <section class="relative min-h-screen flex items-center pt-24 pb-12 fluid-section-px overflow-hidden">
+        <div class="absolute -top-20 -right-20 w-64 h-64 md:w-96 md:h-96 rounded-full opacity-20 blur-3xl bg-yellow_gold blob-animation"></div>
+        <div class="absolute bottom-20 -left-20 w-56 h-56 md:w-80 md:h-80 rounded-full opacity-20 blur-3xl bg-coral blob-animation" style="animation-delay: -5s;"></div>
+        <div class="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center z-10">
             <div class="reveal">
-                <h1 class="hero-title-stacked text-6xl md:text-8xl lg:text-9xl font-space text-teal_primary mb-10 uppercase">
+                <h1 class="hero-title-stacked font-space text-teal_primary mb-8 lg:mb-10 uppercase">
                     WHAT<br>DO I<br>CREATE?
                 </h1>
-                
-                <div class="max-w-xl mb-12">
-                    <p class="text-lg md:text-xl font-space font-bold leading-relaxed uppercase tracking-tight text-charcoal">
+                <div class="max-w-xl mb-8 lg:mb-12">
+                    <p class="fluid-hero-sub font-space font-bold leading-relaxed uppercase tracking-tight text-charcoal">
                         THIS IS MY VIRTUAL CREATIVE HUB WHERE ALL MY WORK CONVERGES:<br>
                         FROM <span class="text-teal_primary">PLASTIC & DIGITAL ART</span>,<br>
                         TO <span class="text-teal_primary">WEB DESIGN</span>, & <span class="text-teal_primary">VIDEO EDITING</span>.
                     </p>
                 </div>
-                
                 <div class="flex flex-wrap gap-4">
-                    <a href="#portfolio" class="px-8 py-4 rounded-full font-space font-bold text-white shadow-lg bg-teal_primary hover:scale-105 transition-transform text-center">
+                    <a href="#portfolio" class="px-6 md:px-8 py-3 md:py-4 rounded-full font-space font-bold text-white shadow-lg bg-teal_primary hover:scale-105 transition-transform text-center text-sm md:text-base">
                         View Portfolio
                     </a>
                 </div>
             </div>
-
             <div class="relative flex justify-center reveal" style="transition-delay: 0.2s">
-                <div class="relative w-full max-w-lg aspect-square flex items-center justify-center">
-                    <div class="absolute w-[105%] h-[105%] rounded-full opacity-20 bg-teal_primary transform -translate-x-12 translate-y-2"></div>
-                    <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa" class="relative w-full h-auto object-contain drop-shadow-2xl z-10 max-h-[80vh] transform -translate-y-8">
+                <div class="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square flex items-center justify-center">
+                    <div class="absolute w-[105%] h-[105%] rounded-full opacity-20 bg-teal_primary transform -translate-x-8 lg:-translate-x-12 translate-y-2"></div>
+                    <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa" class="hero-img-offset relative w-full h-auto object-contain drop-shadow-2xl z-10 max-h-[70vh] lg:max-h-[80vh] transform -translate-y-8">
                 </div>
             </div>
         </div>
     </section>
-
+ 
     <!-- About Section -->
-    <section id="about" class="pt-24 pb-32 px-6 md:px-12 bg-white rounded-[100px] -mt-10 relative z-20 about-card-shadow">
+    <section id="about" class="fluid-section-py fluid-section-px bg-white rounded-[3rem] sm:rounded-[4rem] md:rounded-[6rem] lg:rounded-[100px] -mt-10 relative z-20 about-card-shadow">
         <div class="container mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center about-grid-gap">
                 <div class="order-2 lg:order-1 relative reveal">
-                    <div class="relative p-8 rounded-3xl bg-warm_beige">
+                    <div class="relative p-6 md:p-8 rounded-3xl bg-warm_beige">
                         <img src="https://i.ibb.co/Kx3kLtfV/Z-CREATIVE-ST33.png" alt="Character Style" class="w-full h-auto rounded-xl grayscale hover:grayscale-0 transition-all duration-700">
                     </div>
-                    <div class="absolute -bottom-6 -right-6 w-32 h-32 rounded-full flex items-center justify-center text-center p-4 text-xs font-bold leading-tight transform rotate-12 bg-yellow_gold text-charcoal shadow-lg">
+                    <div class="absolute -bottom-6 -right-6 w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center text-center p-3 md:p-4 text-xs font-bold leading-tight transform rotate-12 bg-yellow_gold text-charcoal shadow-lg">
                         CREATIVE<br>MINDSET
                     </div>
                 </div>
                 <div class="order-1 lg:order-2 reveal">
-                    <div class="mb-12">
-                        <h3 class="text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Who am I?</h3>
-                        <h2 class="text-4xl md:text-5xl font-bold font-fredoka text-charcoal">About Me</h2>
+                    <div class="mb-8 md:mb-12">
+                        <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Who am I?</h3>
+                        <h2 class="fluid-h2-section font-bold font-fredoka text-charcoal">About Me</h2>
                     </div>
-                    <p class="text-2xl font-bold mb-8 leading-relaxed text-teal_primary">
+                    <p class="fluid-body-lg font-bold mb-6 md:mb-8 leading-relaxed text-teal_primary">
                         Digital Media Designer and Junior Web Developer with experience in branding, social media design, and website development.
                     </p>
-                    <p class="text-lg opacity-80 leading-relaxed mb-8">
+                    <p class="fluid-body opacity-80 leading-relaxed mb-6 md:mb-8">
                         I create engaging digital experiences through design, content creation, and web development. My approach blends technical precision with artistic flair.
                     </p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 rounded-2xl border border-sage">
-                            <h4 class="font-space font-bold text-3xl mb-1 text-charcoal">2+</h4>
-                            <p class="text-sm opacity-60 uppercase tracking-tighter text-subtitle_beige">Years Experience</p>
+                    <div class="grid grid-cols-2 gap-3 md:gap-4">
+                        <div class="p-3 md:p-4 rounded-2xl border border-sage">
+                            <h4 class="font-space font-bold text-2xl md:text-3xl mb-1 text-charcoal">2+</h4>
+                            <p class="text-xs sm:text-sm opacity-60 uppercase tracking-tighter text-subtitle_beige">Years Experience</p>
                         </div>
-                        <div class="p-4 rounded-2xl border border-sage">
-                            <h4 class="font-space font-bold text-3xl mb-1 text-charcoal">50+</h4>
-                            <p class="text-sm opacity-60 uppercase tracking-tighter text-subtitle_beige">Projects Delivered</p>
+                        <div class="p-3 md:p-4 rounded-2xl border border-sage">
+                            <h4 class="font-space font-bold text-2xl md:text-3xl mb-1 text-charcoal">50+</h4>
+                            <p class="text-xs sm:text-sm opacity-60 uppercase tracking-tighter text-subtitle_beige">Projects Delivered</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Skills Section (Designer Board Board) -->
-    <section id="skills" class="py-32 px-6 md:px-12 -mt-24 relative z-10 overflow-visible">
-        <!-- SVG Scribbles behind cards -->
+ 
+    <!-- Skills Section -->
+    <section id="skills" class="fluid-section-py fluid-section-px -mt-16 md:-mt-24 relative z-10 overflow-visible">
         <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-10 z-0" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
-
-<path d="M50 300 Q200 200 400 300 T750 280 T1100 320"
-stroke="#2C2C2C"
-stroke-width="2"
-stroke-dasharray="6 8"
-fill="none"/>
-
-<path d="M120 520 Q350 420 600 470 T1000 450"
-stroke="#2C2C2C"
-stroke-width="2"
-stroke-dasharray="6 8"
-fill="none"/>
-
-<path d="M200 120 Q450 80 700 130 T1000 110"
-stroke="#2C2C2C"
-stroke-width="2"
-stroke-dasharray="6 8"
-fill="none"/>
-
-<circle cx="380" cy="320" r="3" fill="#2C2C2C"/>
-<circle cx="750" cy="260" r="3" fill="#2C2C2C"/>
-<circle cx="620" cy="450" r="3" fill="#2C2C2C"/>
-
-</svg>
-
+            <path d="M50 300 Q200 200 400 300 T750 280 T1100 320" stroke="#2C2C2C" stroke-width="2" stroke-dasharray="6 8" fill="none"/>
+            <path d="M120 520 Q350 420 600 470 T1000 450" stroke="#2C2C2C" stroke-width="2" stroke-dasharray="6 8" fill="none"/>
+            <path d="M200 120 Q450 80 700 130 T1000 110" stroke="#2C2C2C" stroke-width="2" stroke-dasharray="6 8" fill="none"/>
+            <circle cx="380" cy="320" r="3" fill="#2C2C2C"/>
+            <circle cx="750" cy="260" r="3" fill="#2C2C2C"/>
+            <circle cx="620" cy="450" r="3" fill="#2C2C2C"/>
+        </svg>
         <div class="container mx-auto pt-10 relative z-10">
-            <div class="mb-20 reveal">
-                <h3 class="text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">What I do best</h3>
-                <h2 class="text-4xl md:text-5xl font-bold font-space text-charcoal">My Expertise</h2>
+            <div class="mb-12 md:mb-20 reveal">
+                <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">What I do best</h3>
+                <h2 class="fluid-h2-section font-bold font-space text-charcoal">My Expertise</h2>
             </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-10 justify-items-center max-w-5xl mx-auto">
-                
-                <!-- Skill 1: Graphic Designer -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 sm:gap-8 md:gap-10 justify-items-center max-w-5xl mx-auto">
+ 
                 <div class="skill-note pin-teal p-4 rounded-md reveal rotate-1" style="transition-delay: 0.1s">
-                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-teal_primary/[0.03]">
+                    <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-teal_primary/[0.03]">
                         <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-teal_primary/10 pb-1">Graphic Designer</h3>
                         <div class="space-y-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Tools</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Illustrator, Photoshop, Canva</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Capabilities</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Brand Identity, Packaging, Marketing, Social Media</p>
-                            </div>
+                            <div><p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Tools</p><p class="text-[11px] leading-tight text-subtitle_beige">Illustrator, Photoshop, Canva</p></div>
+                            <div><p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Capabilities</p><p class="text-[11px] leading-tight text-subtitle_beige">Brand Identity, Packaging, Marketing, Social Media</p></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Skill 2: Social Media Specialist -->
+ 
                 <div class="skill-note pin-coral p-4 rounded-md reveal -rotate-1" style="transition-delay: 0.15s">
-                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-coral/[0.03]">
+                    <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-coral/[0.03]">
                         <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-coral/10 pb-1">Social Media</h3>
                         <div class="space-y-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Platforms</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">IG, FB, LinkedIn, Meta Business Suite</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Tasks</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Planning, Design, Account Management</p>
-                            </div>
+                            <div><p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Platforms</p><p class="text-[11px] leading-tight text-subtitle_beige">IG, FB, LinkedIn, Meta Business Suite</p></div>
+                            <div><p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Tasks</p><p class="text-[11px] leading-tight text-subtitle_beige">Planning, Design, Account Management</p></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Skill 3: UX/UI Designer -->
+ 
                 <div class="skill-note pin-gold p-4 rounded-md reveal rotate-2" style="transition-delay: 0.2s">
-                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-yellow_gold/[0.03]">
+                    <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-yellow_gold/[0.03]">
                         <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-yellow_gold/10 pb-1">UX / UI Designer</h3>
                         <div class="space-y-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Tools</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Figma</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Process</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Wireframes, UI Design, Prototyping, UX Thinking</p>
-                            </div>
+                            <div><p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Tools</p><p class="text-[11px] leading-tight text-subtitle_beige">Figma</p></div>
+                            <div><p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Process</p><p class="text-[11px] leading-tight text-subtitle_beige">Wireframes, UI Design, Prototyping, UX Thinking</p></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Skill 4: Web Developer -->
+ 
                 <div class="skill-note pin-teal p-4 rounded-md reveal -rotate-2" style="transition-delay: 0.25s">
-                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-teal_primary/[0.03]">
+                    <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-teal_primary/[0.03]">
                         <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-teal_primary/10 pb-1">Web Dev (Junior)</h3>
                         <div class="space-y-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Stack</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">HTML, CSS, JS, Node.js</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Workflow</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">GitHub, VS Code</p>
-                            </div>
+                            <div><p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Stack</p><p class="text-[11px] leading-tight text-subtitle_beige">HTML, CSS, JS, Node.js</p></div>
+                            <div><p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Workflow</p><p class="text-[11px] leading-tight text-subtitle_beige">GitHub, VS Code</p></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Skill 5: Videographer -->
-                <div class="skill-note pin-coral p-4 rounded-md reveal rotate-1 md:col-start-2 md:row-start-2" style="transition-delay: 0.3s">
-                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-coral/[0.03]">
+ 
+                <div class="skill-note pin-coral p-4 rounded-md reveal rotate-1" style="transition-delay: 0.3s">
+                    <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-coral/[0.03]">
                         <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-coral/10 pb-1">Videographer</h3>
                         <div class="space-y-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Tools</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Premiere Pro, CapCut</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Expertise</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Short-form Edits, Social Content</p>
-                            </div>
+                            <div><p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Tools</p><p class="text-[11px] leading-tight text-subtitle_beige">Premiere Pro, CapCut</p></div>
+                            <div><p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Expertise</p><p class="text-[11px] leading-tight text-subtitle_beige">Short-form Edits, Social Content</p></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Skill 6: Operations -->
-<div class="skill-note pin-gold p-4 rounded-md reveal -rotate-1 md:col-start-2" style="transition-delay: 0.35s">                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-yellow_gold/[0.03]">
+ 
+                <div class="skill-note pin-gold p-4 rounded-md reveal -rotate-1" style="transition-delay: 0.35s">
+                    <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-yellow_gold/[0.03]">
                         <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-yellow_gold/10 pb-1">Operations</h3>
                         <div class="space-y-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Systems</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">CRM, Data Handling</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Management</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Project & Operations Coordination</p>
-                            </div>
+                            <div><p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Systems</p><p class="text-[11px] leading-tight text-subtitle_beige">CRM, Data Handling</p></div>
+                            <div><p class="text-[10px] font-bold text-yellow_gold uppercase tracking-tighter">Management</p><p class="text-[11px] leading-tight text-subtitle_beige">Project & Operations Coordination</p></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Skill 7: Productivity -->
-<div class="skill-note pin-teal p-4 rounded-md reveal rotate-2 md:col-start-3" style="transition-delay: 0.4s">                    <div class="skill-inner-panel h-full w-full p-4 rounded bg-teal_primary/[0.03]">
+ 
+                <div class="skill-note pin-teal p-4 rounded-md reveal rotate-2" style="transition-delay: 0.4s">
+                    <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-teal_primary/[0.03]">
                         <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-teal_primary/10 pb-1">Office Tools</h3>
                         <div class="space-y-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Tools</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">MS Office, Advanced Excel</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Focus</p>
-                                <p class="text-[11px] leading-tight text-subtitle_beige">Spreadsheets, Data Organization</p>
-                            </div>
+                            <div><p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Tools</p><p class="text-[11px] leading-tight text-subtitle_beige">MS Office, Advanced Excel</p></div>
+                            <div><p class="text-[10px] font-bold text-teal_primary uppercase tracking-tighter">Focus</p><p class="text-[11px] leading-tight text-subtitle_beige">Spreadsheets, Data Organization</p></div>
                         </div>
                     </div>
                 </div>
-
+ 
+                <div class="skill-note pin-coral p-4 rounded-md reveal -rotate-1" style="transition-delay: 0.45s">
+                    <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-coral/[0.03]">
+                        <h3 class="text-sm font-space font-bold text-charcoal mb-2 border-b border-coral/10 pb-1">Plastic Artist</h3>
+                        <div class="space-y-2">
+                            <div><p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Mediums</p><p class="text-[11px] leading-tight text-subtitle_beige">Traditional Drawing, Sketching</p></div>
+                            <div><p class="text-[10px] font-bold text-coral uppercase tracking-tighter">Style</p><p class="text-[11px] leading-tight text-subtitle_beige">Hand-drawn Art, Creative Expression</p></div>
+                        </div>
+                    </div>
+                </div>
+ 
             </div>
         </div>
     </section>
-
+ 
     <!-- Education Section -->
-    <section id="education" class="py-16 px-6 md:px-12 bg-white rounded-[60px] relative z-20">
+    <section id="education" class="py-12 md:py-16 fluid-section-px bg-white rounded-[2rem] sm:rounded-[3rem] md:rounded-[60px] relative z-20">
         <div class="container mx-auto max-w-4xl reveal">
-            <div class="mb-12">
-                <h2 class="text-4xl md:text-5xl font-bold font-fredoka text-charcoal">Education</h2>
+            <div class="mb-8 md:mb-12">
+                <h2 class="fluid-h2-section font-bold font-fredoka text-charcoal">Education</h2>
             </div>
-            <div class="p-6 md:p-8 rounded-[32px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-sage">
+            <div class="p-5 md:p-8 rounded-[1.5rem] md:rounded-[32px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-5 md:gap-6 border-sage">
                 <div>
-                    <h3 class="text-3xl md:text-4xl font-space font-bold mb-2 text-charcoal">Digital Media Design</h3>
-                    <p class="text-xl opacity-70">SAE Institute Amman</p>
+                    <h3 class="fluid-h3-card font-space font-bold mb-2 text-charcoal">Digital Media Design</h3>
+                    <p class="fluid-body opacity-70">SAE Institute Amman</p>
                 </div>
-                <div class="flex flex-col items-end">
-                    <img src="https://i.ibb.co/BHkpjXLH/SAE-Institute-Logo.png" alt="SAE Institute Logo" class="h-16 w-auto object-contain">
+                <div class="flex flex-col items-start md:items-end">
+                    <img src="https://i.ibb.co/BHkpjXLH/SAE-Institute-Logo.png" alt="SAE Institute Logo" class="h-12 md:h-16 w-auto object-contain">
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="py-24 px-6 md:px-12 relative z-20">
+ 
+    <!-- =============================================
+         PORTFOLIO SECTION — Animated Folders
+    ============================================= -->
+    <section id="portfolio" class="fluid-section-py fluid-section-px relative z-20">
         <div class="container mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+ 
+            <!-- Header + Filters -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 reveal gap-4">
                 <div>
-                    <h3 class="text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Selected Works</h3>
-                    <h2 class="text-4xl md:text-5xl font-bold font-space text-charcoal">Archives & Projects</h2>
+                    <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Selected Works</h3>
+                    <h2 class="fluid-h2-section font-bold font-space text-charcoal">Archives & Projects</h2>
                 </div>
-                <div class="flex flex-wrap gap-2 mt-6">
-                    <button class="filter-btn active px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-teal_primary text-white shadow-lg" data-filter="all">All</button>
-                    <button class="filter-btn px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-white opacity-60 hover:opacity-100 text-charcoal" data-filter="design">Graphic Design</button>
-                    <button class="filter-btn px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-white opacity-60 hover:opacity-100 text-charcoal" data-filter="web">Web Design</button>
+                <div class="flex flex-wrap gap-2 mt-2 md:mt-6">
+                    <button class="filter-btn-folder active" data-filter="all">All</button>
+                    <button class="filter-btn-folder" data-filter="design">Graphic Design</button>
+                    <button class="filter-btn-folder" data-filter="web">Web Design</button>
+                    <button class="filter-btn-folder" data-filter="video">Video</button>
                 </div>
             </div>
+ 
+            <!-- Folders Grid -->
+            <div class="folders-grid" id="folders-grid">
+ 
+  <!-- Web Design & Development -->
+<div class="folder-wrap reveal" data-cat="web">
+    <div class="folder f-mint" onclick="showWebProjects()">
+        <div class="folder-back">
+            <div class="paper"><div class="paper-content">UX/UI</div></div>
+            <div class="paper"><div class="paper-content">Development</div></div>
+            <div class="paper"><div class="paper-content">Projects</div></div>
+            <div class="folder-front"></div>
+            <div class="folder-front right"></div>
+        </div>
+    </div>
+    <div class="folder-label">Web Design</div>
+    <div class="folder-sub">UX/UI + DEV</div>
+</div>
 
-            <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-y-12">
-                <!-- Project 1 -->
-                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-teal_primary reveal" data-category="design" data-tab="PRJ-2025">
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
-                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Graphic Design</span>
-                        <h3 class="text-2xl font-space font-bold mb-4">Brand Identity System</h3>
-                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
-                            <i data-lucide="external-link" size="18"></i>
-                        </div>
-                    </div>
-                    <div class="w-full h-full flex items-center justify-center p-12">
-                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                            <i data-lucide="palette" class="text-white opacity-40 w-12 h-12"></i>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Project 2 -->
-                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-mint reveal" data-category="web" data-tab="WEB-2024">
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
-                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Web Design</span>
-                        <h3 class="text-2xl font-space font-bold mb-4">E-Commerce Design</h3>
-                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
-                            <i data-lucide="external-link" size="18"></i>
-                        </div>
-                    </div>
-                    <div class="w-full h-full flex items-center justify-center p-12">
-                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                            <i data-lucide="layout" class="text-white opacity-40 w-12 h-12"></i>
-                        </div>
-                    </div>
-                </div>
+<!-- Graphic Design -->
+<div class="folder-wrap reveal" data-cat="design">
+    <div class="folder f-teal" onclick="toggleFolder(this)">
+        <div class="folder-back">
+            <div class="paper"><div class="paper-content">Branding</div></div>
+            <div class="paper"><div class="paper-content">Visuals</div></div>
+            <div class="paper"><div class="paper-content">Identity</div></div>
+            <div class="folder-front"></div>
+            <div class="folder-front right"></div>
+        </div>
+    </div>
+    <div class="folder-label">Graphic Design</div>
+    <div class="folder-sub">VISUAL WORK</div>
+</div>
 
-                <!-- Project 3 -->
-                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-coral reveal" data-category="video" data-tab="REEL-24">
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
-                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Video Editing</span>
-                        <h3 class="text-2xl font-space font-bold mb-4">Creative Reel</h3>
-                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
-                            <i data-lucide="external-link" size="18"></i>
-                        </div>
-                    </div>
-                    <div class="w-full h-full flex items-center justify-center p-12">
-                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                            <i data-lucide="video" class="text-white opacity-40 w-12 h-12"></i>
-                        </div>
-                    </div>
-                </div>
+<!-- Packaging Design -->
+<div class="folder-wrap reveal" data-cat="design">
+    <div class="folder f-gold" onclick="toggleFolder(this)">
+        <div class="folder-back">
+            <div class="paper"><div class="paper-content">Packaging</div></div>
+            <div class="paper"><div class="paper-content">Concept</div></div>
+            <div class="paper"><div class="paper-content">Mockups</div></div>
+            <div class="folder-front"></div>
+            <div class="folder-front right"></div>
+        </div>
+    </div>
+    <div class="folder-label">Packaging</div>
+    <div class="folder-sub">PRODUCT DESIGN</div>
+</div>
 
-                <!-- Project 4 -->
-                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-yellow_gold reveal" data-category="design" data-tab="INF-2025">
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
-                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Graphic Design</span>
-                        <h3 class="text-2xl font-space font-bold mb-4 text-white">Marketplace Infographics</h3>
-                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
-                            <i data-lucide="external-link" size="18"></i>
-                        </div>
-                    </div>
-                    <div class="w-full h-full flex items-center justify-center p-12">
-                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                            <i data-lucide="palette" class="text-white opacity-40 w-12 h-12"></i>
-                        </div>
-                    </div>
-                </div>
+<!-- Social Media -->
+<div class="folder-wrap reveal" data-cat="design">
+    <div class="folder f-coral" onclick="toggleFolder(this)">
+        <div class="folder-back">
+            <div class="paper"><div class="paper-content">Posts</div></div>
+            <div class="paper"><div class="paper-content">Content</div></div>
+            <div class="paper"><div class="paper-content">Campaigns</div></div>
+            <div class="folder-front"></div>
+            <div class="folder-front right"></div>
+        </div>
+    </div>
+    <div class="folder-label">Social Media</div>
+    <div class="folder-sub">CONTENT & POSTS</div>
+</div>
 
-                <!-- Project 5 -->
-                <div class="portfolio-card group relative rounded-[20px] rounded-tl-none overflow-visible aspect-square shadow-md cursor-pointer bg-teal_primary reveal" data-category="web" data-tab="SYS-24">
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 z-10 rounded-[20px] rounded-tl-none"></div>
-                    <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                        <span class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Web Design</span>
-                        <h3 class="text-2xl font-space font-bold mb-4 text-white">Design Systems</h3>
-                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-charcoal">
-                            <i data-lucide="external-link" size="18"></i>
-                        </div>
-                    </div>
-                    <div class="w-full h-full flex items-center justify-center p-12">
-                        <div class="w-full h-full rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                            <i data-lucide="code" class="text-white opacity-40 w-12 h-12"></i>
-                        </div>
-                    </div>
-                </div>
+<!-- Videography -->
+<div class="folder-wrap reveal" data-cat="video">
+    <div class="folder f-coral" onclick="showVideoProjects()">
+        <div class="folder-back">
+            <div class="paper"><div class="paper-content">Reels</div></div>
+            <div class="paper"><div class="paper-content">Editing</div></div>
+            <div class="paper"><div class="paper-content">Content</div></div>
+            <div class="folder-front"></div>
+            <div class="folder-front right"></div>
+        </div>
+    </div>
+    <div class="folder-label">Videography</div>
+    <div class="folder-sub">REELS & EDITING</div>
+</div>
             </div>
         </div>
     </section>
+
+    <!-- =============================================
+         NEW: VIDEO PROJECTS INTERNAL SECTION
+    ============================================= -->
+    <section id="video-projects" class="fluid-section-py fluid-section-px relative z-20 hidden">
+        <div class="container mx-auto">
+            <!-- Header -->
+            <div class="mb-10 md:mb-16 reveal">
+                <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-coral">Showcase</h3>
+                <h2 class="fluid-h2-section font-bold font-space text-charcoal mb-4">Videography & Reels Editing</h2>
+                <p class="fluid-body-lg text-subtitle_beige max-w-2xl leading-relaxed">
+                    A curated selection of dynamic video content, including short-form social media reels, promotional edits, and storytelling-driven visuals designed to drive engagement.
+                </p>
+            </div>
+
+            <!-- Featured Video (Large) -->
+            <div class="reveal mb-8 md:mb-12">
+                <div class="bg-white p-3 md:p-6 rounded-[2rem] sm:rounded-[3rem] shadow-xl border border-sage/30 hover:shadow-2xl transition-shadow duration-300">
+                    <video controls poster="https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=1200&q=80" class="w-full rounded-[1.25rem] sm:rounded-[2rem] aspect-video object-cover bg-charcoal/5 outline-none">
+                        <source src="featured-video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+
+            <!-- Responsive Video Grid (2 on Desktop, 1 on Mobile) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 reveal">
+                <div class="bg-white p-3 md:p-6 rounded-[2rem] shadow-lg border border-sage/30 hover:shadow-xl transition-shadow duration-300">
+                    <video controls poster="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80" class="w-full rounded-[1.25rem] sm:rounded-[1.5rem] aspect-[9/16] object-cover bg-charcoal/5 outline-none max-h-[650px]">
+                        <source src="videos/Aloha-Breakfast.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="bg-white p-3 md:p-6 rounded-[2rem] shadow-lg border border-sage/30 hover:shadow-xl transition-shadow duration-300">
+                    <video controls poster="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80" class="w-full rounded-[1.25rem] sm:rounded-[1.5rem] aspect-[9/16] object-cover bg-charcoal/5 outline-none max-h-[650px]">
+                        <source src="reel-2.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+
+            <!-- Hide Showcase Button -->
+            <div class="mt-12 md:mt-16 flex justify-center reveal">
+                <button onclick="hideVideoProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-coral hover:text-coral transition-all flex items-center gap-2 text-sm md:text-base group">
+                    <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i> 
+                    Close Showcase
+                </button>
+            </div>
+        </div>
+    </section>
+ 
+    <section id="web-projects" class="fluid-section-py fluid-section-px relative z-20 hidden">
+    <div class="container mx-auto">
+
+        <!-- Header -->
+        <div class="mb-12 reveal">
+            <h3 class="text-xs uppercase tracking-widest font-bold text-mint mb-2">Showcase</h3>
+            <h2 class="fluid-h2-section font-bold font-space text-charcoal">Web Design & Development</h2>
+            <p class="fluid-body-lg text-subtitle_beige max-w-2xl">
+                UX/UI design and development projects focused on user experience, clean interfaces, and functional systems.
+            </p>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="grid md:grid-cols-2 gap-8">
+
+            <div class="bg-white p-6 rounded-2xl shadow border">
+                <img src="images/web1.jpg" class="rounded-xl mb-4">
+                <h3 class="font-bold">Project Name</h3>
+                <p class="text-sm text-subtitle_beige">UX/UI + Development</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow border">
+                <img src="images/web2.jpg" class="rounded-xl mb-4">
+                <h3 class="font-bold">Project Name</h3>
+                <p class="text-sm text-subtitle_beige">Landing Page</p>
+            </div>
+
+        </div>
+
+        <!-- Close -->
+     <div class="mt-12 md:mt-16 flex justify-center reveal">
+    <button onclick="hideWebProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-coral hover:text-coral transition-all flex items-center gap-2 text-sm md:text-base group">
+        <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i> 
+        Close Showcase
+    </button>
+</div>
+
+    </div>
+</section>
 
     <!-- Contact Section -->
-    <section id="contact" class="pt-24 pb-40 md:pb-52 px-6 md:px-12 bg-charcoal text-white rounded-t-[100px] relative h-auto">
+    <section id="contact" class="fluid-section-py fluid-section-px pb-32 md:pb-52 bg-charcoal text-white rounded-t-[3rem] sm:rounded-t-[5rem] md:rounded-t-[100px] relative h-auto">
         <div class="container mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                 <div class="reveal">
-                    <h3 class="text-sm uppercase tracking-widest font-bold mb-4 text-yellow_gold">Let's Talk</h3>
-                    <h2 class="text-5xl md:text-7xl font-space font-bold mb-12 text-white leading-tight">Ready to start a project?</h2>
-                    
-                    <div class="space-y-6 text-xl text-white">
+                    <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-4 text-yellow_gold">Let's Talk</h3>
+                    <h2 class="fluid-h2-contact font-space font-bold mb-8 md:mb-12 text-white leading-tight">Ready to start a project?</h2>
+                    <div class="space-y-5 md:space-y-6 fluid-body text-white">
                         <div class="flex items-center gap-4 group">
-                            <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-charcoal transition-all">
-                                <i data-lucide="mail" size="20"></i>
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-charcoal transition-all shrink-0">
+                                <i data-lucide="mail" size="18"></i>
                             </div>
                             <span>zainaalissah@gmail.com</span>
                         </div>
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
-                                <i data-lucide="map-pin" size="20"></i>
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="map-pin" size="18"></i>
                             </div>
                             <span>Amman – Jordan</span>
                         </div>
                         <div class="flex items-center gap-4 group cursor-pointer">
-                            <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-charcoal transition-all">
-                                <i data-lucide="download" size="20"></i>
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-charcoal transition-all shrink-0">
+                                <i data-lucide="download" size="18"></i>
                             </div>
                             <span class="border-b border-white/20 group-hover:border-white transition-all">Download My CV</span>
                         </div>
                     </div>
                 </div>
-
-                <!-- Creative "Take What You Need" Contact Card -->
-                <div class="bg-yellow_gold rounded-[40px] p-8 md:p-12 text-charcoal reveal relative overflow-visible shadow-2xl h-fit" style="transition-delay: 0.2s">
+ 
+                <div class="bg-yellow_gold rounded-[2rem] md:rounded-[40px] p-6 md:p-12 text-charcoal reveal relative overflow-visible shadow-2xl h-fit" style="transition-delay: 0.2s">
                     <div class="relative z-10">
-                        <h3 class="text-3xl font-space font-bold mb-2 uppercase tracking-tighter">Take what you need</h3>
-                        <p class="text-sm font-bold opacity-70 mb-10 italic">Feel free to grab a service to start our journey...</p>
-                        
+                        <h3 class="text-xl md:text-3xl font-space font-bold mb-2 uppercase tracking-tighter">Take what you need</h3>
+                        <p class="text-xs md:text-sm font-bold opacity-70 mb-6 md:mb-10 italic">Feel free to grab a service to start our journey...</p>
                         <div class="grid grid-cols-4 md:grid-cols-7 gap-px bg-charcoal/10 rounded-xl overflow-visible">
-                            <!-- Removable Tags -->
-                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
-                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Graphic Design</span>
+                            <div class="tear-tag bg-white/90 p-2 md:p-3 flex items-center justify-center h-36 sm:h-44 md:h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[8px] md:text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Graphic Design</span>
                             </div>
-                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
-                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Social Media</span>
+                            <div class="tear-tag bg-white/90 p-2 md:p-3 flex items-center justify-center h-36 sm:h-44 md:h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[8px] md:text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Social Media</span>
                             </div>
-                            <!-- Torn Tag Effect - UX/UI DESIGN -->
-                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20 translate-y-6 rotate-2 shadow-lg z-20">
-                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest text-teal_primary">UX/UI Design</span>
+                            <div class="tear-tag bg-white/90 p-2 md:p-3 flex items-center justify-center h-36 sm:h-44 md:h-52 border-t border-dashed border-charcoal/20 translate-y-5 md:translate-y-6 rotate-2 shadow-lg z-20">
+                                <span class="text-[8px] md:text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest text-teal_primary">UX/UI Design</span>
                             </div>
-                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
-                                <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Web Development</span>
+                            <div class="tear-tag bg-white/90 p-2 md:p-3 flex items-center justify-center h-36 sm:h-44 md:h-52 border-t border-dashed border-charcoal/20">
+                                <span class="text-[8px] md:text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Web Dev</span>
                             </div>
-                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                            <div class="tear-tag hidden md:flex bg-white/90 p-3 items-center justify-center h-52 border-t border-dashed border-charcoal/20">
                                 <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Video Editing</span>
                             </div>
-                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                            <div class="tear-tag hidden md:flex bg-white/90 p-3 items-center justify-center h-52 border-t border-dashed border-charcoal/20">
                                 <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Data Ops</span>
                             </div>
-                            <div class="tear-tag bg-white/90 p-3 flex items-center justify-center h-52 border-t border-dashed border-charcoal/20">
+                            <div class="tear-tag hidden md:flex bg-white/90 p-3 items-center justify-center h-52 border-t border-dashed border-charcoal/20">
                                 <span class="text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Excel / Office</span>
                             </div>
                         </div>
@@ -660,10 +866,10 @@ fill="none"/>
             </div>
         </div>
     </section>
-
+ 
     <!-- Footer -->
-    <footer class="py-12 px-6 md:px-12 bg-charcoal text-white border-t border-white/5 relative z-30">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+    <footer class="py-10 md:py-12 fluid-section-px bg-charcoal text-white border-t border-white/5 relative z-30">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 text-center md:text-left">
             <div>
                 <div class="flex items-center gap-2 mb-2">
                     <img src="https://i.ibb.co/PZ7PVdpT/22.png" alt="logo" class="w-8 h-8 object-contain">
@@ -671,68 +877,114 @@ fill="none"/>
                 </div>
                 <p class="text-sm text-subtitle_beige italic">Creative Digital Portfolio &copy; 2026</p>
             </div>
-
             <div class="flex gap-6">
                 <a href="#" class="p-3 rounded-full border border-white/10 hover:bg-white hover:text-charcoal transition-all text-white"><i data-lucide="instagram" size="20"></i></a>
                 <a href="#" class="p-3 rounded-full border border-white/10 hover:bg-white hover:text-charcoal transition-all text-white"><i data-lucide="linkedin" size="20"></i></a>
                 <span class="p-3 rounded-full border border-white/10 font-bold text-xs flex items-center justify-center w-11 h-11 text-white">Be</span>
                 <span class="p-3 rounded-full border border-white/10 font-bold text-xs flex items-center justify-center w-11 h-11 text-white">Dr</span>
             </div>
-
             <p class="text-xs text-subtitle_beige font-space tracking-widest uppercase">Designed with Passion</p>
         </div>
     </footer>
-
-    <script>
+ 
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         lucide.createIcons();
-
+ 
+        // Scroll reveal
         function reveal() {
-            var reveals = document.querySelectorAll(".reveal");
-            for (var i = 0; i < reveals.length; i++) {
-                var windowHeight = window.innerHeight;
-                var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 150;
-                if (elementTop < windowHeight - elementVisible) {
-                    reveals[i].classList.add("active");
+            document.querySelectorAll(".reveal").forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 150) {
+                    el.classList.add("active");
                 }
-            }
+            });
         }
         window.addEventListener("scroll", reveal);
         window.addEventListener("load", reveal);
+ 
+        // Mobile menu
+        document.getElementById('menu-toggle').onclick = () => { document.getElementById('mobile-menu').style.display = 'flex'; };
+        document.getElementById('menu-close').onclick  = () => { document.getElementById('mobile-menu').style.display = 'none'; };
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.onclick = () => { document.getElementById('mobile-menu').style.display = 'none'; };
+        });
+ 
+        // Folder toggle
+        function toggleFolder(el) {
+            el.classList.toggle('open');
+        }
+ 
+   function showVideoProjects() {
+    const section = document.getElementById('video-projects');
+    const portfolio = document.getElementById('portfolio');
 
-        const menuToggle = document.getElementById('menu-toggle');
-        const menuClose = document.getElementById('menu-close');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
+    // hide other sections
+    document.getElementById('web-projects').classList.add('hidden');
 
-        menuToggle.onclick = () => { mobileMenu.style.display = 'flex'; };
-        menuClose.onclick = () => { mobileMenu.style.display = 'none'; };
-        mobileLinks.forEach(link => { link.onclick = () => { mobileMenu.style.display = 'none'; } });
+    portfolio.scrollIntoView({ behavior: 'smooth' });
 
-        // Portfolio Filtering logic
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const portfolioCards = document.querySelectorAll('.portfolio-card');
+    setTimeout(() => {
+        section.classList.remove('hidden');
+        reveal();
+        section.scrollIntoView({ behavior: 'smooth' });
+    }, 400);
+}
 
-        filterBtns.forEach(btn => {
+        function showWebProjects() {
+    const section = document.getElementById('web-projects');
+    const portfolio = document.getElementById('portfolio');
+
+    // hide other sections
+    document.getElementById('video-projects').classList.add('hidden');
+
+    // scroll first
+    portfolio.scrollIntoView({ behavior: 'smooth' });
+
+    // then show
+    setTimeout(() => {
+        section.classList.remove('hidden');
+        reveal();
+        section.scrollIntoView({ behavior: 'smooth' });
+    }, 400);
+}
+
+function hideWebProjects() {
+    const section = document.getElementById('web-projects');
+    const portfolio = document.getElementById('portfolio');
+
+    portfolio.scrollIntoView({ behavior: 'smooth' });
+
+    setTimeout(() => {
+        section.classList.add('hidden');
+    }, 600);
+}
+
+        function hideVideoProjects() {
+            const section = document.getElementById('video-projects');
+            const portfolio = document.getElementById('portfolio');
+            
+            // Scroll smoothly back to the folders
+            portfolio.scrollIntoView({ behavior: 'smooth' });
+            
+            // Hide the section after scroll finishes (~600ms)
+            setTimeout(() => {
+                section.classList.add('hidden');
+            }, 600);
+        }
+
+        // Portfolio folder filter
+        document.querySelectorAll('.filter-btn-folder').forEach(btn => {
             btn.onclick = () => {
-                // UI Toggle
-                filterBtns.forEach(b => {
-                    b.classList.remove('active', 'bg-teal_primary', 'text-white', 'shadow-lg');
-                    b.classList.add('bg-white', 'opacity-60', 'text-charcoal');
-                });
-                btn.classList.add('active', 'bg-teal_primary', 'text-white', 'shadow-lg');
-                btn.classList.remove('bg-white', 'opacity-60', 'text-charcoal');
-
-                // Filter logic
+                document.querySelectorAll('.filter-btn-folder').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
                 const filter = btn.getAttribute('data-filter');
-                portfolioCards.forEach(card => {
-                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
-                        card.style.display = 'block';
+                document.querySelectorAll('.folder-wrap').forEach(wrap => {
+                    if (filter === 'all' || wrap.dataset.cat === filter) {
+                        wrap.classList.remove('hidden');
                     } else {
-                        card.style.display = 'none';
+                        wrap.classList.add('hidden');
                     }
                 });
-            }
+            };
         });
     </script>
 </body>
