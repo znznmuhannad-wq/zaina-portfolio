@@ -9,6 +9,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Dark mode flash prevention — only restore saved preference, never auto-dark -->
+    <script>
+        (function(){
+            var s = localStorage.getItem('zcreative-theme');
+            if (s === 'dark') {
+                document.documentElement.setAttribute('data-theme','dark');
+            }
+        })();
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
  
     <script>
@@ -46,6 +55,361 @@
     </script>
  
     <style>
+        /* =============================================
+            CSS CUSTOM PROPERTIES — THEME TOKENS
+        ============================================= */
+        :root {
+            --dm-bg:           #F5EFE6;
+            --dm-surface:      #ffffff;
+            --dm-surface-alt:  #f4f2ee;
+            --dm-text:         #2C2C2C;
+            --dm-text-sub:     #8A7E72;
+            --dm-border:       #B7C7C9;
+            --dm-nav-bg:       rgba(245,239,230,0.82);
+            --dm-mobile-menu:  #F5EFE6;
+            --dm-card-shadow:  rgba(0,0,0,0.08);
+            --dm-modal-bg:     rgba(0,0,0,0.85);
+            --dm-skill-bg:     #ffffff;
+            --dm-dl-bg:        #ffffff;
+            --dm-dl-border:    rgba(0,0,0,0.07);
+            --dm-case-bg:      #ffffff;
+            --dm-case-border:  rgba(0,0,0,0.055);
+            --dm-footer-bg:    #2C2C2C;
+            --dm-contact-bg:   #2C2C2C;
+            --dm-education-bg: #F5EFE6;
+            --dm-icon-filter:  none;
+        }
+
+        /* ── Dark mode palette — refined warm cinematic ── */
+        [data-theme="dark"] {
+            /* ── Layer stack (lighter = higher) ── */
+            --dm-bg:           #1E1A15;   /* page base */
+            --dm-surface:      #2C2620;   /* cards, about, education */
+            --dm-surface-mid:  #332D25;   /* skill section grid bg */
+            --dm-surface-alt:  #282319;   /* slightly recessed areas */
+            --dm-surface-hi:   #3A332A;   /* elevated cards — skill notes, case blocks */
+
+            /* ── Typography ── */
+            --dm-text:         #F0E6D4;   /* primary — warm off-white, easy on eyes */
+            --dm-text-mid:     #C4B49A;   /* secondary — subheadings, labels */
+            --dm-text-sub:     #9A8E7E;   /* tertiary — captions, small labels */
+
+            /* ── Borders ── */
+            --dm-border:       rgba(200,175,140,0.2);
+            --dm-border-hi:    rgba(200,175,140,0.32);
+
+            /* ── UI ── */
+            --dm-nav-bg:       rgba(30,26,21,0.92);
+            --dm-mobile-menu:  #1E1A15;
+            --dm-card-shadow:  rgba(0,0,0,0.45);
+            --dm-modal-bg:     rgba(0,0,0,0.92);
+
+            /* ── Component surfaces ── */
+            --dm-skill-bg:     #3A332A;   /* note cards — visibly lifted */
+            --dm-skill-inner:  rgba(255,255,255,0.04);
+            --dm-dl-bg:        #2C2620;
+            --dm-dl-border:    rgba(200,175,140,0.18);
+            --dm-case-bg:      #2C2620;
+            --dm-case-border:  rgba(200,175,140,0.16);
+
+            /* ── Section backgrounds ── */
+            --dm-footer-bg:    #141210;
+            --dm-contact-bg:   #141210;
+            --dm-education-bg: #1E1A15;
+
+            --dm-icon-filter:  brightness(0.9) sepia(0.15);
+        }
+
+        /* ── Global theme transition ── */
+        *, *::before, *::after {
+            transition-property: background-color, border-color, color, box-shadow, opacity;
+            transition-duration: 0.38s;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Don't slow down animations that should be instant or custom */
+        .reveal, .skill-note, .petra-carousel-track, .ameed-carousel-track,
+        .ameed-cinema-track, .petra-case-desc, .petra-case-divider,
+        .petra-case-block::before, .folder, .paper, .folder-front,
+        video, img { transition-duration: 0s; }
+        /* Restore custom transitions for interactive elements */
+        .petra-case-block         { transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease, border-color 0.3s, background-color 0.38s !important; }
+        .petra-case-block::before { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1) !important; }
+        .petra-case-divider       { transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1), background-color 0.38s !important; }
+        .petra-case-desc          { transition: max-height 0.45s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease, margin-top 0.3s ease !important; }
+        .petra-dl-card            { transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s ease, border-color 0.2s, background-color 0.38s !important; }
+
+        /* =============================================
+            DARK MODE OVERRIDES — REFINED
+        ============================================= */
+
+        /* ── Page base ── */
+        [data-theme="dark"] body { background-color: var(--dm-bg); color: var(--dm-text); }
+
+        /* ── Typography helpers — global ── */
+        [data-theme="dark"] .text-charcoal       { color: var(--dm-text) !important; }
+        [data-theme="dark"] .text-subtitle_beige { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .opacity-80          { opacity: 0.85; }
+        [data-theme="dark"] .opacity-70          { opacity: 0.75; }
+
+        /* ── Navbar ── */
+        [data-theme="dark"] nav {
+            background-color: var(--dm-nav-bg) !important;
+            border-bottom: 1px solid var(--dm-border);
+        }
+        [data-theme="dark"] nav .text-charcoal,
+        [data-theme="dark"] nav span { color: var(--dm-text); }
+        [data-theme="dark"] nav a           { color: var(--dm-text-mid); }
+        [data-theme="dark"] nav a:hover     { color: var(--dm-text); }
+
+        /* ── Mobile menu ── */
+        [data-theme="dark"] #mobile-menu    { background-color: var(--dm-mobile-menu); }
+        [data-theme="dark"] #mobile-menu a  { color: var(--dm-text); }
+
+        /* ── Hero ── */
+        [data-theme="dark"] .hero-section-mobile { background-color: var(--dm-bg); }
+
+        /* ── About section ── */
+        [data-theme="dark"] #about { background-color: var(--dm-surface) !important; }
+        [data-theme="dark"] #about .border-sage  { border-color: var(--dm-border) !important; }
+        [data-theme="dark"] .about-card-shadow   { box-shadow: 0 40px 80px -20px var(--dm-card-shadow); }
+
+        /* ── Skills section ── */
+        [data-theme="dark"] #skills {
+            background-color: var(--dm-surface-mid) !important;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px) !important;
+        }
+
+        /* Skill note cards — clearly lifted from bg */
+        [data-theme="dark"] .skill-note {
+            background-color: var(--dm-skill-bg) !important;
+            background-image: none !important;           /* remove paper texture in dark */
+            border: 1px solid var(--dm-border-hi) !important;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.4),
+                0 6px 16px rgba(0,0,0,0.35),
+                0 16px 40px rgba(0,0,0,0.28) !important;
+        }
+        [data-theme="dark"] .skill-note:hover {
+            box-shadow:
+                0 4px 8px rgba(0,0,0,0.5),
+                0 20px 48px -6px rgba(0,0,0,0.45),
+                0 8px 20px -4px rgba(0,0,0,0.35) !important;
+        }
+
+        /* Inner panel inside note */
+        [data-theme="dark"] .skill-inner-panel {
+            background-color: var(--dm-skill-inner) !important;
+            border-color: var(--dm-border) !important;
+            box-shadow: none !important;
+        }
+
+        /* Skill card text — explicit contrast fixes */
+        [data-theme="dark"] .skill-note h3              { color: var(--dm-text) !important; }
+        [data-theme="dark"] .skill-note .text-teal_primary,
+        [data-theme="dark"] .skill-note .text-coral,
+        [data-theme="dark"] .skill-note .text-yellow_gold {
+            /* keep accent colour but lift brightness slightly */
+            filter: brightness(1.2);
+        }
+        [data-theme="dark"] .skill-note .text-subtitle_beige { color: var(--dm-text-mid) !important; }
+
+        /* Pin heads — keep visible */
+        [data-theme="dark"] .skill-note::after { opacity: 0.9; }
+
+        /* Section label above skills */
+        [data-theme="dark"] #skills .text-subtitle_beige { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] #skills h2                   { color: var(--dm-text) !important; }
+
+        /* ── Education section ── */
+        [data-theme="dark"] #education                    { background-color: var(--dm-education-bg) !important; }
+        [data-theme="dark"] #education .bg-white          { background-color: var(--dm-surface) !important; }
+        [data-theme="dark"] #education .border-sage       { border-color: var(--dm-border) !important; }
+        [data-theme="dark"] #education h2,
+        [data-theme="dark"] #education h3                 { color: var(--dm-text) !important; }
+        [data-theme="dark"] #education p                  { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] #education img[alt="SAE Institute Logo"] { filter: var(--dm-icon-filter); }
+
+        /* ── Portfolio folders ── */
+        [data-theme="dark"] #portfolio                    { background-color: var(--dm-bg); }
+        [data-theme="dark"] .filter-btn-folder            { background: var(--dm-surface) !important; color: var(--dm-text-mid) !important; border-color: var(--dm-border) !important; }
+        [data-theme="dark"] .filter-btn-folder.active     { background: #428A97 !important; color: #fff !important; }
+        [data-theme="dark"] .folder-label                 { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .folder-sub                   { color: var(--dm-text-sub) !important; }
+
+        /* ── Highlighted projects — Petra/Al Ameed ── */
+        [data-theme="dark"] .petra-section                { background-color: var(--dm-bg); }
+        [data-theme="dark"] .petra-bg-overlay             { opacity: 0.05; }
+
+        /* Project titles — max legibility */
+        [data-theme="dark"] .petra-project-title          { color: var(--dm-text) !important; }
+        [data-theme="dark"] .petra-project-subtitle       { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .petra-tag                    {
+            color: #65C6BE !important;
+            border-color: rgba(101,198,190,0.3) !important;
+            background: rgba(101,198,190,0.08) !important;
+        }
+        [data-theme="dark"] .ameed-award-badge            { background: #F2B11C; color: #1E1A15 !important; }
+
+        /* Section label (Featured Case Study) */
+        [data-theme="dark"] .petra-section .text-subtitle_beige { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .petra-section h2              { color: var(--dm-text) !important; }
+
+        /* Case study blocks — clearly elevated, readable */
+        [data-theme="dark"] .petra-case-grid              { background-color: transparent; gap: 0.75rem; }
+        [data-theme="dark"] .petra-case-block {
+            background-color: var(--dm-surface-hi) !important;
+            border: 1px solid var(--dm-border-hi) !important;
+        }
+        [data-theme="dark"] .petra-case-block:hover {
+            box-shadow: 0 16px 40px -8px rgba(66,138,151,0.28) !important;
+            border-color: rgba(101,198,190,0.35) !important;
+        }
+        [data-theme="dark"] .petra-case-number            { color: var(--dm-text-sub) !important; }
+        [data-theme="dark"] .petra-case-title             { color: var(--dm-text) !important; }
+        [data-theme="dark"] .petra-case-block:hover .petra-case-title { color: #65C6BE !important; }
+        [data-theme="dark"] .petra-case-desc              { color: var(--dm-text-mid) !important; }
+
+        /* Download cards */
+        [data-theme="dark"] .petra-dl-label               { color: var(--dm-text-sub) !important; }
+        [data-theme="dark"] .petra-dl-card {
+            background: var(--dm-surface-hi) !important;
+            border: 1px solid var(--dm-border-hi) !important;
+            color: var(--dm-text) !important;
+        }
+        [data-theme="dark"] .petra-dl-card:hover {
+            border-color: rgba(101,198,190,0.4) !important;
+            box-shadow: 0 12px 32px -6px rgba(66,138,151,0.28) !important;
+        }
+        [data-theme="dark"] .petra-dl-title               { color: var(--dm-text) !important; }
+        [data-theme="dark"] .petra-dl-sub                 { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .petra-dl-icon                { background: rgba(101,198,190,0.12) !important; color: #65C6BE !important; }
+
+        /* Al Ameed case blocks (reuse petra-case-block) */
+        [data-theme="dark"] .ameed-case-grid .petra-case-block {
+            background-color: var(--dm-surface-hi) !important;
+        }
+
+        /* Carousel arrows — both petra and ameed */
+        [data-theme="dark"] .petra-arrow,
+        [data-theme="dark"] .ameed-arrow {
+            background: var(--dm-surface-hi) !important;
+            border: 1px solid var(--dm-border-hi) !important;
+            color: var(--dm-text) !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.45) !important;
+        }
+        [data-theme="dark"] .petra-arrow:hover,
+        [data-theme="dark"] .ameed-arrow:hover {
+            background: #3D3529 !important;
+            border-color: rgba(101,198,190,0.4) !important;
+        }
+        [data-theme="dark"] .petra-slide-counter,
+        [data-theme="dark"] .ameed-slide-counter          { background: rgba(0,0,0,0.55) !important; }
+        [data-theme="dark"] .petra-dot,
+        [data-theme="dark"] .ameed-dot                    { background: rgba(200,175,140,0.3) !important; }
+        [data-theme="dark"] .petra-dot.active,
+        [data-theme="dark"] .ameed-dot.active             { background: #65C6BE !important; }
+
+        /* Video cinema carousel */
+        [data-theme="dark"] #video-projects               { background-color: var(--dm-bg); }
+        [data-theme="dark"] #video-projects h2,
+        [data-theme="dark"] #video-projects h3            { color: var(--dm-text) !important; }
+        [data-theme="dark"] #video-projects p             { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .vcine-counter                { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .vcine-dot                    { background: rgba(200,175,140,0.3) !important; }
+        [data-theme="dark"] .vcine-dot.active             { background: #65C6BE !important; }
+        [data-theme="dark"] .vcine-arrow {
+            background: var(--dm-surface-hi) !important;
+            border-color: var(--dm-border-hi) !important;
+            color: var(--dm-text) !important;
+        }
+        [data-theme="dark"] .vcine-active .vcine-open-btn { background: rgba(240,230,212,0.92) !important; color: #1E1A15 !important; }
+
+        /* Web projects section */
+        [data-theme="dark"] #web-projects                 { background-color: var(--dm-bg); }
+        [data-theme="dark"] #web-projects h2,
+        [data-theme="dark"] #web-projects h3              { color: var(--dm-text) !important; }
+        [data-theme="dark"] #web-projects p               { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .web-project-card {
+            background-color: var(--dm-surface) !important;
+            border-color: var(--dm-border) !important;
+        }
+        [data-theme="dark"] .web-project-card:hover       { box-shadow: 0 16px 40px rgba(0,0,0,0.4) !important; border-color: var(--dm-border-hi) !important; }
+        [data-theme="dark"] .web-project-card h3          { color: var(--dm-text) !important; }
+        [data-theme="dark"] .web-project-card p           { color: var(--dm-text-mid) !important; }
+
+        /* Skill tag pills on web cards */
+        [data-theme="dark"] .web-project-card span[class*="bg-teal"],
+        [data-theme="dark"] .web-project-card span[class*="bg-mint"],
+        [data-theme="dark"] .web-project-card span[class*="bg-yellow"] {
+            filter: brightness(1.15);
+        }
+
+        /* Close showcase buttons */
+        [data-theme="dark"] button.border-sage            { border-color: var(--dm-border-hi) !important; color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] button.border-sage:hover      { border-color: #E36A67 !important; color: #E36A67 !important; }
+
+        /* Modal */
+        [data-theme="dark"] #showcase-modal               { background: var(--dm-modal-bg); }
+        [data-theme="dark"] #modal-close-btn,
+        [data-theme="dark"] .modal-nav-btn                { background: rgba(255,255,255,0.1) !important; border-color: rgba(255,255,255,0.18) !important; }
+        [data-theme="dark"] #modal-close-btn:hover,
+        [data-theme="dark"] .modal-nav-btn:hover          { background: rgba(255,255,255,0.2) !important; }
+        [data-theme="dark"] #modal-counter                { color: rgba(240,230,212,0.6) !important; }
+        [data-theme="dark"] #modal-web-bar span           { color: var(--dm-text) !important; }
+
+        /* Education dashed border */
+        [data-theme="dark"] .custom-dashed                { border-color: var(--dm-border) !important; }
+
+        /* Contact section */
+        [data-theme="dark"] #contact                      { background-color: var(--dm-contact-bg) !important; }
+        [data-theme="dark"] #contact h2                   { color: #F0E6D4 !important; }
+        [data-theme="dark"] #contact .text-yellow_gold    { color: #F2B11C !important; }
+
+        /* Footer */
+        [data-theme="dark"] footer                        { background-color: var(--dm-footer-bg) !important; border-color: rgba(255,255,255,0.06) !important; }
+        [data-theme="dark"] footer span,
+        [data-theme="dark"] footer p                      { color: var(--dm-text-sub) !important; }
+
+        /* Global bg/surface Tailwind class overrides */
+        [data-theme="dark"] .bg-white                     { background-color: var(--dm-surface) !important; }
+        [data-theme="dark"] .bg-warm_beige                { background-color: var(--dm-bg) !important; }
+
+        /* Al Ameed progress bar */
+        [data-theme="dark"] .ameed-progress-bar           { background: rgba(255,255,255,0.07); }
+
+        /* Hero title teal stays vivid in dark */
+        [data-theme="dark"] .text-teal_primary            { color: #65C6BE !important; }
+
+        /* ── Dark mode toggle button ── */
+        #dm-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(44,44,44,0.18);
+            background: transparent;
+            cursor: pointer;
+            color: #2C2C2C;
+            transition: border-color 0.3s, background 0.3s, color 0.3s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            flex-shrink: 0;
+        }
+        #dm-toggle:hover { background: rgba(66,138,151,0.08); border-color: #428A97; transform: scale(1.1); }
+        [data-theme="dark"] #dm-toggle { border-color: rgba(240,230,212,0.25); color: #F0E6D4; }
+        [data-theme="dark"] #dm-toggle:hover { background: rgba(101,198,190,0.15); border-color: #65C6BE; }
+
+        /* Icon swap */
+        #dm-toggle .dm-icon-moon { display: block; }
+        #dm-toggle .dm-icon-sun  { display: none; }
+        [data-theme="dark"] #dm-toggle .dm-icon-moon { display: none; }
+        [data-theme="dark"] #dm-toggle .dm-icon-sun  { display: block; }
+
+        @media (max-width: 640px) { #dm-toggle { width: 32px; height: 32px; } }
+
+        /* ── Original light-mode base styles ── */
         body {
             background-color: #F5EFE6;
             color: #2C2C2C;
@@ -76,63 +440,172 @@
             line-height: 0.85;
             font-weight: 800;
             letter-spacing: -0.04em;
-            /* Fluid: ~52px on 320px screens → ~144px on 1280px+ */
-            font-size: clamp(3.25rem, 10vw + 1rem, 9rem);
+            font-size: clamp(2.6rem, 9vw + 0.5rem, 9rem);
         }
  
-        /* ── Fluid typography tokens ── */
         .fluid-hero-sub   { font-size: clamp(0.85rem, 1.4vw + 0.4rem,  1.2rem); }
-        .fluid-h2-section { font-size: clamp(1.85rem, 3.2vw + 0.6rem,  3.25rem); }
-        .fluid-h2-contact { font-size: clamp(2.25rem, 4.5vw + 0.5rem,  4.5rem); }
-        .fluid-h3-card    { font-size: clamp(1.5rem,  2.2vw + 0.5rem,  2.25rem); }
-        .fluid-body-lg    { font-size: clamp(1.05rem, 1.4vw + 0.3rem,  1.5rem); }
-        .fluid-body       { font-size: clamp(0.95rem, 1.1vw + 0.25rem, 1.1rem); }
+        .fluid-h2-section { font-size: clamp(1.6rem,  3.2vw + 0.6rem,  3.25rem); }
+        .fluid-h2-contact { font-size: clamp(1.9rem,  4.5vw + 0.5rem,  4.5rem); }
+        .fluid-h3-card    { font-size: clamp(1.3rem,  2.2vw + 0.5rem,  2.25rem); }
+        .fluid-body-lg    { font-size: clamp(0.95rem, 1.4vw + 0.3rem,  1.35rem); }
+        .fluid-body       { font-size: clamp(0.875rem,1.1vw + 0.25rem, 1.05rem); }
+
+        .fluid-section-py { padding-top: clamp(2.5rem, 6vw, 8rem); padding-bottom: clamp(2.5rem, 6vw, 8rem); }
+        .fluid-section-px { padding-left: clamp(1rem, 5vw, 3rem); padding-right: clamp(1rem, 5vw, 3rem); }
  
-        /* ── Fluid section spacing ── */
-        .fluid-section-py { padding-top: clamp(3rem, 7vw, 8rem); padding-bottom: clamp(3rem, 7vw, 8rem); }
-        .fluid-section-px { padding-left: clamp(1.25rem, 4vw, 3rem); padding-right: clamp(1.25rem, 4vw, 3rem); }
- 
-        /* ── Skill cards: scale down on small screens ── */
+        /* =============================================
+            COMPREHENSIVE RESPONSIVE STYLES
+        ============================================= */
+
+        /* ── Skill cards ── */
         @media (max-width: 480px) {
-            .skill-note {
-                max-width: 155px;
-                height: 170px;
-            }
+            .skill-note { max-width: 148px; height: 160px; }
+            .skill-note::after { width: 11px; height: 13px; }
         }
- 
-        /* ── Folders grid: 2-col on small mobile ── */
+        @media (min-width: 481px) and (max-width: 640px) {
+            .skill-note { max-width: 170px; height: 180px; }
+        }
+
+        /* ── Folders grid ── */
         @media (max-width: 480px) {
             .folders-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 2.5rem 1.25rem;
+                gap: 2rem 1rem;
+                padding-top: 2.5rem;
+            }
+            .folder-back { width: 90px; height: 72px; }
+            .folder-back::after { width: 28px; height: 10px; }
+            .folder-label { font-size: 10px; }
+            .folder-sub   { font-size: 9px; }
+        }
+        @media (min-width: 481px) and (max-width: 767px) {
+            .folders-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2.5rem 1.5rem;
                 padding-top: 3rem;
             }
-            .folder-back { width: 96px; height: 76px; }
         }
- 
-        /* ── Contact tear-tags: 4-col on mobile, full 7 on md+ ── */
+
+        /* ── Tear tags (contact) ── */
         @media (max-width: 767px) {
-            .tear-tags-grid { grid-template-columns: repeat(4, 1fr) !important; }
-            .tear-tag { height: 10rem !important; }
+            .tear-tag { height: 9rem !important; }
         }
- 
-        /* ── About section rounded corners scale down ── */
+        @media (max-width: 480px) {
+            .tear-tag { height: 7.5rem !important; }
+        }
+
+        /* ── About rounded corners ── */
         @media (max-width: 640px) {
-            #about.rounded-section   { border-radius: 3rem; }
-            #education.rounded-sm-section { border-radius: 2rem; }
+            #about  { border-radius: 2.5rem; }
+            #education { border-radius: 1.75rem; }
         }
- 
-        /* ── Hero image: don't push too far up on mobile ── */
+
+        /* ── Hero image offset ── */
         @media (max-width: 1023px) {
-            .hero-img-offset { transform: translateY(-2rem) !important; }
+            .hero-img-offset { transform: translateY(-1rem) !important; }
         }
         @media (max-width: 640px) {
             .hero-img-offset { transform: translateY(0) !important; }
         }
- 
-        /* ── Gap scaling for about grid ── */
+
+        /* ── About grid gap ── */
         @media (max-width: 640px) {
-            .about-grid-gap { gap: 2.5rem; }
+            .about-grid-gap { gap: 2rem; }
+        }
+
+        /* ── Hero section: center text on mobile, less tall ── */
+        @media (max-width: 640px) {
+            .hero-section-mobile { min-height: auto; padding-top: 6rem; padding-bottom: 2rem; }
+            .hero-title-stacked  { line-height: 0.88; margin-bottom: 1.25rem !important; }
+        }
+
+        /* ── About image badge: pull in on tiny screens ── */
+        @media (max-width: 480px) {
+            .about-badge {
+                width: 5rem; height: 5rem;
+                bottom: -1rem; right: -0.75rem;
+                font-size: 0.6rem;
+            }
+        }
+
+        /* ── Skills section: reduce padding on mobile ── */
+        @media (max-width: 640px) {
+            #skills { padding-top: 3.5rem; padding-bottom: 3rem; }
+            #skills .container { padding-top: 0.5rem; }
+        }
+
+        /* ── Video grid: 2-col on small mobile ── */
+        @media (max-width: 480px) {
+            #video-projects .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.625rem !important; }
+            #video-projects .bg-white { padding: 0.375rem !important; border-radius: 1rem !important; }
+            .video-thumb-wrap { border-radius: 0.75rem; }
+            .play-btn-circle  { width: 38px; height: 38px; }
+            .play-btn-circle svg { width: 14px; height: 14px; }
+        }
+
+        /* ── Web project grid: single col on small phones ── */
+        @media (max-width: 640px) {
+            #web-projects .grid { grid-template-columns: 1fr !important; }
+        }
+
+        /* ── Modal: full-screen on mobile with swipe-friendly layout ── */
+        @media (max-width: 640px) {
+            #showcase-modal { padding: 0.5rem; align-items: flex-end; }
+            #showcase-modal-inner {
+                max-height: 95vh;
+                gap: 0.5rem;
+                padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+            }
+            #modal-close-btn {
+                top: auto;
+                bottom: calc(100% + 8px);
+                right: 0;
+                width: 36px; height: 36px;
+            }
+            #modal-media-container { border-radius: 1rem; max-height: 78vh; }
+            #modal-video { max-height: 78vh; }
+            #modal-iframe { height: 70vh !important; }
+            #modal-nav { gap: 0.75rem; }
+            .modal-nav-btn { width: 36px; height: 36px; }
+            #modal-web-bar { flex-wrap: wrap; gap: 0.5rem; padding: 0.25rem 0; }
+            #modal-web-bar a { padding: 5px 10px; font-size: 0.65rem; }
+        }
+
+        /* ── Contact section: tighter padding on mobile ── */
+        @media (max-width: 640px) {
+            #contact { padding-bottom: 5rem; }
+            #contact .grid { gap: 2.5rem; }
+        }
+
+        /* ── Tear tag card: reduce padding on small screens ── */
+        @media (max-width: 640px) {
+            .tear-tag-card { padding: 1rem; border-radius: 1.5rem; }
+        }
+
+        /* ── Footer: tighter on mobile ── */
+        @media (max-width: 640px) {
+            footer { padding-top: 2rem; padding-bottom: 2rem; }
+            footer .flex.gap-6 { gap: 0.75rem; }
+            footer .w-11 { width: 2.5rem; height: 2.5rem; }
+        }
+
+        /* ── Prevent any horizontal overflow ── */
+        html, body { max-width: 100%; overflow-x: hidden; }
+
+        /* ── Smooth momentum scrolling on iOS ── */
+        html { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+
+        /* ── Reduce reveal animation distance on mobile ── */
+        @media (max-width: 640px) {
+            .reveal { transform: translateY(18px); }
+        }
+
+        /* ── Tablet: 768–1023px ── */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .hero-title-stacked { font-size: clamp(3.5rem, 7vw, 6rem); }
+            .folders-grid { grid-template-columns: repeat(4, 1fr); gap: 2.5rem 1.5rem; }
+            #video-projects .grid { grid-template-columns: repeat(3, 1fr) !important; }
+            #web-projects .grid   { grid-template-columns: repeat(2, 1fr) !important; }
         }
  
         /* Skills Section */
@@ -145,21 +618,13 @@
             position: relative;
         }
  
-        /* Keyframe: float in place, respecting the card's own rotation */
         @keyframes cardFloat {
             0%   { transform: translateY(0px)   rotate(var(--card-rot, 0deg)); }
             50%  { transform: translateY(-10px) rotate(var(--card-rot, 0deg)); }
             100% { transform: translateY(0px)   rotate(var(--card-rot, 0deg)); }
         }
  
-        /* Keyframe: hover lift — separate so it can override cleanly */
-        @keyframes cardHoverLift {
-            from { transform: translateY(-14px) scale(1.05) rotate(var(--card-rot, 0deg)); }
-            to   { transform: translateY(-14px) scale(1.05) rotate(var(--card-rot, 0deg)); }
-        }
- 
         .skill-note {
-            /* Layout */
             background-color: #ffffff;
             background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
             width: 100%;
@@ -398,15 +863,1114 @@
             padding-top: 4rem;
             padding-bottom: 2rem;
         }
+
+        /* =============================================
+            VIDEO GRID — clickable thumbnails
+        ============================================= */
+        .video-thumb-wrap {
+            position: relative;
+            cursor: pointer;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+        .video-thumb-wrap video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+        .video-play-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.25);
+            transition: background 0.2s;
+        }
+        .video-thumb-wrap:hover .video-play-overlay { background: rgba(0,0,0,0.45); }
+        .play-btn-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .video-thumb-wrap:hover .play-btn-circle { transform: scale(1.1); }
+
+        /* =============================================
+            MODAL / LIGHTBOX
+        ============================================= */
+        #showcase-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+        #showcase-modal.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        #showcase-modal-inner {
+            position: relative;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        #modal-close-btn {
+            position: absolute;
+            top: -48px;
+            right: 0;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+        #modal-close-btn:hover { background: rgba(255,255,255,0.25); }
+        #modal-media-container {
+            width: 100%;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-height: 80vh;
+        }
+        #modal-video {
+            width: 100%;
+            max-height: 80vh;
+            outline: none;
+            display: block;
+        }
+        #modal-img {
+            width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            display: none;
+        }
+        #modal-nav {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .modal-nav-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: background 0.2s;
+        }
+        .modal-nav-btn:hover { background: rgba(255,255,255,0.25); }
+        #modal-counter {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Web project card clickable */
+        .web-project-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .web-project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+        }
+
+        /* =============================================
+            PETRA CHOCOLATE — HIGHLIGHTED PROJECT
+        ============================================= */
+        .petra-section {
+            background-color: #F5EFE6;
+            position: relative;
+        }
+
+        .petra-bg-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://i.ibb.co/YTDNQHHV/6.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Project header */
+        .petra-project-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(2rem, 4vw + 0.5rem, 4.5rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #2C2C2C;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .petra-project-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.82rem, 1vw + 0.25rem, 1rem);
+            color: #8A7E72;
+            max-width: 580px;
+            line-height: 1.6;
+        }
+        .petra-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 999px;
+            border: 1px solid #B7C7C9;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #428A97;
+            background: rgba(66,138,151,0.06);
+        }
+
+        /* Video */
+        .petra-video-wrap {
+            border-radius: 1.25rem;
+            overflow: hidden;
+            position: relative;
+            background: #1a1a1a;
+            box-shadow: 0 16px 48px -10px rgba(0,0,0,0.16);
+            /* Tighter aspect ratio — less vertical dominance */
+            aspect-ratio: 3/4;
+        }
+        .petra-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ── Petra Gallery Carousel ── */
+        .petra-gallery-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+
+        /* Carousel — matches video aspect ratio */
+        .petra-carousel {
+            position: relative;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            background: #111;
+            aspect-ratio: 3/4;
+            box-shadow: 0 16px 48px -10px rgba(0,0,0,0.14);
+            cursor: grab;
+            user-select: none;
+        }
+        .petra-carousel:active { cursor: grabbing; }
+
+        .petra-carousel-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+            transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .petra-carousel-track.dragging {
+            transition: none;
+        }
+
+        .petra-slide {
+            min-width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .petra-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+            transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .petra-carousel:not(.dragging) .petra-slide.active img {
+            transform: scale(1.03);
+        }
+
+        /* Arrow nav buttons */
+        .petra-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.92);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2C2C2C;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .petra-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+        .petra-arrow-prev { left: 0.875rem; }
+        .petra-arrow-next { right: 0.875rem; }
+
+        /* Dot indicators */
+        .petra-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+        .petra-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #B7C7C9;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.25s, transform 0.25s;
+        }
+        .petra-dot.active {
+            background: #428A97;
+            transform: scale(1.4);
+        }
+
+        /* Slide counter */
+        .petra-slide-counter {
+            position: absolute;
+            bottom: 0.875rem;
+            left: 0.875rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.75);
+            z-index: 10;
+            background: rgba(0,0,0,0.3);
+            padding: 3px 10px;
+            border-radius: 999px;
+            backdrop-filter: blur(4px);
+        }
+
+        .petra-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ── Scroll-reveal keyframes for highlighted projects ── */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeSlideLeft {
+            from { opacity: 0; transform: translateX(24px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes softFade {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* ── Petra info cards (hover-expand, staggered) ── */
+        .petra-case-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+        @media (max-width: 640px) { .petra-case-grid { grid-template-columns: 1fr; } }
+
+        .petra-case-block {
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.055);
+            border-radius: 1rem;
+            padding: clamp(1rem, 2vw, 1.5rem);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.35s ease,
+                        border-color 0.3s;
+            opacity: 0;
+            transform: translateY(24px);
+        }
+        .petra-case-block.in-view {
+            animation: fadeSlideUp 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+        }
+        .petra-case-block:nth-child(1) { animation-delay: 0.05s; }
+        .petra-case-block:nth-child(2) { animation-delay: 0.15s; }
+        .petra-case-block:nth-child(3) { animation-delay: 0.25s; }
+        .petra-case-block:nth-child(4) { animation-delay: 0.35s; }
+
+        /* Teal accent bar that slides in on hover */
+        .petra-case-block::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: #428A97;
+            border-radius: 0 2px 2px 0;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .petra-case-block:hover::before { transform: scaleY(1); }
+        .petra-case-block:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px -8px rgba(66,138,151,0.14);
+            border-color: rgba(66,138,151,0.2);
+        }
+
+        .petra-case-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: #B7C7C9;
+            margin-bottom: 0.625rem;
+        }
+        .petra-case-divider {
+            width: 1.75rem;
+            height: 2px;
+            background: linear-gradient(to right, #428A97, #65C6BE);
+            margin-bottom: 0.875rem;
+            border-radius: 999px;
+            transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .petra-case-block:hover .petra-case-divider { width: 3rem; }
+
+        .petra-case-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(0.9rem, 1.1vw + 0.3rem, 1.1rem);
+            font-weight: 700;
+            color: #2C2C2C;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s;
+        }
+        .petra-case-block:hover .petra-case-title { color: #428A97; }
+
+        .petra-case-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.8rem, 0.85vw + 0.2rem, 0.9rem);
+            color: #8A7E72;
+            line-height: 1.72;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.45s cubic-bezier(0.25,0.46,0.45,0.94),
+                        opacity 0.35s ease,
+                        margin-top 0.3s ease;
+            margin-top: 0;
+        }
+        .petra-case-block:hover .petra-case-desc {
+            max-height: 160px;
+            opacity: 1;
+            margin-top: 0.5rem;
+        }
+
+        /* Mobile: always show desc on touch (no hover) */
+        @media (hover: none) {
+            .petra-case-desc { max-height: none; opacity: 1; margin-top: 0.5rem; }
+            .petra-case-block::before { transform: scaleY(1); }
+        }
+
+        /* Mobile responsive for petra section */
+        @media (max-width: 640px) {
+            .petra-project-title { font-size: clamp(1.8rem, 9vw, 2.8rem); }
+            .petra-video-wrap  { border-radius: 0.875rem; }
+            .petra-carousel    { border-radius: 0.875rem; aspect-ratio: 3/4; }
+            .petra-case-block  { padding: 0.875rem; }
+            .petra-arrow { width: 30px; height: 30px; }
+        }
+
+        /* ── Project divider ── */
+        .petra-project-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #B7C7C9 30%, #B7C7C9 70%, transparent);
+            margin: 2.5rem 0 3rem;
+        }
+        @media (max-width: 640px) {
+            .petra-project-divider { margin: 1.5rem 0 2rem; }
+        }
+
+        /* ── Award badge ── */
+        .ameed-award-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 14px;
+            border-radius: 999px;
+            background: #F2B11C;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #2C2C2C;
+        }
+
+        /* ── Petra Download Files ── */
+        .petra-downloads { width: 100%; }
+        .petra-dl-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #B7C7C9;
+            margin-bottom: 0.5rem;
+        }
+        .petra-dl-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        @media (max-width: 768px) { .petra-dl-grid { grid-template-columns: 1fr; gap: 0.375rem; } }
+        .petra-dl-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.07);
+            border-radius: 0.875rem;
+            text-decoration: none;
+            color: #2C2C2C;
+            transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.28s ease, border-color 0.2s;
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        .petra-dl-card.in-view {
+            animation: fadeSlideUp 0.55s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+        }
+        .petra-dl-card:nth-child(1) { animation-delay: 0.05s; }
+        .petra-dl-card:nth-child(2) { animation-delay: 0.15s; }
+        .petra-dl-card:nth-child(3) { animation-delay: 0.25s; }
+        .petra-dl-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px -6px rgba(66,138,151,0.18);
+            border-color: #428A97;
+        }
+        .petra-dl-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: rgba(66,138,151,0.08);
+            color: #428A97;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s, transform 0.25s;
+        }
+        .petra-dl-card:hover .petra-dl-icon { background: rgba(66,138,151,0.16); transform: scale(1.08); }
+        .petra-dl-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #2C2C2C;
+            margin-bottom: 2px;
+        }
+        .petra-dl-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: #8A7E72;
+        }
+        .petra-dl-arrow {
+            margin-left: auto;
+            color: #B7C7C9;
+            flex-shrink: 0;
+            transition: color 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .petra-dl-card:hover .petra-dl-arrow { color: #428A97; transform: translate(3px,-3px); }
+
+        /* ── Al Ameed Cinema Horizontal Scroll ── */
+        .ameed-cinema-wrap {
+            position: relative;
+            user-select: none;
+        }
+        .ameed-scroll-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #B7C7C9;
+            margin-bottom: 0.625rem;
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+        .ameed-scroll-hint.hidden { opacity: 0; pointer-events: none; }
+        .ameed-cinema-viewport {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 1rem;
+            cursor: grab;
+            position: relative;
+            box-shadow: 0 16px 48px -10px rgba(0,0,0,0.14);
+        }
+        .ameed-cinema-viewport:active { cursor: grabbing; }
+        .ameed-cinema-track {
+            display: flex;
+            width: max-content;
+            will-change: transform;
+        }
+        /* Tighter image height — was 38vw/440px */
+        .ameed-main-img {
+            height: clamp(160px, 28vw, 320px);
+            width: auto;
+            display: block;
+            pointer-events: none;
+        }
+        @media (max-width: 640px) {
+            .ameed-cinema-viewport { border-radius: 0.75rem; }
+            .ameed-main-img { height: clamp(120px, 42vw, 200px); }
+        }
+        .ameed-progress-bar {
+            width: 100%;
+            height: 2px;
+            background: rgba(0,0,0,0.07);
+            border-radius: 999px;
+            margin-top: 0.625rem;
+            overflow: hidden;
+        }
+        .ameed-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #428A97, #65C6BE);
+            border-radius: 999px;
+            transition: width 0.08s linear;
+        }
+
+        /* ── Al Ameed Supporting Gallery (carousel) ── */
+        .ameed-gallery-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.625rem;
+        }
+        .ameed-carousel {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #111;
+            /* Reduced aspect ratio — less vertical space */
+            aspect-ratio: 16/9;
+            box-shadow: 0 12px 36px -8px rgba(0,0,0,0.12);
+            cursor: grab;
+            user-select: none;
+        }
+        .ameed-carousel:active { cursor: grabbing; }
+        @media (max-width: 640px) { .ameed-carousel { border-radius: 0.75rem; aspect-ratio: 4/3; } }
+        .ameed-carousel-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+            transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .ameed-carousel-track.dragging { transition: none; }
+        .ameed-slide {
+            min-width: 100%; height: 100%;
+            flex-shrink: 0; overflow: hidden;
+        }
+        .ameed-slide img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+            pointer-events: none;
+            transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .ameed-carousel:not(.dragging) .ameed-slide.active img { transform: scale(1.03); }
+        .ameed-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            z-index: 10; width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(255,255,255,0.92); border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #2C2C2C; box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .ameed-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+        .ameed-arrow-prev { left: 0.75rem; }
+        .ameed-arrow-next { right: 0.75rem; }
+        .ameed-slide-counter {
+            position: absolute; bottom: 0.75rem; left: 0.75rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.8); z-index: 10;
+            background: rgba(0,0,0,0.28); padding: 3px 10px;
+            border-radius: 999px; backdrop-filter: blur(4px);
+        }
+        .ameed-dots {
+            display: flex; justify-content: center;
+            align-items: center; gap: 6px;
+        }
+        .ameed-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #B7C7C9; border: none; cursor: pointer; padding: 0;
+            transition: background 0.25s, transform 0.25s;
+        }
+        .ameed-dot.active { background: #428A97; transform: scale(1.4); }
+
+        /* ── Al Ameed case text blocks ── */
+        .ameed-case-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        @media (max-width: 640px) { .ameed-case-grid { grid-template-columns: 1fr; gap: 0.5rem; } }
+        /* =============================================
+            CINEMATIC VIDEO CAROUSEL
+        ============================================= */
+        .vcine-stage {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            /* Fade edges — masks neighbors gracefully */
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%);
+            mask-image:         linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%);
+        }
+        @media (max-width: 640px) {
+            .vcine-stage {
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+                mask-image:         linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+            }
+        }
+
+        .vcine-track {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 2.5rem 0;
+            will-change: transform;
+            cursor: grab;
+            user-select: none;
+        }
+        .vcine-track:active { cursor: grabbing; }
+        @media (max-width: 640px) { .vcine-track { gap: 0.75rem; padding: 1.5rem 0; } }
+
+        .vcine-item {
+            flex-shrink: 0;
+            /*
+             * KEY FIX: All items — active AND inactive — have the SAME width
+             * so getBoundingClientRect() always returns a consistent value.
+             * We use opacity + a slight outline glow for active; no scale().
+             */
+            width: clamp(200px, 34vw, 340px);
+            aspect-ratio: 9/16;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            position: relative;
+            background: #111;
+            /* Inactive: dimmed, standard shadow */
+            opacity: 0.42;
+            box-shadow: 0 4px 16px -4px rgba(0,0,0,0.25);
+            transition:
+                opacity   0.45s cubic-bezier(0.25,0.46,0.45,0.94),
+                box-shadow 0.45s ease,
+                outline   0.3s ease;
+            outline: 0px solid transparent;
+        }
+        .vcine-item.vcine-active {
+            opacity: 1;
+            box-shadow:
+                0 0 0 2px rgba(255,255,255,0.12),
+                0 24px 60px -8px rgba(0,0,0,0.38);
+            cursor: default;
+            /* Slight visual lift WITHOUT changing layout footprint */
+            outline: 2px solid rgba(255,255,255,0.08);
+        }
+        @media (max-width: 640px) {
+            .vcine-item {
+                width: clamp(150px, 58vw, 240px);
+                border-radius: 1rem;
+            }
+        }
+
+        /* ── Video framing: fill the frame, stay centred ── */
+        .vcine-item video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            /*
+             * object-fit: cover fills the frame.
+             * object-position: center top keeps the subject
+             * (face / focal point) visible in portrait videos.
+             */
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+            pointer-events: none;
+        }
+
+        /* Play overlay — only on inactive; active clears it */
+        .vcine-overlay {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.30);
+            transition: opacity 0.35s ease, background 0.35s ease;
+            z-index: 1;
+        }
+        .vcine-active .vcine-overlay {
+            background: rgba(0,0,0,0.02);
+            pointer-events: none;
+        }
+        .vcine-active .vcine-overlay .vcine-play {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .vcine-play {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+        }
+        .vcine-item:not(.vcine-active):hover .vcine-play { transform: scale(1.12); }
+        .vcine-item:not(.vcine-active):hover { opacity: 0.65; cursor: pointer; }
+
+        /* Open-in-modal button — only visible on active */
+        .vcine-open-btn {
+            position: absolute; bottom: 0.875rem; right: 0.875rem;
+            background: rgba(255,255,255,0);
+            border: none; border-radius: 999px;
+            padding: 6px 14px; gap: 5px;
+            display: flex; align-items: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.1em; color: #2C2C2C;
+            cursor: pointer; z-index: 2;
+            opacity: 0;
+            transition: background 0.2s, transform 0.2s, opacity 0.3s;
+            box-shadow: 0 2px 12px rgba(0,0,0,0);
+            pointer-events: none;
+        }
+        .vcine-active .vcine-open-btn {
+            background: rgba(255,255,255,0.92);
+            opacity: 1;
+            pointer-events: all;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+        .vcine-active .vcine-open-btn:hover { background: #fff; transform: scale(1.05); }
+
+        /* Counter + Dots row */
+        .vcine-controls {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .vcine-counter {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+            color: #B7C7C9;
+        }
+        .vcine-dots-wrap {
+            display: flex; gap: 5px; align-items: center;
+        }
+        .vcine-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #B7C7C9; border: none; padding: 0; cursor: pointer;
+            transition: background 0.25s, width 0.3s, border-radius 0.3s;
+        }
+        .vcine-dot.active { background: #428A97; width: 18px; border-radius: 999px; }
+
+        /* Nav arrows */
+        .vcine-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            z-index: 10; width: 40px; height: 40px; border-radius: 50%;
+            background: #fff; border: 1px solid rgba(0,0,0,0.08); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #2C2C2C;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
+        }
+        .vcine-arrow:hover { transform: translateY(-50%) scale(1.1); box-shadow: 0 8px 28px rgba(0,0,0,0.16); }
+        .vcine-arrow-prev { left: 0.5rem; }
+        .vcine-arrow-next { right: 0.5rem; }
+        @media (max-width: 640px) {
+            .vcine-arrow { width: 34px; height: 34px; }
+        }
+        [data-theme="dark"] .vcine-arrow { background: #2A2520; border-color: rgba(255,255,255,0.1); color: #EAE0D0; }
+        [data-theme="dark"] .vcine-active .vcine-open-btn { background: rgba(255,255,255,0.88); color: #1E1A15; }
+
+        /* =============================================
+            SOCIAL MEDIA DESIGN — BRUTALIST HERO SECTION
+        ============================================= */
+        .smd-section {
+            position: relative;
+            background: #0A0A0A;
+            overflow: hidden;
+            /* min-height drives the composition */
+            min-height: clamp(520px, 90vh, 900px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ── Optional noise texture ── */
+        .smd-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.035;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ── Bottom gradient bleed into next section ── */
+        .smd-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: clamp(80px, 12vw, 160px);
+            background: linear-gradient(to bottom, transparent, #F5EFE6);
+            pointer-events: none;
+            z-index: 8;
+        }
+        [data-theme="dark"] .smd-section::after { background: linear-gradient(to bottom, transparent, #1E1A15); }
+
+        /* ── Typography layer — sits above cards, below top/bottom labels ── */
+        .smd-typography {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            pointer-events: none;
+            padding: 0 clamp(1rem, 4vw, 3rem);
+            text-align: center;
+        }
+
+        /* Top micro-label */
+        .smd-label-top {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(9px, 1vw + 5px, 13px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.28em;
+            color: rgba(255,255,255,0.45);
+            position: absolute;
+            top: clamp(1.25rem, 3vw, 2.5rem);
+            left: 50%; transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        /* Main title */
+        .smd-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.025em;
+            line-height: 0.9;
+            color: #ffffff;
+            /* 3 lines of huge text */
+            font-size: clamp(3.2rem, 10vw + 1rem, 11rem);
+            /* mix-blend lets it read over images but remain punchy on black */
+            mix-blend-mode: normal;
+            /* Subtle text-shadow for depth against image cards */
+            text-shadow: 0 2px 40px rgba(0,0,0,0.7);
+        }
+
+        /* Bottom micro-label */
+        .smd-label-bottom {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(9px, 1vw + 5px, 13px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.28em;
+            color: rgba(255,255,255,0.45);
+            position: absolute;
+            bottom: clamp(1.5rem, 4vw, 3.5rem);
+            left: 50%; transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        /* ── Floating image cards ── */
+        .smd-cards {
+            position: absolute; inset: 0;
+            z-index: 3;
+            pointer-events: none; /* parallax only — no interaction interference */
+        }
+
+        .smd-card {
+            position: absolute;
+            border-radius: clamp(0.625rem, 1.5vw, 1.25rem);
+            overflow: hidden;
+            background: #111;
+            will-change: transform;
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.5),
+                0 16px 48px rgba(0,0,0,0.45),
+                0 32px 80px rgba(0,0,0,0.3);
+            transition: box-shadow 0.5s ease;
+        }
+        .smd-card img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+            pointer-events: none;
+        }
+
+        /* ── Card layout definitions ── */
+        /* Each card: top%, left%, width, height, rotation, parallax-speed (data attr, used by JS) */
+
+        /* Card 1 — left cluster, tall */
+        .smd-c1 { top: 8%;   left: -2%; width: clamp(120px,15vw,220px); aspect-ratio: 3/4; transform: rotate(-6deg); }
+        /* Card 2 — left cluster, square */
+        .smd-c2 { top: 42%;  left: 4%;  width: clamp(100px,12vw,180px); aspect-ratio: 1/1; transform: rotate(3deg); }
+        /* Card 3 — left-center, medium tall */
+        .smd-c3 { top: 5%;   left: 18%; width: clamp(110px,13vw,190px); aspect-ratio: 2/3; transform: rotate(8deg); }
+        /* Card 4 — center-left, wide */
+        .smd-c4 { top: 58%;  left: 14%; width: clamp(130px,16vw,240px); aspect-ratio: 4/3; transform: rotate(-4deg); }
+        /* Card 5 — right-center, tall */
+        .smd-c5 { top: 3%;   right: 18%;width: clamp(110px,13vw,190px); aspect-ratio: 2/3; transform: rotate(-8deg); }
+        /* Card 6 — right cluster, wide */
+        .smd-c6 { top: 50%;  right: 12%;width: clamp(130px,16vw,230px); aspect-ratio: 4/3; transform: rotate(5deg); }
+        /* Card 7 — far right, square */
+        .smd-c7 { top: 10%;  right: -1%;width: clamp(100px,12vw,180px); aspect-ratio: 1/1; transform: rotate(10deg); }
+        /* Card 8 — bottom right */
+        .smd-c8 { top: 68%;  right: 2%; width: clamp(90px, 11vw,160px); aspect-ratio: 3/4; transform: rotate(-7deg); }
+        /* Card 9 — bottom center-right */
+        .smd-c9 { top: 70%;  left: 32%; width: clamp(90px, 11vw,155px); aspect-ratio: 1/1; transform: rotate(4deg); }
+
+        /* Mobile: pull cards tighter, smaller */
+        @media (max-width: 640px) {
+            .smd-section { min-height: clamp(420px, 85vh, 680px); }
+            .smd-title   { font-size: clamp(2.4rem, 12vw, 4.5rem); }
+            .smd-c1 { width: clamp(70px,18vw,120px); left: -3%; }
+            .smd-c2 { width: clamp(60px,15vw,100px); }
+            .smd-c3 { width: clamp(65px,16vw,110px); left: 14%; }
+            .smd-c4 { width: clamp(75px,18vw,130px); left: 10%; }
+            .smd-c5 { width: clamp(65px,16vw,110px); right: 14%; }
+            .smd-c6 { width: clamp(75px,18vw,130px); right: 8%; }
+            .smd-c7 { width: clamp(60px,15vw,100px); right: -2%; }
+            .smd-c8 { width: clamp(55px,14vw, 90px); }
+            .smd-c9 { width: clamp(55px,14vw, 90px); left: 28%; }
+        }
+
+        /* =============================================
+            SOCIAL MEDIA CAROUSEL (portfolio section)
+        ============================================= */
+        #social-media-projects { background-color: #F5EFE6; }
+        [data-theme="dark"] #social-media-projects { background-color: var(--dm-bg); }
+
+        .sm-carousel-wrap {
+            position: relative;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+            mask-image:         linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+        }
+        .sm-track {
+            display: flex;
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+            padding: 1.5rem 0;
+            width: max-content;
+            cursor: grab;
+            user-select: none;
+            will-change: transform;
+        }
+        .sm-track:active { cursor: grabbing; }
+        .sm-card {
+            flex-shrink: 0;
+            border-radius: 1.1rem;
+            overflow: hidden;
+            width: clamp(200px, 28vw, 320px);
+            aspect-ratio: 4/5;
+            background: #111;
+            box-shadow: 0 6px 24px -6px rgba(0,0,0,0.18);
+            transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                        box-shadow 0.4s ease;
+            position: relative;
+        }
+        .sm-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 18px 44px -8px rgba(0,0,0,0.28);
+        }
+        .sm-card img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+            transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+            pointer-events: none;
+        }
+        .sm-card:hover img { transform: scale(1.05); }
+        .sm-card::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.22));
+            pointer-events: none;
+        }
+        @media (max-width: 640px) {
+            .sm-card { width: clamp(160px, 56vw, 240px); }
+        }
+
+        /* Sm nav arrows */
+        .sm-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            z-index: 10; width: 38px; height: 38px; border-radius: 50%;
+            background: #fff; border: 1px solid rgba(0,0,0,0.08);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #2C2C2C;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
+        }
+        .sm-arrow:hover { transform: translateY(-50%) scale(1.1); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+        .sm-arrow-prev { left: 0.5rem; }
+        .sm-arrow-next { right: 0.5rem; }
+        [data-theme="dark"] .sm-arrow { background: var(--dm-surface-hi); border-color: var(--dm-border-hi); color: var(--dm-text); }
     </style>
 </head>
 <body class="overflow-x-hidden">
  
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 px-6 py-6 flex justify-between items-center backdrop-blur-md bg-warm_beige/80 transition-all duration-300">
+    <nav class="fixed w-full z-50 px-4 md:px-6 py-4 md:py-6 flex justify-between items-center backdrop-blur-md bg-warm_beige/80 transition-all duration-300">
         <div class="flex items-center gap-2">
             <img src="https://i.ibb.co/PZ7PVdpT/22.png" alt="logo" class="w-10 h-10 object-contain">
-            <span class="font-space font-bold text-xl tracking-tight text-charcoal">Z Creative Studio</span>
+            <span class="font-space font-bold text-base md:text-xl tracking-tight text-charcoal">Z Creative Studio</span>
         </div>
         <div class="hidden md:flex gap-8 font-space font-medium uppercase text-xs tracking-widest text-subtitle_beige">
             <a href="#about" class="hover:text-charcoal transition-colors">About</a>
@@ -414,22 +1978,40 @@
             <a href="#portfolio" class="hover:text-charcoal transition-colors">Portfolio</a>
             <a href="#contact" class="hover:text-charcoal transition-colors">Contact</a>
         </div>
-        <button id="menu-toggle" class="md:hidden text-charcoal">
-            <i data-lucide="menu"></i>
-        </button>
+        <div class="flex items-center gap-3">
+            <!-- Dark mode toggle -->
+            <button id="dm-toggle" aria-label="Toggle dark mode">
+                <!-- Moon icon — shown in light mode -->
+                <svg class="dm-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+                <!-- Sun icon — shown in dark mode -->
+                <svg class="dm-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+            </button>
+            <!-- Mobile hamburger -->
+            <button id="menu-toggle" class="md:hidden text-charcoal">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
     </nav>
  
     <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-warm_beige flex-col items-center justify-center gap-8 text-2xl font-space font-bold hidden">
-        <button id="menu-close" class="absolute top-8 right-8"><i data-lucide="x" size="32"></i></button>
-        <a href="#about" class="mobile-link text-charcoal">About</a>
-        <a href="#skills" class="mobile-link text-charcoal">Skills</a>
-        <a href="#portfolio" class="mobile-link text-charcoal">Portfolio</a>
-        <a href="#contact" class="mobile-link text-charcoal">Contact</a>
+    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-warm_beige flex-col items-center justify-center gap-6 text-2xl font-space font-bold hidden">
+        <button id="menu-close" class="absolute top-5 right-5 p-2"><i data-lucide="x" size="28"></i></button>
+        <a href="#about"     class="mobile-link text-charcoal py-3 px-8 w-full text-center">About</a>
+        <a href="#skills"    class="mobile-link text-charcoal py-3 px-8 w-full text-center">Skills</a>
+        <a href="#portfolio" class="mobile-link text-charcoal py-3 px-8 w-full text-center">Portfolio</a>
+        <a href="#contact"   class="mobile-link text-charcoal py-3 px-8 w-full text-center">Contact</a>
     </div>
  
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center pt-24 pb-12 fluid-section-px overflow-hidden">
+    <section class="hero-section-mobile relative min-h-screen flex items-center pt-24 pb-12 fluid-section-px overflow-hidden">
         <div class="absolute -top-20 -right-20 w-64 h-64 md:w-96 md:h-96 rounded-full opacity-20 blur-3xl bg-yellow_gold blob-animation"></div>
         <div class="absolute bottom-20 -left-20 w-56 h-56 md:w-80 md:h-80 rounded-full opacity-20 blur-3xl bg-coral blob-animation" style="animation-delay: -5s;"></div>
         <div class="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center z-10">
@@ -437,59 +2019,51 @@
                 <h1 class="hero-title-stacked font-space text-teal_primary mb-8 lg:mb-10 uppercase">
                     WHAT<br>DO I<br>CREATE?
                 </h1>
-                <div class="max-w-xl mb-8 lg:mb-12">
+                <div class="max-w-xl mb-6 lg:mb-12">
                     <p class="fluid-hero-sub font-space font-bold leading-relaxed uppercase tracking-tight text-charcoal">
                         THIS IS MY VIRTUAL CREATIVE HUB WHERE ALL MY WORK CONVERGES:<br>
                         FROM <span class="text-teal_primary">PLASTIC & DIGITAL ART</span>,<br>
                         TO <span class="text-teal_primary">WEB DESIGN</span>, & <span class="text-teal_primary">VIDEO EDITING</span>.
                     </p>
                 </div>
-                <div class="flex flex-wrap gap-4">
-                    <a href="#portfolio" class="px-6 md:px-8 py-3 md:py-4 rounded-full font-space font-bold text-white shadow-lg bg-teal_primary hover:scale-105 transition-transform text-center text-sm md:text-base">
+                <div class="flex flex-wrap gap-3">
+                    <a href="#portfolio" class="px-6 py-3 rounded-full font-space font-bold text-white shadow-lg bg-teal_primary active:scale-95 hover:scale-105 transition-transform text-center text-sm md:text-base">
                         View Portfolio
                     </a>
                 </div>
             </div>
             <div class="relative flex justify-center reveal" style="transition-delay: 0.2s">
-                <div class="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square flex items-center justify-center">
+                <div class="relative w-full max-w-[220px] sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square flex items-center justify-center mx-auto">
                     <div class="absolute w-[105%] h-[105%] rounded-full opacity-20 bg-teal_primary transform -translate-x-8 lg:-translate-x-12 translate-y-2"></div>
-                    <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa" class="hero-img-offset relative w-full h-auto object-contain drop-shadow-2xl z-10 max-h-[70vh] lg:max-h-[80vh] transform -translate-y-8">
+                    <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa" class="hero-img-offset relative w-full h-auto object-contain drop-shadow-2xl z-10 max-h-[50vh] sm:max-h-[60vh] lg:max-h-[80vh] transform -translate-y-8">
                 </div>
             </div>
         </div>
     </section>
  
     <!-- About Section -->
-    <section id="about" class="fluid-section-py fluid-section-px bg-white rounded-[3rem] sm:rounded-[4rem] md:rounded-[6rem] lg:rounded-[100px] -mt-10 relative z-20 about-card-shadow">
-        <div class="container mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center about-grid-gap">
-                <div class="order-2 lg:order-1 relative reveal">
-                    <div class="relative p-6 md:p-8 rounded-3xl bg-warm_beige">
-                        <img src="https://i.ibb.co/Kx3kLtfV/Z-CREATIVE-ST33.png" alt="Character Style" class="w-full h-auto rounded-xl grayscale hover:grayscale-0 transition-all duration-700">
-                    </div>
-                    <div class="absolute -bottom-6 -right-6 w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center text-center p-3 md:p-4 text-xs font-bold leading-tight transform rotate-12 bg-yellow_gold text-charcoal shadow-lg">
-                        CREATIVE<br>MINDSET
-                    </div>
-                </div>
-                <div class="order-1 lg:order-2 reveal">
-                    <div class="mb-8 md:mb-12">
-                        <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Who am I?</h3>
-                        <h2 class="fluid-h2-section font-bold font-fredoka text-charcoal">About Me</h2>
-                    </div>
-                    <p class="fluid-body-lg font-bold mb-6 md:mb-8 leading-relaxed text-teal_primary">
-                        Digital Media Designer and Junior Web Developer with experience in branding, social media design, and website development.
-                    </p>
-                    <p class="fluid-body opacity-80 leading-relaxed mb-6 md:mb-8">
+    <section id="about" class="py-10 md:py-14 fluid-section-px bg-white rounded-[3rem] sm:rounded-[4rem] md:rounded-[6rem] lg:rounded-[100px] -mt-10 relative z-20 about-card-shadow">
+        <div class="container mx-auto max-w-5xl">
+            <div class="reveal">
+                <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Who am I?</h3>
+                <h2 class="fluid-h2-section font-bold font-fredoka text-charcoal mb-5 md:mb-6">About Me</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-start reveal">
+                <p class="fluid-body-lg font-bold leading-relaxed text-teal_primary">
+                    Digital Media Designer and Junior Web Developer with experience in branding, social media design, and website development.
+                </p>
+                <div>
+                    <p class="fluid-body opacity-80 leading-relaxed mb-6">
                         I create engaging digital experiences through design, content creation, and web development. My approach blends technical precision with artistic flair.
                     </p>
-                    <div class="grid grid-cols-2 gap-3 md:gap-4">
-                        <div class="p-3 md:p-4 rounded-2xl border border-sage">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="p-3 rounded-2xl border border-sage">
                             <h4 class="font-space font-bold text-2xl md:text-3xl mb-1 text-charcoal">2+</h4>
-                            <p class="text-xs sm:text-sm opacity-60 uppercase tracking-tighter text-subtitle_beige">Years Experience</p>
+                            <p class="text-xs opacity-60 uppercase tracking-tighter text-subtitle_beige">Years Experience</p>
                         </div>
-                        <div class="p-3 md:p-4 rounded-2xl border border-sage">
+                        <div class="p-3 rounded-2xl border border-sage">
                             <h4 class="font-space font-bold text-2xl md:text-3xl mb-1 text-charcoal">50+</h4>
-                            <p class="text-xs sm:text-sm opacity-60 uppercase tracking-tighter text-subtitle_beige">Projects Delivered</p>
+                            <p class="text-xs opacity-60 uppercase tracking-tighter text-subtitle_beige">Projects Delivered</p>
                         </div>
                     </div>
                 </div>
@@ -512,7 +2086,7 @@
                 <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">What I do best</h3>
                 <h2 class="fluid-h2-section font-bold font-space text-charcoal">My Expertise</h2>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 sm:gap-8 md:gap-10 justify-items-center max-w-5xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5 md:gap-8 justify-items-center max-w-5xl mx-auto">
  
                 <div class="skill-note pin-teal p-4 rounded-md reveal rotate-1" style="transition-delay: 0.1s">
                     <div class="skill-inner-panel flex flex-col justify-between h-full w-full p-4 rounded bg-teal_primary/[0.03]">
@@ -598,24 +2172,292 @@
         </div>
     </section>
  
-    <!-- Education Section -->
-    <section id="education" class="py-12 md:py-16 fluid-section-px bg-white rounded-[2rem] sm:rounded-[3rem] md:rounded-[60px] relative z-20">
-        <div class="container mx-auto max-w-4xl reveal">
-            <div class="mb-8 md:mb-12">
-                <h2 class="fluid-h2-section font-bold font-fredoka text-charcoal">Education</h2>
+    <!-- =============================================
+         CINEMATIC CREATIVE REEL
+    ============================================= -->
+    <!-- =============================================
+         SOCIAL MEDIA DESIGN — BRUTALIST HERO SECTION
+    ============================================= -->
+    <section class="smd-section" id="social-design-hero" aria-label="Social Media Design showcase">
+
+        <!-- Top label -->
+        <span class="smd-label-top">Web Banners</span>
+
+        <!-- Floating image cards — parallax via JS -->
+        <div class="smd-cards" id="smdCards" aria-hidden="true">
+            <div class="smd-card smd-c1" data-speed="0.035"><img src="https://i.ibb.co/zhD2XDQZ/al-hayat-17.jpg"          alt="" loading="lazy"></div>
+            <div class="smd-card smd-c2" data-speed="0.055"><img src="https://i.ibb.co/Kzpp40wv/armaniiiiiiiiiiiiii-10.jpg" alt="" loading="lazy"></div>
+            <div class="smd-card smd-c3" data-speed="0.025"><img src="https://i.ibb.co/VYXCR45G/IMG-5286.png"              alt="" loading="lazy"></div>
+            <div class="smd-card smd-c4" data-speed="0.045"><img src="https://i.ibb.co/0jSHZvx4/badges-Bahrin.png"         alt="" loading="lazy"></div>
+            <div class="smd-card smd-c5" data-speed="0.030"><img src="https://i.ibb.co/nN0jRbGM/Copy-of-The-Nature-of-Trauma.png" alt="" loading="lazy"></div>
+            <div class="smd-card smd-c6" data-speed="0.050"><img src="https://i.ibb.co/zchMKBb/IMG-5300.png"               alt="" loading="lazy"></div>
+            <div class="smd-card smd-c7" data-speed="0.020"><img src="https://i.ibb.co/n86FWbrF/IMG-5303.png"              alt="" loading="lazy"></div>
+            <div class="smd-card smd-c8" data-speed="0.060"><img src="https://i.ibb.co/0yPkFnR0/IMG-5929.png"              alt="" loading="lazy"></div>
+            <div class="smd-card smd-c9" data-speed="0.040"><img src="https://i.ibb.co/rRf87SS1/image.png"                 alt="" loading="lazy"></div>
+        </div>
+
+        <!-- Main typography — above cards via z-index -->
+        <div class="smd-typography">
+            <h2 class="smd-title">
+                SOCIAL<br>MEDIA<br>DESIGN
+            </h2>
+        </div>
+
+        <!-- Bottom label -->
+        <span class="smd-label-bottom">Ads Design</span>
+
+    </section>
+
+    <!-- =============================================
+         HIGHLIGHTED PROJECTS — Petra Chocolate
+    ============================================= -->
+    <section id="highlighted-projects" class="petra-section fluid-section-px relative z-20 overflow-hidden" style="padding-top:clamp(2rem,5vw,4rem);padding-bottom:clamp(2rem,5vw,4rem);">
+
+        <!-- Atmospheric background image overlay -->
+        <div class="petra-bg-overlay" aria-hidden="true"></div>
+
+        <div class="container mx-auto relative z-10">
+
+            <!-- Section Label -->
+            <div class="mb-6 md:mb-8 reveal">
+                <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-1 text-subtitle_beige">Featured Case Study</h3>
+                <h2 class="fluid-h2-section font-bold font-space text-charcoal">Highlighted Projects</h2>
             </div>
-            <div class="p-5 md:p-8 rounded-[1.5rem] md:rounded-[32px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-5 md:gap-6 border-sage">
-                <div>
-                    <h3 class="fluid-h3-card font-space font-bold mb-2 text-charcoal">Digital Media Design</h3>
-                    <p class="fluid-body opacity-70">SAE Institute Amman</p>
+
+            <!-- Project Header -->
+            <div class="petra-project-header reveal mb-5 md:mb-7">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="petra-tag">Branding</span>
+                    <span class="petra-tag">Packaging</span>
+                    <span class="petra-tag">UI/UX</span>
+                    <span class="petra-tag">Visual Direction</span>
                 </div>
-                <div class="flex flex-col items-start md:items-end">
-                    <img src="https://i.ibb.co/BHkpjXLH/SAE-Institute-Logo.png" alt="SAE Institute Logo" class="h-12 md:h-16 w-auto object-contain">
+                <h3 class="petra-project-title">Petra Chocolate</h3>
+                <p class="petra-project-subtitle">A luxury chocolate brand rooted in Jordanian identity — where heritage architecture meets modern visual storytelling.</p>
+            </div>
+
+            <!-- Main Visual Layout: Video + Carousel -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-5 md:mb-7 items-stretch">
+
+                <!-- LEFT: Cinematic brand video -->
+                <div class="reveal petra-video-wrap" style="transition-delay:0.1s">
+                    <video autoplay muted loop playsinline class="petra-video">
+                        <source src="https://files.catbox.moe/paacsw.mov" type="video/mp4">
+                    </video>
+                </div>
+
+                <!-- RIGHT: Clean image carousel — same aspect ratio as video -->
+                <div class="petra-gallery-wrap reveal" style="transition-delay:0.2s">
+                    <div class="petra-carousel" id="petraCarousel">
+
+                        <div class="petra-carousel-track" id="petraTrack">
+                            <div class="petra-slide active">
+                                <img src="https://i.ibb.co/xtdnp6vy/1.png" alt="Petra Chocolate — Brand Identity" loading="lazy">
+                            </div>
+                            <div class="petra-slide">
+                                <img src="https://i.ibb.co/fVqBcT7k/2.png" alt="Petra Chocolate — Packaging" loading="lazy">
+                            </div>
+                            <div class="petra-slide">
+                                <img src="https://i.ibb.co/KpLPbVZb/3.png" alt="Petra Chocolate — Visual" loading="lazy">
+                            </div>
+                            <div class="petra-slide">
+                                <img src="https://i.ibb.co/3m70n1c1/4.png" alt="Petra Chocolate — UI/UX" loading="lazy">
+                            </div>
+                            <div class="petra-slide">
+                                <img src="https://i.ibb.co/fzRJpVCF/5.png" alt="Petra Chocolate — Creative Direction" loading="lazy">
+                            </div>
+                        </div>
+
+                        <!-- Prev / Next arrows -->
+                        <button class="petra-arrow petra-arrow-prev" id="petraPrev" aria-label="Previous image">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <button class="petra-arrow petra-arrow-next" id="petraNext" aria-label="Next image">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+
+                        <!-- Slide counter -->
+                        <div class="petra-slide-counter" id="petraCounter">1 / 5</div>
+
+                    </div>
+
+                    <!-- Dot navigation -->
+                    <div class="petra-dots" id="petraDots">
+                        <button class="petra-dot active" data-index="0" aria-label="Image 1"></button>
+                        <button class="petra-dot" data-index="1" aria-label="Image 2"></button>
+                        <button class="petra-dot" data-index="2" aria-label="Image 3"></button>
+                        <button class="petra-dot" data-index="3" aria-label="Image 4"></button>
+                        <button class="petra-dot" data-index="4" aria-label="Image 5"></button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Case Study Text Blocks -->
+            <div class="petra-case-grid reveal" style="transition-delay:0.15s">
+
+                <div class="petra-case-block">
+                    <div class="petra-case-number">01</div>
+                    <div class="petra-case-divider"></div>
+                    <h4 class="petra-case-title">Brand Identity</h4>
+                    <p class="petra-case-desc">A visual identity inspired by the ancient city of Petra — its rose-red stone, geometric reliefs, and cultural grandeur. The mark fuses Jordanian heritage with a luxury-first aesthetic built for premium gifting markets.</p>
+                </div>
+
+                <div class="petra-case-block">
+                    <div class="petra-case-number">02</div>
+                    <div class="petra-case-divider"></div>
+                    <h4 class="petra-case-title">Packaging Design</h4>
+                    <p class="petra-case-desc">A full packaging system across multiple flavours — featuring custom dielines, a signature triangular form, and sustainable luxury materials. Every unboxing moment is crafted as a cultural experience in itself.</p>
+                </div>
+
+                <div class="petra-case-block">
+                    <div class="petra-case-number">03</div>
+                    <div class="petra-case-divider"></div>
+                    <h4 class="petra-case-title">UI/UX Design</h4>
+                    <p class="petra-case-desc">A complete digital concept for the brand's e-commerce presence — from wireframes to high-fidelity screens. Designed to balance luxury aesthetics with intuitive navigation and seamless product discovery.</p>
+                </div>
+
+                <div class="petra-case-block">
+                    <div class="petra-case-number">04</div>
+                    <div class="petra-case-divider"></div>
+                    <h4 class="petra-case-title">Creative Direction</h4>
+                    <p class="petra-case-desc">End-to-end art direction unifying brand, print, and digital touchpoints. Every visual decision — from colour palette to typographic rhythm — serves a single narrative: Jordanian luxury, reimagined for the world.</p>
+                </div>
+
+            </div>
+
+            <!-- Petra — Download Project Files -->
+            <div class="petra-downloads reveal mt-4 md:mt-6" style="transition-delay:0.2s">
+                <p class="petra-dl-label">Project Files</p>
+                <div class="petra-dl-grid">
+                    <a href="https://drive.google.com/file/d/1eKoZFdRui0TLOPo-AEyi-jIEUHlPU1FC/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
+                        <div class="petra-dl-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div>
+                            <p class="petra-dl-title">Branding Presentation</p>
+                            <p class="petra-dl-sub">Brand Identity & Visual System</p>
+                        </div>
+                        <div class="petra-dl-arrow">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </div>
+                    </a>
+                    <a href="https://drive.google.com/file/d/1W_ySWu9uFxmJWpgpp3bmQU1F54Nkp_cW/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
+                        <div class="petra-dl-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div>
+                            <p class="petra-dl-title">Packaging Design</p>
+                            <p class="petra-dl-sub">Full Packaging System & Dielines</p>
+                        </div>
+                        <div class="petra-dl-arrow">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </div>
+                    </a>
+                    <a href="https://drive.google.com/file/d/1_ogMQAIFgDCbbXCG6et7FjA4bNaINp8b/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
+                        <div class="petra-dl-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div>
+                            <p class="petra-dl-title">UI/UX Web Design</p>
+                            <p class="petra-dl-sub">Wireframes & High-Fidelity Screens</p>
+                        </div>
+                        <div class="petra-dl-arrow">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </div>
+                    </a>
                 </div>
             </div>
+
+            <!-- Section Divider -->
+            <div class="petra-project-divider reveal" style="transition-delay:0.1s"></div>
+
+            <!-- ── AL AMEED PROJECT ── -->
+            <div class="petra-project-header reveal mb-5 md:mb-7">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="petra-tag">Competition Entry</span>
+                    <span class="petra-tag">Visual Design</span>
+                    <span class="petra-tag">Cultural Storytelling</span>
+                    <span class="ameed-award-badge">🏆 2nd Place</span>
+                </div>
+                <h3 class="petra-project-title">Al Ameed Drive Through</h3>
+                <p class="petra-project-subtitle">A competition entry for Al Ameed Coffee's drive-through experience — a cinematic visual journey through Jordanian civilisation, flowing from north to south through cultural motifs, heritage architecture, and symbolic storytelling. <strong style="color:#2C2C2C; font-weight:700;">Awarded 2nd Place.</strong></p>
+            </div>
+
+            <!-- Al Ameed: Cinematic wide artwork with horizontal scroll -->
+            <div class="ameed-cinema-wrap reveal mb-3 md:mb-4" style="transition-delay:0.1s">
+                <div class="ameed-scroll-hint">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <span>Scroll to explore</span>
+                </div>
+                <div class="ameed-cinema-viewport" id="ameedViewport">
+                    <div class="ameed-cinema-track" id="ameedTrack">
+                        <img src="https://i.ibb.co/whJD34dH/AL-AMEED-DRIVE-THROUGH.png" alt="Al Ameed Drive Through — Full artwork" class="ameed-main-img" draggable="false">
+                    </div>
+                </div>
+                <!-- Drag progress indicator -->
+                <div class="ameed-progress-bar">
+                    <div class="ameed-progress-fill" id="ameedProgress"></div>
+                </div>
+            </div>
+
+            <!-- Al Ameed: Supporting images carousel -->
+            <div class="ameed-gallery-wrap reveal" style="transition-delay:0.15s">
+                <div class="ameed-carousel" id="ameedCarousel">
+                    <div class="ameed-carousel-track" id="ameedCarouselTrack">
+                        <div class="ameed-slide active">
+                            <img src="https://i.ibb.co/7t7Vmy3C/AL-AMEED.png" alt="Al Ameed — Tote bag illustration" loading="lazy">
+                        </div>
+                        <div class="ameed-slide">
+                            <img src="https://i.ibb.co/rGQmXTqN/1.png" alt="Al Ameed — Mockup" loading="lazy">
+                        </div>
+                        <div class="ameed-slide">
+                            <img src="https://i.ibb.co/RJVdfsm/7.png" alt="Al Ameed — Design elements" loading="lazy">
+                        </div>
+                    </div>
+                    <button class="ameed-arrow ameed-arrow-prev" id="ameedPrev" aria-label="Previous">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <button class="ameed-arrow ameed-arrow-next" id="ameedNext" aria-label="Next">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                    <div class="ameed-slide-counter" id="ameedCarouselCounter">1 / 3</div>
+                </div>
+                <div class="ameed-dots" id="ameedCarouselDots">
+                    <button class="ameed-dot active" data-index="0" aria-label="Image 1"></button>
+                    <button class="ameed-dot" data-index="1" aria-label="Image 2"></button>
+                    <button class="ameed-dot" data-index="2" aria-label="Image 3"></button>
+                </div>
+            </div>
+
+            <!-- Al Ameed: Case study text blocks -->
+            <div class="ameed-case-grid reveal" style="transition-delay:0.2s">
+
+                <div class="petra-case-block">
+                    <div class="petra-case-number">01</div>
+                    <div class="petra-case-divider"></div>
+                    <h4 class="petra-case-title">The Concept</h4>
+                    <p class="petra-case-desc">Designed for a drive-through branding competition hosted by Al Ameed Coffee, the concept translates Jordanian civilisation into a continuous visual narrative — guiding the visitor's eye from north to south through the country's most iconic cultural landmarks and motifs.</p>
+                </div>
+
+                <div class="petra-case-block">
+                    <div class="petra-case-number">02</div>
+                    <div class="petra-case-divider"></div>
+                    <h4 class="petra-case-title">Visual Language</h4>
+                    <p class="petra-case-desc">Environmental graphics drew from traditional Jordanian patterns, architectural heritage, and natural landscapes. The flow of imagery was intentionally designed as a journey — immersive, symbolic, and culturally resonant for every visitor passing through.</p>
+                </div>
+
+                <div class="petra-case-block">
+                    <div class="petra-case-number">03</div>
+                    <div class="petra-case-divider"></div>
+                    <h4 class="petra-case-title">Result</h4>
+                    <p class="petra-case-desc">The design was recognised with Second Place in the competition — a validation of both the cultural depth and the visual craft invested in the project. Merchandise concepts, including illustrated tote bags, were developed as extensions of the visual identity.</p>
+                </div>
+
+            </div>
+
         </div>
     </section>
- 
     <!-- =============================================
          PORTFOLIO SECTION — Animated Folders
     ============================================= -->
@@ -639,176 +2481,421 @@
             <!-- Folders Grid -->
             <div class="folders-grid" id="folders-grid">
  
-  <!-- Web Design & Development -->
-<div class="folder-wrap reveal" data-cat="web">
-    <div class="folder f-mint" onclick="showWebProjects()">
-        <div class="folder-back">
-            <div class="paper"><div class="paper-content">UX/UI</div></div>
-            <div class="paper"><div class="paper-content">Development</div></div>
-            <div class="paper"><div class="paper-content">Projects</div></div>
-            <div class="folder-front"></div>
-            <div class="folder-front right"></div>
-        </div>
-    </div>
-    <div class="folder-label">Web Design</div>
-    <div class="folder-sub">UX/UI + DEV</div>
-</div>
+                <!-- Web Design & Development -->
+                <div class="folder-wrap reveal" data-cat="web">
+                    <div class="folder f-mint" onclick="showWebProjects()">
+                        <div class="folder-back">
+                            <div class="paper"><div class="paper-content">UX/UI</div></div>
+                            <div class="paper"><div class="paper-content">Development</div></div>
+                            <div class="paper"><div class="paper-content">Projects</div></div>
+                            <div class="folder-front"></div>
+                            <div class="folder-front right"></div>
+                        </div>
+                    </div>
+                    <div class="folder-label">Web Design</div>
+                    <div class="folder-sub">UX/UI + DEV</div>
+                </div>
 
-<!-- Graphic Design -->
-<div class="folder-wrap reveal" data-cat="design">
-    <div class="folder f-teal" onclick="toggleFolder(this)">
-        <div class="folder-back">
-            <div class="paper"><div class="paper-content">Branding</div></div>
-            <div class="paper"><div class="paper-content">Visuals</div></div>
-            <div class="paper"><div class="paper-content">Identity</div></div>
-            <div class="folder-front"></div>
-            <div class="folder-front right"></div>
-        </div>
-    </div>
-    <div class="folder-label">Graphic Design</div>
-    <div class="folder-sub">VISUAL WORK</div>
-</div>
+                <!-- Graphic Design -->
+                <div class="folder-wrap reveal" data-cat="design">
+                    <div class="folder f-teal" onclick="toggleFolder(this)">
+                        <div class="folder-back">
+                            <div class="paper"><div class="paper-content">Branding</div></div>
+                            <div class="paper"><div class="paper-content">Visuals</div></div>
+                            <div class="paper"><div class="paper-content">Identity</div></div>
+                            <div class="folder-front"></div>
+                            <div class="folder-front right"></div>
+                        </div>
+                    </div>
+                    <div class="folder-label">Graphic Design</div>
+                    <div class="folder-sub">VISUAL WORK</div>
+                </div>
 
-<!-- Packaging Design -->
-<div class="folder-wrap reveal" data-cat="design">
-    <div class="folder f-gold" onclick="toggleFolder(this)">
-        <div class="folder-back">
-            <div class="paper"><div class="paper-content">Packaging</div></div>
-            <div class="paper"><div class="paper-content">Concept</div></div>
-            <div class="paper"><div class="paper-content">Mockups</div></div>
-            <div class="folder-front"></div>
-            <div class="folder-front right"></div>
-        </div>
-    </div>
-    <div class="folder-label">Packaging</div>
-    <div class="folder-sub">PRODUCT DESIGN</div>
-</div>
+                <!-- Packaging Design -->
+                <div class="folder-wrap reveal" data-cat="design">
+                    <div class="folder f-gold" onclick="toggleFolder(this)">
+                        <div class="folder-back">
+                            <div class="paper"><div class="paper-content">Packaging</div></div>
+                            <div class="paper"><div class="paper-content">Concept</div></div>
+                            <div class="paper"><div class="paper-content">Mockups</div></div>
+                            <div class="folder-front"></div>
+                            <div class="folder-front right"></div>
+                        </div>
+                    </div>
+                    <div class="folder-label">Packaging</div>
+                    <div class="folder-sub">PRODUCT DESIGN</div>
+                </div>
 
-<!-- Social Media -->
-<div class="folder-wrap reveal" data-cat="design">
-    <div class="folder f-coral" onclick="toggleFolder(this)">
-        <div class="folder-back">
-            <div class="paper"><div class="paper-content">Posts</div></div>
-            <div class="paper"><div class="paper-content">Content</div></div>
-            <div class="paper"><div class="paper-content">Campaigns</div></div>
-            <div class="folder-front"></div>
-            <div class="folder-front right"></div>
-        </div>
-    </div>
-    <div class="folder-label">Social Media</div>
-    <div class="folder-sub">CONTENT & POSTS</div>
-</div>
+                <!-- Social Media -->
+                <div class="folder-wrap reveal" data-cat="design">
+                    <div class="folder f-coral" onclick="showSocialMediaProjects()">
+                        <div class="folder-back">
+                            <div class="paper"><div class="paper-content">Posts</div></div>
+                            <div class="paper"><div class="paper-content">Content</div></div>
+                            <div class="paper"><div class="paper-content">Campaigns</div></div>
+                            <div class="folder-front"></div>
+                            <div class="folder-front right"></div>
+                        </div>
+                    </div>
+                    <div class="folder-label">Social Media</div>
+                    <div class="folder-sub">CONTENT & POSTS</div>
+                </div>
 
-<!-- Videography -->
-<div class="folder-wrap reveal" data-cat="video">
-    <div class="folder f-coral" onclick="showVideoProjects()">
-        <div class="folder-back">
-            <div class="paper"><div class="paper-content">Reels</div></div>
-            <div class="paper"><div class="paper-content">Editing</div></div>
-            <div class="paper"><div class="paper-content">Content</div></div>
-            <div class="folder-front"></div>
-            <div class="folder-front right"></div>
-        </div>
-    </div>
-    <div class="folder-label">Videography</div>
-    <div class="folder-sub">REELS & EDITING</div>
-</div>
+                <!-- Videography -->
+                <div class="folder-wrap reveal" data-cat="video">
+                    <div class="folder f-coral" onclick="showVideoProjects()">
+                        <div class="folder-back">
+                            <div class="paper"><div class="paper-content">Reels</div></div>
+                            <div class="paper"><div class="paper-content">Editing</div></div>
+                            <div class="paper"><div class="paper-content">Content</div></div>
+                            <div class="folder-front"></div>
+                            <div class="folder-front right"></div>
+                        </div>
+                    </div>
+                    <div class="folder-label">Videography</div>
+                    <div class="folder-sub">REELS & EDITING</div>
+                </div>
+
             </div>
         </div>
     </section>
 
     <!-- =============================================
-         NEW: VIDEO PROJECTS INTERNAL SECTION
+         VIDEO PROJECTS SECTION
     ============================================= -->
     <section id="video-projects" class="fluid-section-py fluid-section-px relative z-20 hidden">
         <div class="container mx-auto">
+
             <!-- Header -->
-            <div class="mb-10 md:mb-16 reveal">
+            <div class="mb-8 md:mb-12 reveal">
                 <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-coral">Showcase</h3>
-                <h2 class="fluid-h2-section font-bold font-space text-charcoal mb-4">Videography & Reels Editing</h2>
-                <p class="fluid-body-lg text-subtitle_beige max-w-2xl leading-relaxed">
-                    A curated selection of dynamic video content, including short-form social media reels, promotional edits, and storytelling-driven visuals designed to drive engagement.
-                </p>
-            </div>
-
-            <!-- Featured Video (Large) -->
-            <div class="reveal mb-8 md:mb-12">
-                <div class="bg-white p-3 md:p-6 rounded-[2rem] sm:rounded-[3rem] shadow-xl border border-sage/30 hover:shadow-2xl transition-shadow duration-300">
-                    <video controls poster="https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=1200&q=80" class="w-full rounded-[1.25rem] sm:rounded-[2rem] aspect-video object-cover bg-charcoal/5 outline-none">
-                        <source src="featured-video.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+                <h2 class="fluid-h2-section font-bold font-space text-charcoal mb-3">Videography & Reels</h2>
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                    <p class="fluid-body text-subtitle_beige max-w-lg leading-relaxed">
+                        Short-form social content, promotional edits, and storytelling reels. Swipe or drag to explore.
+                    </p>
+                    <span class="vcine-counter" id="vcineCounter" style="flex-shrink:0">1 / 16</span>
                 </div>
             </div>
 
-            <!-- Responsive Video Grid (2 on Desktop, 1 on Mobile) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 reveal">
-                <div class="bg-white p-3 md:p-6 rounded-[2rem] shadow-lg border border-sage/30 hover:shadow-xl transition-shadow duration-300">
-                    <video controls poster="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80" class="w-full rounded-[1.25rem] sm:rounded-[1.5rem] aspect-[9/16] object-cover bg-charcoal/5 outline-none max-h-[650px]">
-                        <source src="https://files.catbox.moe/vdvwqq.mp4" type="video/mp4">
-                    </video>
-                </div>
-                <div class="bg-white p-3 md:p-6 rounded-[2rem] shadow-lg border border-sage/30 hover:shadow-xl transition-shadow duration-300">
-                    <video controls poster="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80" class="w-full rounded-[1.25rem] sm:rounded-[1.5rem] aspect-[9/16] object-cover bg-charcoal/5 outline-none max-h-[650px]">
-                        <source src="reel-2.mp4" type="video/mp4">
-                    </video>
+            <!-- Cinematic carousel stage -->
+            <div class="relative reveal" style="transition-delay:0.1s">
+                <!-- Prev arrow -->
+                <button class="vcine-arrow vcine-arrow-prev" id="vcinePrev" aria-label="Previous video">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <!-- Next arrow -->
+                <button class="vcine-arrow vcine-arrow-next" id="vcineNext" aria-label="Next video">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <div class="vcine-stage">
+                    <div class="vcine-track" id="vcineTrack">
+
+                        <!-- 16 video items -->
+                        <div class="vcine-item" data-idx="0">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/pa8t76.mp4" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',0)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="1">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/2o1zfh.mp4" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="2">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/g2efjs.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',2)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="3">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/jm1myj.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',3)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="4">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/1gt1z1.mp4" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',4)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="5">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/yh28as.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',5)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="6">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/efjltu.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',6)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="7">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/93ka56.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',7)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="8">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/wd82z3.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',8)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="9">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/22ulfd.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',9)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="10">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/x1vkd5.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',10)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="11">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/sgsour.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',11)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="12">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/93n59s.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',12)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="13">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/g48z06.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',13)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="14">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/czr2jr.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',14)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+                        <div class="vcine-item" data-idx="15">
+                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/2pe51e.mov" type="video/mp4"></video>
+                            <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                            <button class="vcine-open-btn" onclick="openModal('video',15)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+                        </div>
+
+                    </div><!-- /vcine-track -->
+                </div><!-- /vcine-stage -->
+
+                <!-- Dot strip -->
+                <div class="vcine-controls mt-4">
+                    <span></span><!-- spacer -->
+                    <div class="vcine-dots-wrap" id="vcineDots"></div>
+                    <span></span>
                 </div>
             </div>
 
-            <!-- Hide Showcase Button -->
-            <div class="mt-12 md:mt-16 flex justify-center reveal">
+            <!-- Close button -->
+            <div class="mt-10 md:mt-14 flex justify-center reveal">
                 <button onclick="hideVideoProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-coral hover:text-coral transition-all flex items-center gap-2 text-sm md:text-base group">
-                    <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i> 
+                    <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i>
                     Close Showcase
                 </button>
             </div>
         </div>
     </section>
  
+    <!-- WEB PROJECTS SECTION -->
     <section id="web-projects" class="fluid-section-py fluid-section-px relative z-20 hidden">
-    <div class="container mx-auto">
+        <div class="container mx-auto">
 
-        <!-- Header -->
-        <div class="mb-12 reveal">
-            <h3 class="text-xs uppercase tracking-widest font-bold text-mint mb-2">Showcase</h3>
-            <h2 class="fluid-h2-section font-bold font-space text-charcoal">Web Design & Development</h2>
-            <p class="fluid-body-lg text-subtitle_beige max-w-2xl">
-                UX/UI design and development projects focused on user experience, clean interfaces, and functional systems.
-            </p>
-        </div>
-
-        <!-- Projects Grid -->
-        <div class="grid md:grid-cols-2 gap-8">
-
-            <div class="bg-white p-6 rounded-2xl shadow border">
-                <img src="images/web1.jpg" class="rounded-xl mb-4">
-                <h3 class="font-bold">Project Name</h3>
-                <p class="text-sm text-subtitle_beige">UX/UI + Development</p>
+            <!-- Header -->
+            <div class="mb-12 reveal">
+                <h3 class="text-xs uppercase tracking-widest font-bold text-mint mb-2">Showcase</h3>
+                <h2 class="fluid-h2-section font-bold font-space text-charcoal">Web Design & Development</h2>
+                <p class="fluid-body-lg text-subtitle_beige max-w-2xl">
+                    UX/UI design and development projects focused on user experience, clean interfaces, and functional systems.
+                </p>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow border">
-                <img src="images/web2.jpg" class="rounded-xl mb-4">
-                <h3 class="font-bold">Project Name</h3>
-                <p class="text-sm text-subtitle_beige">Landing Page</p>
+            <!-- Projects Grid — each card is clickable and opens live-site modal -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+
+                <!-- Project 1: Lamsaa -->
+                <div class="web-project-card bg-white p-5 rounded-2xl shadow border border-sage/30" onclick="openModal('web', 0)">
+                    <!-- Live iframe preview -->
+                    <div class="relative rounded-xl overflow-hidden mb-4 bg-warm_beige" style="height: clamp(140px, 22vw, 200px);">
+                        <iframe src="https://lamsaa-z.netlify.app/" title="Lamsaa preview" class="w-full h-full border-0 pointer-events-none" style="transform: scale(0.6); transform-origin: top left; width: 166.66%; height: 166.66%;" loading="lazy" scrolling="no"></iframe>
+                        <div class="absolute inset-0 flex items-end justify-end p-3">
+                            <span class="bg-teal_primary text-white text-[9px] font-space font-bold uppercase tracking-widest px-2 py-1 rounded-full">View Site</span>
+                        </div>
+                    </div>
+                    <h3 class="font-bold font-space text-charcoal mb-1">Lamsaa</h3>
+                    <p class="text-xs text-subtitle_beige mb-3 leading-relaxed">A virtual home furniture store designed and developed by me. Built using HTML, CSS, and JavaScript.</p>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-teal_primary/10 text-teal_primary px-2 py-0.5 rounded-full">HTML</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-teal_primary/10 text-teal_primary px-2 py-0.5 rounded-full">CSS</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-teal_primary/10 text-teal_primary px-2 py-0.5 rounded-full">JavaScript</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-teal_primary/10 text-teal_primary px-2 py-0.5 rounded-full">UX/UI Design</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-teal_primary/10 text-teal_primary px-2 py-0.5 rounded-full">Front-End Dev</span>
+                    </div>
+                </div>
+
+                <!-- Project 2: Yousef Salman Portfolio -->
+                <div class="web-project-card bg-white p-5 rounded-2xl shadow border border-sage/30" onclick="openModal('web', 1)">
+                    <div class="relative rounded-xl overflow-hidden mb-4 bg-warm_beige" style="height: clamp(140px, 22vw, 200px);">
+                        <iframe src="https://yousef-salman.com/" title="Yousef Salman preview" class="w-full h-full border-0 pointer-events-none" style="transform: scale(0.6); transform-origin: top left; width: 166.66%; height: 166.66%;" loading="lazy" scrolling="no"></iframe>
+                        <div class="absolute inset-0 flex items-end justify-end p-3">
+                            <span class="bg-teal_primary text-white text-[9px] font-space font-bold uppercase tracking-widest px-2 py-1 rounded-full">View Site</span>
+                        </div>
+                    </div>
+                    <h3 class="font-bold font-space text-charcoal mb-1">Yousef Salman Portfolio</h3>
+                    <p class="text-xs text-subtitle_beige mb-3 leading-relaxed">A portfolio website designed and developed by me with backend integration and database functionality.</p>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-mint/20 text-teal_primary px-2 py-0.5 rounded-full">UX/UI Design</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-mint/20 text-teal_primary px-2 py-0.5 rounded-full">Front-End Dev</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-mint/20 text-teal_primary px-2 py-0.5 rounded-full">Backend Dev</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-mint/20 text-teal_primary px-2 py-0.5 rounded-full">Database</span>
+                    </div>
+                </div>
+
+                <!-- Project 3: Z Creative Studio (this portfolio) -->
+                <div class="web-project-card bg-white p-5 rounded-2xl shadow border border-sage/30" onclick="openModal('web', 2)">
+                    <div class="relative rounded-xl overflow-hidden mb-4 bg-warm_beige" style="height: clamp(140px, 22vw, 200px);">
+                        <iframe src="about:blank" title="Z Creative Studio preview" class="w-full h-full border-0 pointer-events-none" style="transform: scale(0.6); transform-origin: top left; width: 166.66%; height: 166.66%;" loading="lazy" scrolling="no"></iframe>
+                        <!-- Fallback visual for self-referencing page -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal_primary/10 to-mint/10 gap-2">
+                            <img src="https://i.ibb.co/PZ7PVdpT/22.png" alt="Z Creative Studio" class="w-12 h-12 object-contain">
+                            <span class="font-space font-bold text-sm text-teal_primary">Z Creative Studio</span>
+                        </div>
+                        <div class="absolute inset-0 flex items-end justify-end p-3">
+                            <span class="bg-yellow_gold text-charcoal text-[9px] font-space font-bold uppercase tracking-widest px-2 py-1 rounded-full">This Site</span>
+                        </div>
+                    </div>
+                    <h3 class="font-bold font-space text-charcoal mb-1">Z Creative Studio</h3>
+                    <p class="text-xs text-subtitle_beige mb-3 leading-relaxed">My personal creative portfolio — designed and developed entirely by me, from concept to code.</p>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-yellow_gold/20 text-charcoal px-2 py-0.5 rounded-full">HTML</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-yellow_gold/20 text-charcoal px-2 py-0.5 rounded-full">CSS</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-yellow_gold/20 text-charcoal px-2 py-0.5 rounded-full">JavaScript</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-yellow_gold/20 text-charcoal px-2 py-0.5 rounded-full">UX/UI Design</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider bg-yellow_gold/20 text-charcoal px-2 py-0.5 rounded-full">Branding</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Close -->
+            <div class="mt-12 md:mt-16 flex justify-center reveal">
+                <button onclick="hideWebProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-coral hover:text-coral transition-all flex items-center gap-2 text-sm md:text-base group">
+                    <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i> 
+                    Close Showcase
+                </button>
             </div>
 
         </div>
+    </section>
 
-        <!-- Close -->
-     <div class="mt-12 md:mt-16 flex justify-center reveal">
-    <button onclick="hideWebProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-coral hover:text-coral transition-all flex items-center gap-2 text-sm md:text-base group">
-        <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i> 
-        Close Showcase
-    </button>
-</div>
+    <!-- =============================================
+         SOCIAL MEDIA SHOWCASE SECTION
+    ============================================= -->
+    <section id="social-media-projects" class="fluid-section-py fluid-section-px relative z-20 hidden">
+        <div class="container mx-auto">
 
+            <!-- Header -->
+            <div class="mb-8 md:mb-12 reveal">
+                <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-coral">Showcase</h3>
+                <h2 class="fluid-h2-section font-bold font-space text-charcoal mb-3">Social Media</h2>
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                    <p class="fluid-body text-subtitle_beige max-w-lg leading-relaxed">
+                        Content design, brand posts, and social campaigns. Drag or swipe to explore.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Carousel -->
+            <div class="relative reveal" style="transition-delay:0.1s">
+                <button class="sm-arrow sm-arrow-prev" id="smPrev" aria-label="Previous">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button class="sm-arrow sm-arrow-next" id="smNext" aria-label="Next">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <div class="sm-carousel-wrap">
+                    <div class="sm-track" id="smTrack">
+                        <div class="sm-card"><img src="https://i.ibb.co/zhD2XDQZ/al-hayat-17.jpg"          alt="Social post 1" loading="lazy"></div>
+                        <div class="sm-card"><img src="https://i.ibb.co/Kzpp40wv/armaniiiiiiiiiiiiii-10.jpg" alt="Social post 2" loading="lazy"></div>
+                        <div class="sm-card"><img src="https://i.ibb.co/VYXCR45G/IMG-5286.png"              alt="Social post 3" loading="lazy"></div>
+                        <div class="sm-card"><img src="https://i.ibb.co/0jSHZvx4/badges-Bahrin.png"         alt="Social post 4" loading="lazy"></div>
+                        <div class="sm-card"><img src="https://i.ibb.co/nN0jRbGM/Copy-of-The-Nature-of-Trauma.png" alt="Social post 5" loading="lazy"></div>
+                        <div class="sm-card"><img src="https://i.ibb.co/zchMKBb/IMG-5300.png"               alt="Social post 6" loading="lazy"></div>
+                        <div class="sm-card"><img src="https://i.ibb.co/n86FWbrF/IMG-5303.png"              alt="Social post 7" loading="lazy"></div>
+                        <div class="sm-card"><img src="https://i.ibb.co/0yPkFnR0/IMG-5929.png"              alt="Social post 8" loading="lazy"></div>
+                        <div class="sm-card"><img src="https://i.ibb.co/rRf87SS1/image.png"                 alt="Social post 9" loading="lazy"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close button -->
+            <div class="mt-10 md:mt-14 flex justify-center reveal">
+                <button onclick="hideSocialMediaProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-coral hover:text-coral transition-all flex items-center gap-2 text-sm md:text-base group">
+                    <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i>
+                    Close Showcase
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         UNIVERSAL SHOWCASE MODAL / LIGHTBOX
+    ============================================= -->
+    <div id="showcase-modal" onclick="handleModalBackdropClick(event)">
+        <div id="showcase-modal-inner">
+            <button id="modal-close-btn" onclick="closeModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <!-- Web project title + open link bar (shown only for web type) -->
+            <div id="modal-web-bar" style="display:none; width:100%; align-items:center; justify-content:space-between; gap:1rem; padding:0.5rem 0;">
+                <span id="modal-web-title" style="font-family:'Space Grotesk',sans-serif; font-size:0.85rem; font-weight:700; color:#fff; opacity:0.85;"></span>
+                <a id="modal-web-link" href="#" target="_blank" rel="noopener noreferrer"
+                   style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); border-radius:999px; padding:6px 14px; font-family:'Space Grotesk',sans-serif; font-size:0.7rem; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:0.08em; text-decoration:none; white-space:nowrap; transition:background 0.2s;"
+                   onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Open Live Site
+                </a>
+            </div>
+            <div id="modal-media-container">
+                <video id="modal-video" controls playsinline>
+                    <source id="modal-video-src" src="" type="video/mp4">
+                </video>
+                <img id="modal-img" src="" alt="Project showcase">
+                <iframe id="modal-iframe" src="" title="Project preview" style="display:none; width:100%; height:80vh; border:0; border-radius:1rem;"></iframe>
+            </div>
+            <div id="modal-nav">
+                <button class="modal-nav-btn" onclick="modalNav(-1)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <span id="modal-counter">1 / 1</span>
+                <button class="modal-nav-btn" onclick="modalNav(1)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+        </div>
     </div>
-</section>
+
+    <!-- Education Section -->
+    <section id="education" class="py-10 md:py-14 fluid-section-px bg-warm_beige relative z-20">
+        <div class="container mx-auto max-w-4xl reveal">
+            <div class="mb-6 md:mb-8">
+                <h2 class="fluid-h2-section font-bold font-fredoka text-charcoal">Education</h2>
+            </div>
+            <div class="p-5 md:p-8 rounded-[1.5rem] md:rounded-[32px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-5 md:gap-6 border-sage bg-white">
+                <div>
+                    <h3 class="fluid-h3-card font-space font-bold mb-2 text-charcoal">Digital Media Design</h3>
+                    <p class="fluid-body opacity-70">SAE Institute Amman</p>
+                </div>
+                <div class="flex flex-col items-start md:items-end">
+                    <img src="https://i.ibb.co/BHkpjXLH/SAE-Institute-Logo.png" alt="SAE Institute Logo" class="h-12 md:h-16 w-auto object-contain">
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Contact Section -->
     <section id="contact" class="fluid-section-py fluid-section-px pb-32 md:pb-52 bg-charcoal text-white rounded-t-[3rem] sm:rounded-t-[5rem] md:rounded-t-[100px] relative h-auto">
         <div class="container mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center">
                 <div class="reveal">
                     <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-4 text-yellow_gold">Let's Talk</h3>
                     <h2 class="fluid-h2-contact font-space font-bold mb-8 md:mb-12 text-white leading-tight">Ready to start a project?</h2>
@@ -819,22 +2906,28 @@
                             </div>
                             <span>zainaalissah@gmail.com</span>
                         </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-charcoal transition-all shrink-0">
+                                <i data-lucide="phone" size="18"></i>
+                            </div>
+                            <span>0798677701</span>
+                        </div>
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center shrink-0">
                                 <i data-lucide="map-pin" size="18"></i>
                             </div>
                             <span>Amman – Jordan</span>
                         </div>
-                        <div class="flex items-center gap-4 group cursor-pointer">
+                        <a href="https://drive.google.com/uc?export=download&id=1qaVuaYCbUWKvSdEShjAgzVFu4XaYIZEe" download="Zaina_Alissa_CV.pdf" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 group cursor-pointer">
                             <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-charcoal transition-all shrink-0">
                                 <i data-lucide="download" size="18"></i>
                             </div>
                             <span class="border-b border-white/20 group-hover:border-white transition-all">Download My CV</span>
-                        </div>
+                        </a>
                     </div>
                 </div>
  
-                <div class="bg-yellow_gold rounded-[2rem] md:rounded-[40px] p-6 md:p-12 text-charcoal reveal relative overflow-visible shadow-2xl h-fit" style="transition-delay: 0.2s">
+                <div class="tear-tag-card bg-yellow_gold rounded-[2rem] md:rounded-[40px] p-5 md:p-12 text-charcoal reveal relative overflow-visible shadow-2xl h-fit" style="transition-delay: 0.2s">
                     <div class="relative z-10">
                         <h3 class="text-xl md:text-3xl font-space font-bold mb-2 uppercase tracking-tighter">Take what you need</h3>
                         <p class="text-xs md:text-sm font-bold opacity-70 mb-6 md:mb-10 italic">Feel free to grab a service to start our journey...</p>
@@ -877,20 +2970,168 @@
                 </div>
                 <p class="text-sm text-subtitle_beige italic">Creative Digital Portfolio &copy; 2026</p>
             </div>
-            <div class="flex gap-6">
+            <div class="flex gap-4">
                 <a href="#" class="p-3 rounded-full border border-white/10 hover:bg-white hover:text-charcoal transition-all text-white"><i data-lucide="instagram" size="20"></i></a>
                 <a href="#" class="p-3 rounded-full border border-white/10 hover:bg-white hover:text-charcoal transition-all text-white"><i data-lucide="linkedin" size="20"></i></a>
-                <span class="p-3 rounded-full border border-white/10 font-bold text-xs flex items-center justify-center w-11 h-11 text-white">Be</span>
-                <span class="p-3 rounded-full border border-white/10 font-bold text-xs flex items-center justify-center w-11 h-11 text-white">Dr</span>
             </div>
             <p class="text-xs text-subtitle_beige font-space tracking-widest uppercase">Designed with Passion</p>
         </div>
     </footer>
  
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         lucide.createIcons();
- 
-        // Scroll reveal
+
+        // ── Al Ameed Cinema Drag-Scroll ───────────────────────────
+        (function() {
+            function initAmeedScroll() {
+                const viewport = document.getElementById('ameedViewport');
+                const track    = document.getElementById('ameedTrack');
+                const progress = document.getElementById('ameedProgress');
+                const hint     = document.querySelector('.ameed-scroll-hint');
+                if (!viewport || !track) return;
+
+                let isDragging = false, startX = 0, scrollLeft = 0, hintHidden = false;
+
+                function getMaxScroll() { return track.scrollWidth - viewport.clientWidth; }
+                function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
+                function updateProgress(x) {
+                    const max = getMaxScroll();
+                    if (max <= 0) return;
+                    const pct = clamp((x / max) * 100, 0, 100);
+                    progress.style.width = pct + '%';
+                    if (!hintHidden && pct > 2) { hint.classList.add('hidden'); hintHidden = true; }
+                }
+
+                let currentX = 0, targetX = 0, rafId = null;
+                function animate() {
+                    currentX += (targetX - currentX) * 0.12;
+                    if (Math.abs(targetX - currentX) < 0.3) currentX = targetX;
+                    track.style.transform = 'translateX(' + (-currentX) + 'px)';
+                    updateProgress(currentX);
+                    rafId = Math.abs(targetX - currentX) > 0.2 ? requestAnimationFrame(animate) : null;
+                }
+                function setTarget(x) {
+                    targetX = clamp(x, 0, getMaxScroll());
+                    if (!rafId) rafId = requestAnimationFrame(animate);
+                }
+
+                viewport.addEventListener('mousedown', e => { isDragging = true; startX = e.pageX; scrollLeft = currentX; viewport.style.cursor = 'grabbing'; });
+                window.addEventListener('mousemove',  e => { if (isDragging) setTarget(scrollLeft - (e.pageX - startX)); });
+                window.addEventListener('mouseup',    () => { isDragging = false; viewport.style.cursor = 'grab'; });
+
+                let tSX = 0, tSL = 0;
+                viewport.addEventListener('touchstart', e => { tSX = e.changedTouches[0].pageX; tSL = currentX; }, { passive: true });
+                viewport.addEventListener('touchmove',  e => { setTarget(tSL - (e.changedTouches[0].pageX - tSX)); }, { passive: true });
+                viewport.addEventListener('wheel', e => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); setTarget(currentX + e.deltaX * 1.5); } }, { passive: false });
+            }
+            document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', initAmeedScroll) : initAmeedScroll();
+        })();
+
+        // ── Generic carousel factory ──────────────────────────────
+        function makeCarousel(opts) {
+            const { carouselId, trackId, counterId, dotsSelector, prevId, nextId, slideClass, dotClass, autoDelay } = opts;
+            const carousel = document.getElementById(carouselId);
+            const track    = document.getElementById(trackId);
+            const counter  = document.getElementById(counterId);
+            const prevBtn  = document.getElementById(prevId);
+            const nextBtn  = document.getElementById(nextId);
+            const dots     = document.querySelectorAll(dotsSelector + ' .' + dotClass);
+            const slides   = track ? track.querySelectorAll('.' + slideClass) : [];
+            if (!carousel || !track || !slides.length) return;
+
+            const total = slides.length;
+            let current = 0, dragDelta = 0, isDragging = false, touchDelta = 0;
+
+            function goTo(idx, instant) {
+                current = (idx + total) % total;
+                track.style.transition = instant ? 'none' : 'transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94)';
+                track.style.transform  = 'translateX(' + (-current * 100) + '%)';
+                slides.forEach((s, i) => s.classList.toggle('active', i === current));
+                dots.forEach((d, i)   => d.classList.toggle('active', i === current));
+                if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            }
+
+            if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
+            if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+            dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
+
+            carousel.setAttribute('tabindex', '0');
+            carousel.addEventListener('keydown', e => {
+                if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(current - 1); }
+                if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
+            });
+
+            carousel.addEventListener('mousedown', e => { isDragging = true; dragDelta = 0; track.dataset.startX = e.pageX; track.classList.add('dragging'); });
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                dragDelta = e.pageX - +track.dataset.startX;
+                track.style.transition = 'none';
+                track.style.transform  = 'translateX(calc(' + (-current * 100) + '% + ' + dragDelta + 'px))';
+            });
+            window.addEventListener('mouseup', () => {
+                if (!isDragging) return;
+                isDragging = false; track.classList.remove('dragging');
+                if (Math.abs(dragDelta) > 55) goTo(dragDelta < 0 ? current + 1 : current - 1);
+                else goTo(current);
+                dragDelta = 0;
+            });
+
+            carousel.addEventListener('touchstart', e => { touchDelta = 0; track.dataset.touchStartX = e.changedTouches[0].pageX; }, { passive: true });
+            carousel.addEventListener('touchmove',  e => {
+                touchDelta = e.changedTouches[0].pageX - +track.dataset.touchStartX;
+                track.style.transition = 'none';
+                track.style.transform  = 'translateX(calc(' + (-current * 100) + '% + ' + touchDelta + 'px))';
+            }, { passive: true });
+            carousel.addEventListener('touchend', () => {
+                if (Math.abs(touchDelta) > 45) goTo(touchDelta < 0 ? current + 1 : current - 1);
+                else goTo(current);
+                touchDelta = 0;
+            });
+
+            if (autoDelay) {
+                let timer = setInterval(() => goTo(current + 1), autoDelay);
+                carousel.addEventListener('mouseenter', () => clearInterval(timer));
+                carousel.addEventListener('mouseleave', () => { timer = setInterval(() => goTo(current + 1), autoDelay); });
+            }
+
+            goTo(0, true);
+        }
+
+        // ── Init Petra carousel ───────────────────────────────────
+        function initPetraCarousel() {
+            makeCarousel({ carouselId:'petraCarousel', trackId:'petraTrack', counterId:'petraCounter', dotsSelector:'#petraDots', prevId:'petraPrev', nextId:'petraNext', slideClass:'petra-slide', dotClass:'petra-dot', autoDelay:5000 });
+        }
+
+        // ── Init Al Ameed supporting carousel ────────────────────
+        function initAmeedCarousel() {
+            makeCarousel({ carouselId:'ameedCarousel', trackId:'ameedCarouselTrack', counterId:'ameedCarouselCounter', dotsSelector:'#ameedCarouselDots', prevId:'ameedPrev', nextId:'ameedNext', slideClass:'ameed-slide', dotClass:'ameed-dot', autoDelay:6000 });
+        }
+
+        // ── Staggered IntersectionObserver for case blocks + dl cards ──
+        function initCardAnimations() {
+            if (!('IntersectionObserver' in window)) {
+                // Fallback: just show everything
+                document.querySelectorAll('.petra-case-block, .petra-dl-card').forEach(el => {
+                    el.style.opacity = 1; el.style.transform = 'none';
+                });
+                return;
+            }
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            document.querySelectorAll('.petra-case-block, .petra-dl-card').forEach(el => obs.observe(el));
+        }
+
+        document.readyState === 'loading'
+            ? document.addEventListener('DOMContentLoaded', () => { initPetraCarousel(); initAmeedCarousel(); initCardAnimations(); })
+            : (initPetraCarousel(), initAmeedCarousel(), initCardAnimations());
+
         function reveal() {
             document.querySelectorAll(".reveal").forEach(el => {
                 if (el.getBoundingClientRect().top < window.innerHeight - 150) {
@@ -901,77 +3142,121 @@
         window.addEventListener("scroll", reveal);
         window.addEventListener("load", reveal);
  
-        // Mobile menu
+        // ── Mobile menu ────────────────────────────────────────────
         document.getElementById('menu-toggle').onclick = () => { document.getElementById('mobile-menu').style.display = 'flex'; };
         document.getElementById('menu-close').onclick  = () => { document.getElementById('mobile-menu').style.display = 'none'; };
         document.querySelectorAll('.mobile-link').forEach(link => {
             link.onclick = () => { document.getElementById('mobile-menu').style.display = 'none'; };
         });
  
-        // Folder toggle
+        // ── Folder toggle ──────────────────────────────────────────
         function toggleFolder(el) {
             el.classList.toggle('open');
         }
- 
-   function showVideoProjects() {
-    const section = document.getElementById('video-projects');
-    const portfolio = document.getElementById('portfolio');
 
-    // hide other sections
-    document.getElementById('web-projects').classList.add('hidden');
-
-    portfolio.scrollIntoView({ behavior: 'smooth' });
-
-    setTimeout(() => {
-        section.classList.remove('hidden');
-        reveal();
-        section.scrollIntoView({ behavior: 'smooth' });
-    }, 400);
-}
-
-        function showWebProjects() {
-    const section = document.getElementById('web-projects');
-    const portfolio = document.getElementById('portfolio');
-
-    // hide other sections
-    document.getElementById('video-projects').classList.add('hidden');
-
-    // scroll first
-    portfolio.scrollIntoView({ behavior: 'smooth' });
-
-    // then show
-    setTimeout(() => {
-        section.classList.remove('hidden');
-        reveal();
-        section.scrollIntoView({ behavior: 'smooth' });
-    }, 400);
-}
-
-function hideWebProjects() {
-    const section = document.getElementById('web-projects');
-    const portfolio = document.getElementById('portfolio');
-
-    portfolio.scrollIntoView({ behavior: 'smooth' });
-
-    setTimeout(() => {
-        section.classList.add('hidden');
-    }, 600);
-}
-
+        // ── Section show/hide helpers ──────────────────────────────
         function hideVideoProjects() {
             const section = document.getElementById('video-projects');
-            const portfolio = document.getElementById('portfolio');
-            
-            // Scroll smoothly back to the folders
-            portfolio.scrollIntoView({ behavior: 'smooth' });
-            
-            // Hide the section after scroll finishes (~600ms)
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
+                // Pause all carousel videos when closing
+                const track = document.getElementById('vcineTrack');
+                if (track) track.querySelectorAll('.vcine-vid').forEach(v => v.pause());
                 section.classList.add('hidden');
             }, 600);
         }
 
-        // Portfolio folder filter
+        // ── Social Media Carousel ──────────────────────────────
+        function initSmCarousel() {
+            const track   = document.getElementById('smTrack');
+            const prevBtn = document.getElementById('smPrev');
+            const nextBtn = document.getElementById('smNext');
+            if (!track) return;
+
+            let currentX = 0, targetX = 0, rafId = null;
+            let isDragging = false, dragStartX = 0, dragStartCX = 0;
+            let touchStartX = 0, touchStartCX = 0;
+
+            function clamp(v, lo, hi) { return Math.min(Math.max(v, lo), hi); }
+            function maxScroll() { return Math.max(0, track.scrollWidth - track.parentElement.clientWidth); }
+
+            function animateTo(x) {
+                targetX = clamp(x, 0, maxScroll());
+                if (!rafId) rafId = requestAnimationFrame(step);
+            }
+            function step() {
+                const diff = targetX - currentX;
+                if (Math.abs(diff) < 0.4) { currentX = targetX; track.style.transform = 'translateX(' + (-currentX) + 'px)'; rafId = null; return; }
+                currentX += diff * 0.1;
+                track.style.transform = 'translateX(' + (-currentX) + 'px)';
+                rafId = requestAnimationFrame(step);
+            }
+
+            function cardW() { const c = track.querySelector('.sm-card'); return c ? c.getBoundingClientRect().width + 20 : 300; }
+
+            if (prevBtn) prevBtn.addEventListener('click', () => animateTo(currentX - cardW() * 2));
+            if (nextBtn) nextBtn.addEventListener('click', () => animateTo(currentX + cardW() * 2));
+
+            // Mouse drag
+            track.addEventListener('mousedown', e => { isDragging = true; dragStartX = e.clientX; dragStartCX = currentX; if (rafId) { cancelAnimationFrame(rafId); rafId = null; } });
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                const dx = dragStartX - e.clientX;
+                currentX = clamp(dragStartCX + dx, 0, maxScroll());
+                track.style.transform = 'translateX(' + (-currentX) + 'px)';
+            });
+            window.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; targetX = currentX; } });
+
+            // Touch
+            track.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; touchStartCX = currentX; if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }, { passive: true });
+            track.addEventListener('touchmove', e => {
+                const dx = touchStartX - e.changedTouches[0].clientX;
+                currentX = clamp(touchStartCX + dx, 0, maxScroll());
+                track.style.transform = 'translateX(' + (-currentX) + 'px)';
+            }, { passive: true });
+            track.addEventListener('touchend', () => { targetX = currentX; });
+        }
+
+        function showSocialMediaProjects() {
+            const section = document.getElementById('social-media-projects');
+            // Hide other open showcase sections
+            document.getElementById('video-projects').classList.add('hidden');
+            document.getElementById('web-projects').classList.add('hidden');
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                section.classList.remove('hidden');
+                reveal();
+                section.scrollIntoView({ behavior: 'smooth' });
+                lucide.createIcons();
+                setTimeout(initSmCarousel, 80);
+            }, 400);
+        }
+
+        function hideSocialMediaProjects() {
+            const section = document.getElementById('social-media-projects');
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => { section.classList.add('hidden'); }, 600);
+        }
+
+        function showWebProjects() {
+            const section = document.getElementById('web-projects');
+            document.getElementById('video-projects').classList.add('hidden');
+            document.getElementById('social-media-projects').classList.add('hidden');
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                section.classList.remove('hidden');
+                reveal();
+                section.scrollIntoView({ behavior: 'smooth' });
+            }, 400);
+        }
+
+        function hideWebProjects() {
+            const section = document.getElementById('web-projects');
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => { section.classList.add('hidden'); }, 600);
+        }
+
+        // ── Portfolio folder filter ────────────────────────────────
         document.querySelectorAll('.filter-btn-folder').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.filter-btn-folder').forEach(b => b.classList.remove('active'));
@@ -986,6 +3271,558 @@ function hideWebProjects() {
                 });
             };
         });
+
+        // ── MODAL / LIGHTBOX SYSTEM ───────────────────────────────
+        const videoSources = [
+            'https://files.catbox.moe/pa8t76.mp4',
+            'https://files.catbox.moe/2o1zfh.mp4',
+            'https://files.catbox.moe/g2efjs.mov',
+            'https://files.catbox.moe/jm1myj.mov',
+            'https://files.catbox.moe/1gt1z1.mp4',
+            'https://files.catbox.moe/yh28as.mov',
+            'https://files.catbox.moe/efjltu.mov',
+            'https://files.catbox.moe/93ka56.mov',
+            'https://files.catbox.moe/wd82z3.mov',
+            'https://files.catbox.moe/22ulfd.mov',
+            'https://files.catbox.moe/x1vkd5.mov',
+            'https://files.catbox.moe/sgsour.mov',
+            'https://files.catbox.moe/93n59s.mov',
+            'https://files.catbox.moe/g48z06.mov',
+            'https://files.catbox.moe/czr2jr.mov',
+            'https://files.catbox.moe/2pe51e.mov',
+        ];
+
+        // Web projects data — used by the modal iframe viewer
+        const webProjects = [
+            {
+                url:   'https://lamsaa-z.netlify.app/',
+                title: 'Lamsaa',
+                desc:  'A virtual home furniture store designed and developed by me. Built using HTML, CSS, and JavaScript. I handled the UX/UI design and front-end development.',
+            },
+            {
+                url:   'https://yousef-salman.com/',
+                title: 'Yousef Salman Portfolio',
+                desc:  'A portfolio website designed and developed by me with backend integration and database functionality. I handled the UX/UI design and full development process.',
+            },
+            {
+                url:   window.location.href.split('#')[0],
+                title: 'Z Creative Studio',
+                desc:  'My personal creative portfolio — designed and developed entirely by me, from concept to code.',
+            },
+        ];
+
+        let modalCurrentIndex = 0;
+        let modalCurrentType = 'video'; // 'video' | 'image' | 'web'
+        let modalCurrentSet = videoSources;
+
+        function openModal(type, index, set) {
+            modalCurrentType = type;
+            modalCurrentIndex = index;
+
+            const video   = document.getElementById('modal-video');
+            const img     = document.getElementById('modal-img');
+            const iframe  = document.getElementById('modal-iframe');
+            const navEl   = document.getElementById('modal-nav');
+
+            // Hide all media elements first
+            video.style.display  = 'none';
+            img.style.display    = 'none';
+            iframe.style.display = 'none';
+            iframe.src = '';
+
+            // Web bar (title + link) — only shown for web type
+            const webBar   = document.getElementById('modal-web-bar');
+            const webTitle = document.getElementById('modal-web-title');
+            const webLink  = document.getElementById('modal-web-link');
+
+            if (type === 'video') {
+                modalCurrentSet = videoSources;
+                loadModalVideo(videoSources[index]);
+                video.style.display  = 'block';
+                navEl.style.display  = modalCurrentSet.length > 1 ? 'flex' : 'none';
+                webBar.style.display = 'none';
+
+            } else if (type === 'image') {
+                const imgSet = set === 'web' ? [] : [];
+                modalCurrentSet = imgSet;
+                img.src = imgSet[index] || '';
+                img.style.display    = 'block';
+                navEl.style.display  = modalCurrentSet.length > 1 ? 'flex' : 'none';
+                webBar.style.display = 'none';
+
+            } else if (type === 'web') {
+                modalCurrentSet = webProjects;
+                iframe.src           = webProjects[index].url;
+                iframe.style.display = 'block';
+                navEl.style.display  = webProjects.length > 1 ? 'flex' : 'none';
+                webTitle.textContent = webProjects[index].title;
+                webLink.href         = webProjects[index].url;
+                webBar.style.display = 'flex';
+            }
+
+            updateModalCounter();
+            document.getElementById('showcase-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function loadModalVideo(src) {
+            const video = document.getElementById('modal-video');
+            video.pause();
+            document.getElementById('modal-video-src').src = src;
+            video.load();
+            video.play().catch(() => {});
+        }
+
+        function loadModalImage(src) {
+            document.getElementById('modal-img').src = src;
+        }
+
+        function updateModalCounter() {
+            document.getElementById('modal-counter').textContent =
+                (modalCurrentIndex + 1) + ' / ' + modalCurrentSet.length;
+        }
+
+        function modalNav(dir) {
+            const video  = document.getElementById('modal-video');
+            const iframe = document.getElementById('modal-iframe');
+            if (modalCurrentType === 'video') video.pause();
+
+            modalCurrentIndex = (modalCurrentIndex + dir + modalCurrentSet.length) % modalCurrentSet.length;
+
+            if (modalCurrentType === 'video') {
+                loadModalVideo(modalCurrentSet[modalCurrentIndex]);
+            } else if (modalCurrentType === 'image') {
+                loadModalImage(modalCurrentSet[modalCurrentIndex]);
+            } else if (modalCurrentType === 'web') {
+                iframe.src = webProjects[modalCurrentIndex].url;
+                document.getElementById('modal-web-title').textContent = webProjects[modalCurrentIndex].title;
+                document.getElementById('modal-web-link').href         = webProjects[modalCurrentIndex].url;
+            }
+            updateModalCounter();
+        }
+
+        function closeModal() {
+            const modal  = document.getElementById('showcase-modal');
+            const video  = document.getElementById('modal-video');
+            const iframe = document.getElementById('modal-iframe');
+            video.pause();
+            iframe.src = ''; // stop iframe loading
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function handleModalBackdropClick(e) {
+            if (e.target === document.getElementById('showcase-modal')) {
+                closeModal();
+            }
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowRight') { if (document.getElementById('showcase-modal').classList.contains('open')) modalNav(1); }
+            if (e.key === 'ArrowLeft')  { if (document.getElementById('showcase-modal').classList.contains('open')) modalNav(-1); }
+        });
+
+        // Touch swipe for modal navigation
+        let touchStartX = 0;
+        let touchStartY = 0;
+        document.getElementById('modal-media-container').addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+        document.getElementById('modal-media-container').addEventListener('touchend', e => {
+            const dx = e.changedTouches[0].screenX - touchStartX;
+            const dy = e.changedTouches[0].screenY - touchStartY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 44) {
+                if (document.getElementById('showcase-modal').classList.contains('open')) {
+                    modalNav(dx < 0 ? 1 : -1);
+                }
+            }
+        }, { passive: true });
+
+        // Hover-preview: play muted on mouse enter, pause on leave (desktop only)
+        if (window.matchMedia('(hover: hover)').matches) {
+            document.querySelectorAll('.video-thumb-wrap video').forEach(v => {
+                const wrap = v.closest('.video-thumb-wrap');
+                wrap.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
+                wrap.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
+            });
+        }
+
+        // ── Social Media Design — Parallax cards ────────────────
+        (function() {
+            const section = document.getElementById('social-design-hero');
+            const cards   = section ? Array.from(section.querySelectorAll('.smd-card')) : [];
+            if (!cards.length) return;
+
+            // Store each card's CSS baseline transform (rotation) separately
+            // so we only ADD to it, never overwrite
+            const baseRotations = cards.map(c => {
+                // Read rotation from computed style by extracting from inline transform
+                const style = window.getComputedStyle(c);
+                const matrix = style.transform;
+                if (matrix && matrix !== 'none') {
+                    const m = matrix.match(/matrix\(([^)]+)\)/);
+                    if (m) {
+                        const [a, b] = m[1].split(',').map(Number);
+                        return Math.round(Math.atan2(b, a) * (180 / Math.PI));
+                    }
+                }
+                return 0;
+            });
+
+            // Per-card state for smooth lerp
+            const state = cards.map(() => ({ x: 0, y: 0, tx: 0, ty: 0 }));
+            let rafId = null;
+            let mouseX = 0, mouseY = 0;
+            let centreX = 0, centreY = 0;
+            let active = false;
+
+            function updateCentre() {
+                const rect = section.getBoundingClientRect();
+                centreX = rect.left + rect.width  / 2;
+                centreY = rect.top  + rect.height / 2;
+            }
+
+            // On mouse move over the section, compute delta from centre
+            section.addEventListener('mousemove', e => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                active = true;
+                updateCentre();
+                cards.forEach((c, i) => {
+                    const speed  = parseFloat(c.dataset.speed) || 0.04;
+                    state[i].tx  = (mouseX - centreX) * speed;
+                    state[i].ty  = (mouseY - centreY) * speed;
+                });
+                if (!rafId) rafId = requestAnimationFrame(tick);
+            });
+
+            // Ease back to centre on mouse leave
+            section.addEventListener('mouseleave', () => {
+                active = false;
+                cards.forEach((_, i) => { state[i].tx = 0; state[i].ty = 0; });
+                if (!rafId) rafId = requestAnimationFrame(tick);
+            });
+
+            function tick() {
+                let stillMoving = false;
+                cards.forEach((c, i) => {
+                    const s   = state[i];
+                    const lerpF = active ? 0.085 : 0.065; // slightly slower easing out
+                    s.x += (s.tx - s.x) * lerpF;
+                    s.y += (s.ty - s.y) * lerpF;
+                    if (Math.abs(s.tx - s.x) > 0.08 || Math.abs(s.ty - s.y) > 0.08) stillMoving = true;
+                    const rot = baseRotations[i];
+                    c.style.transform = 'rotate(' + rot + 'deg) translate(' + s.x.toFixed(2) + 'px,' + s.y.toFixed(2) + 'px)';
+                });
+                rafId = stillMoving ? requestAnimationFrame(tick) : null;
+            }
+
+            // Touch: subtle tilt on touch move
+            section.addEventListener('touchmove', e => {
+                const t = e.touches[0];
+                updateCentre();
+                active = true;
+                cards.forEach((c, i) => {
+                    const speed  = parseFloat(c.dataset.speed) || 0.04;
+                    state[i].tx  = (t.clientX - centreX) * speed * 0.5; // halved on touch
+                    state[i].ty  = (t.clientY - centreY) * speed * 0.5;
+                });
+                if (!rafId) rafId = requestAnimationFrame(tick);
+            }, { passive: true });
+
+            section.addEventListener('touchend', () => {
+                active = false;
+                cards.forEach((_, i) => { state[i].tx = 0; state[i].ty = 0; });
+                if (!rafId) rafId = requestAnimationFrame(tick);
+            });
+
+            // Recalc centre on resize
+            window.addEventListener('resize', updateCentre, { passive: true });
+            updateCentre();
+        })();
+
+        // ── Dark Mode Toggle ──────────────────────────────────────
+        (function() {
+            const root    = document.documentElement;
+            const btn     = document.getElementById('dm-toggle');
+            const STORAGE = 'zcreative-theme';
+
+            function applyTheme(dark) {
+                root.setAttribute('data-theme', dark ? 'dark' : 'light');
+            }
+
+            // Restore saved preference; default is always light
+            const saved = localStorage.getItem(STORAGE);
+            if (saved === 'dark') {
+                applyTheme(true);
+            }
+
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    const isDark = root.getAttribute('data-theme') === 'dark';
+                    applyTheme(!isDark);
+                    localStorage.setItem(STORAGE, isDark ? 'light' : 'dark');
+                });
+            }
+        })();
+
+        // ── Cinematic Video Carousel ──────────────────────────────
+        function initVideoCinema() {
+            const track    = document.getElementById('vcineTrack');
+            const counter  = document.getElementById('vcineCounter');
+            const dotsWrap = document.getElementById('vcineDots');
+            const prevBtn  = document.getElementById('vcinePrev');
+            const nextBtn  = document.getElementById('vcineNext');
+            if (!track) return;
+
+            // ── 1. Collect real items and total ──────────────────
+            const realItems = Array.from(track.querySelectorAll('.vcine-item'));
+            const total     = realItems.length;
+            if (!total) return;
+
+            // ── 2. Build dots for real items only ────────────────
+            if (dotsWrap) {
+                dotsWrap.innerHTML = '';
+                realItems.forEach((_, i) => {
+                    const d = document.createElement('button');
+                    d.className = 'vcine-dot' + (i === 0 ? ' active' : '');
+                    d.setAttribute('aria-label', 'Video ' + (i + 1));
+                    d.addEventListener('click', () => jumpTo(i));
+                    dotsWrap.appendChild(d);
+                });
+            }
+
+            // ── 3. Clone BUFFER items at each end for seamless loop ──
+            // Cloning 3 from each side gives enough coverage at any speed.
+            const BUFFER = Math.min(3, total);
+            const headClones = []; // clones of last BUFFER items → prepended
+            const tailClones = []; // clones of first BUFFER items → appended
+
+            for (let i = total - BUFFER; i < total; i++) {
+                const cl = realItems[i].cloneNode(true);
+                cl.setAttribute('data-clone', 'head');
+                cl.setAttribute('data-real', i);
+                headClones.push(cl);
+            }
+            for (let i = 0; i < BUFFER; i++) {
+                const cl = realItems[i].cloneNode(true);
+                cl.setAttribute('data-clone', 'tail');
+                cl.setAttribute('data-real', i);
+                tailClones.push(cl);
+            }
+
+            // Prepend heads (in order: tail-of-real first, so last clone is adjacent to item 0)
+            headClones.forEach(cl => track.insertBefore(cl, track.firstChild));
+            // Append tails
+            tailClones.forEach(cl => track.appendChild(cl));
+
+            // ── 4. All items (clones + real + clones) ────────────
+            const allItems = Array.from(track.querySelectorAll('.vcine-item'));
+
+            // The real item[0] is now at index BUFFER inside allItems
+            let realIndex   = 0;          // which real slide we're "on" (0–total-1)
+            let allIndex    = BUFFER;     // which allItems index is currently centered
+
+            // ── 5. Measurement helpers ───────────────────────────
+            function iw()  {
+                // Measure from the first real item (past the head clones) for accuracy.
+                const el = allItems[BUFFER] || allItems[0];
+                return el ? el.getBoundingClientRect().width : 260;
+            }
+            function gap() { return parseFloat(window.getComputedStyle(track).gap) || 16; }
+            function sw()  { return track.parentElement ? track.parentElement.getBoundingClientRect().width : window.innerWidth; }
+
+            // Offset that centres allItems[idx] in the stage
+            function offsetFor(idx) {
+                const w = iw(), g = gap(), s = sw();
+                return -(idx * (w + g)) + (s / 2 - w / 2);
+            }
+
+            // ── 6. Animation state ───────────────────────────────
+            let currentOffset = 0, targetOffset = 0;
+            let rafId = null;
+            let isDragging = false, dragStartX = 0, dragDelta = 0;
+            let tSX = 0, tD = 0;
+            let loopSilent = false; // true while we're silently repositioning for loop
+
+            function animate() {
+                const diff = targetOffset - currentOffset;
+                if (Math.abs(diff) < 0.35) {
+                    currentOffset = targetOffset;
+                    track.style.transform = 'translateX(' + currentOffset + 'px)';
+                    rafId = null;
+                    // After settling, silently reposition if we're on a clone
+                    checkLoop();
+                    return;
+                }
+                currentOffset += diff * 0.12;
+                track.style.transform = 'translateX(' + currentOffset + 'px)';
+                rafId = requestAnimationFrame(animate);
+            }
+
+            function animateTo(target) {
+                targetOffset = target;
+                if (!rafId) rafId = requestAnimationFrame(animate);
+            }
+
+            // ── 7. Silent repositioning for infinite loop ─────────
+            function checkLoop() {
+                // If we landed on a head clone → jump to the equivalent real item
+                if (allIndex < BUFFER) {
+                    const realEquiv = allIndex + total; // corresponding real item index in allItems
+                    loopSilent = true;
+                    allIndex   = realEquiv;
+                    currentOffset = targetOffset = offsetFor(allIndex);
+                    track.style.transform = 'translateX(' + currentOffset + 'px)';
+                    loopSilent = false;
+                }
+                // If we landed on a tail clone → jump to the equivalent real item
+                if (allIndex >= BUFFER + total) {
+                    const realEquiv = allIndex - total;
+                    loopSilent = true;
+                    allIndex   = realEquiv;
+                    currentOffset = targetOffset = offsetFor(allIndex);
+                    track.style.transform = 'translateX(' + currentOffset + 'px)';
+                    loopSilent = false;
+                }
+            }
+
+            // ── 8. Update visual state ────────────────────────────
+            function updateClasses() {
+                // active class on the centred allItem
+                allItems.forEach((el, i) => el.classList.toggle('vcine-active', i === allIndex));
+                // dots reflect realIndex
+                const dots = dotsWrap ? dotsWrap.querySelectorAll('.vcine-dot') : [];
+                dots.forEach((d, i) => d.classList.toggle('active', i === realIndex));
+                if (counter) counter.textContent = (realIndex + 1) + ' / ' + total;
+            }
+
+            function manageVideo() {
+                // Play only the centred item's video; pause all others
+                allItems.forEach((el, i) => {
+                    const v = el.querySelector('.vcine-vid');
+                    if (!v) return;
+                    if (i === allIndex) v.play().catch(() => {});
+                    else v.pause();
+                });
+            }
+
+            // ── 9. Navigate ───────────────────────────────────────
+            function goBy(delta) {
+                allIndex   += delta;
+                realIndex   = ((allIndex - BUFFER) % total + total) % total;
+                updateClasses();
+                manageVideo();
+                animateTo(offsetFor(allIndex));
+            }
+
+            function jumpTo(ri) {
+                // Jump to a specific real index (from dot click)
+                allIndex  = ri + BUFFER;
+                realIndex = ri;
+                updateClasses();
+                manageVideo();
+                animateTo(offsetFor(allIndex));
+            }
+
+            // ── 10. Click non-active items to focus them ──────────
+            allItems.forEach((el, i) => {
+                el.addEventListener('click', e => {
+                    if (e.target.closest('.vcine-open-btn')) return;
+                    if (i !== allIndex) { e.preventDefault(); goBy(i - allIndex); }
+                });
+            });
+
+            if (prevBtn) prevBtn.addEventListener('click', () => goBy(-1));
+            if (nextBtn) nextBtn.addEventListener('click', () => goBy(1));
+
+            // ── 11. Keyboard ──────────────────────────────────────
+            const stage = track.parentElement;
+            if (stage) {
+                stage.setAttribute('tabindex', '0');
+                stage.addEventListener('keydown', e => {
+                    if (e.key === 'ArrowLeft')  { e.preventDefault(); goBy(-1); }
+                    if (e.key === 'ArrowRight') { e.preventDefault(); goBy(1); }
+                });
+            }
+
+            // ── 12. Mouse drag ────────────────────────────────────
+            track.addEventListener('mousedown', e => {
+                if (e.target.closest('.vcine-open-btn')) return;
+                isDragging = true; dragStartX = e.clientX; dragDelta = 0;
+                if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            });
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                dragDelta = e.clientX - dragStartX;
+                track.style.transform = 'translateX(' + (currentOffset + dragDelta) + 'px)';
+            });
+            window.addEventListener('mouseup', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                const threshold = iw() * 0.26;
+                if (Math.abs(dragDelta) > threshold) goBy(dragDelta < 0 ? 1 : -1);
+                else animateTo(offsetFor(allIndex));
+                dragDelta = 0;
+            });
+
+            // ── 13. Touch ─────────────────────────────────────────
+            track.addEventListener('touchstart', e => {
+                tSX = e.changedTouches[0].clientX; tD = 0;
+                if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            }, { passive: true });
+            track.addEventListener('touchmove', e => {
+                tD = e.changedTouches[0].clientX - tSX;
+                track.style.transform = 'translateX(' + (currentOffset + tD) + 'px)';
+            }, { passive: true });
+            track.addEventListener('touchend', () => {
+                if (Math.abs(tD) > iw() * 0.2) goBy(tD < 0 ? 1 : -1);
+                else animateTo(offsetFor(allIndex));
+                tD = 0;
+            });
+
+            // ── 14. Resize recalc ─────────────────────────────────
+            let rTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(rTimer);
+                rTimer = setTimeout(() => {
+                    currentOffset = targetOffset = offsetFor(allIndex);
+                    track.style.transform = 'translateX(' + currentOffset + 'px)';
+                }, 100);
+            });
+
+            // ── 15. Init — defer by two rAFs so layout is fully painted ──
+            // Without this, getBoundingClientRect returns 0 for items not yet rendered.
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    currentOffset = targetOffset = offsetFor(allIndex);
+                    track.style.transform = 'translateX(' + currentOffset + 'px)';
+                    updateClasses();
+                    manageVideo();
+                });
+            });
+        }
+
+        // Override showVideoProjects to init carousel each time
+        function showVideoProjects() {
+            const section = document.getElementById('video-projects');
+            document.getElementById('web-projects').classList.add('hidden');
+            document.getElementById('social-media-projects').classList.add('hidden');
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                section.classList.remove('hidden');
+                reveal();
+                section.scrollIntoView({ behavior: 'smooth' });
+                lucide.createIcons();
+                // Remove any clones injected by a previous initVideoCinema call
+                const track = document.getElementById('vcineTrack');
+                if (track) track.querySelectorAll('[data-clone]').forEach(el => el.remove());
+                setTimeout(initVideoCinema, 100);
+            }, 400);
+        }
     </script>
 </body>
 </html>
