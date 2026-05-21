@@ -238,6 +238,11 @@
         [data-theme="dark"] #education .always-white-card p { color: #8A7E72 !important; }
         [data-theme="dark"] #education .always-white-card img { filter: none !important; }
 
+        /* ── Web CTA Section ── */
+        [data-theme="dark"] .web-cta-section { background-color: var(--dm-bg) !important; }
+        [data-theme="dark"] .web-cta-sub { color: var(--dm-text-mid) !important; }
+        [data-theme="dark"] .web-cta-bold { color: var(--dm-text) !important; }
+
         /* ── Portfolio folders ── */
         [data-theme="dark"] #portfolio                    { background-color: var(--dm-bg); }
         [data-theme="dark"] .filter-btn-folder            { background: var(--dm-surface) !important; color: var(--dm-text-mid) !important; border-color: var(--dm-border) !important; }
@@ -2789,6 +2794,46 @@
     <!-- =============================================
          HIGHLIGHTED PROJECTS — Petra Chocolate
     ============================================= -->
+    <section id="web-cta" class="web-cta-section bg-warm_beige fluid-section-py fluid-section-px relative z-20 overflow-hidden">
+        <div class="container mx-auto relative z-10 max-w-4xl flex flex-col items-center">
+            
+            <div class="relative w-full max-w-3xl mx-auto mb-10 md:mb-12 reveal">
+                
+                <div class="absolute -top-4 -left-2 md:-top-2 md:-left-8 z-30 bg-mint text-charcoal px-4 py-2 md:px-6 md:py-3 rounded-full font-space font-bold text-[10px] md:text-sm shadow-xl transform -rotate-6 hover:rotate-0 transition-transform cursor-default border border-white/20">
+                    UX / UI Design
+                </div>
+                
+                <div class="absolute top-1/4 -right-4 md:top-1/4 md:-right-12 z-30 bg-yellow_gold text-charcoal px-4 py-2 md:px-6 md:py-3 rounded-full font-space font-bold text-[10px] md:text-sm shadow-xl transform rotate-6 hover:rotate-0 transition-transform cursor-default border border-white/20">
+                    HTML • CSS • JS
+                </div>
+                
+                <div class="absolute bottom-1/4 -left-6 md:bottom-1/4 md:-left-16 z-30 bg-teal_primary text-white px-4 py-2 md:px-6 md:py-3 rounded-full font-space font-bold text-[10px] md:text-sm shadow-xl transform rotate-3 hover:-rotate-3 transition-transform cursor-default border border-white/20">
+                    Node.js & GitHub
+                </div>
+                
+                <div class="absolute -bottom-4 right-0 md:-bottom-2 md:-right-8 z-30 bg-coral text-white px-4 py-2 md:px-6 md:py-3 rounded-full font-space font-bold text-[10px] md:text-sm shadow-xl transform -rotate-3 hover:rotate-3 transition-transform cursor-default border border-white/20">
+                    VS Code
+                </div>
+
+                <div class="relative w-full z-20 flex justify-center drop-shadow-[0_15px_35px_rgba(0,0,0,0.25)]">
+                    <img src="https://i.ibb.co/39g1t6NS/Z-Creative-Studio-1.png" alt="Need a stunning website?" class="w-full max-w-[90%] md:max-w-full h-auto object-contain rounded-2xl">
+                </div>
+            </div>
+
+            <div class="text-center max-w-2xl reveal" style="transition-delay: 0.15s">
+                <p class="web-cta-sub font-inter text-sm md:text-base text-subtitle_beige leading-relaxed mb-8">
+                    I bring digital ideas to life through intuitive <strong class="web-cta-bold text-charcoal">UX/UI design</strong> and solid front-end development. Utilizing <strong class="web-cta-bold text-charcoal">HTML, CSS, JavaScript, Node.js, and GitHub</strong>, I build responsive, functional, and visually engaging websites tailored to your needs.
+                </p>
+                
+                <button onclick="showWebProjects()" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-space font-bold text-sm md:text-base text-white bg-teal_primary hover:bg-teal_primary/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 group">
+                    <span>Explore The Websites I Made</span>
+                    <i data-lucide="arrow-down" size="18" class="group-hover:translate-y-1 transition-transform"></i>
+                </button>
+            </div>
+            
+        </div>
+    </section>
+
     <section id="highlighted-projects" class="petra-section fluid-section-px relative z-20 overflow-hidden" style="padding-top:clamp(2rem,5vw,4rem);padding-bottom:clamp(2rem,5vw,4rem);">
 
         <!-- Atmospheric background image overlay -->
