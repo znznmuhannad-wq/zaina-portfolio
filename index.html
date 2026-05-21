@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Z Creative Studio | Zaina Alissa</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/PZ7PVdpT/22.png">
+    <!-- Preconnect to image CDNs for faster loading -->
+    <link rel="preconnect" href="https://i.ibb.co">
+    <link rel="preconnect" href="https://files.catbox.moe">
+    <link rel="dns-prefetch" href="https://i.ibb.co">
+    <link rel="dns-prefetch" href="https://files.catbox.moe">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -224,12 +229,14 @@
 
         /* ── Education section ── */
         [data-theme="dark"] #education                    { background-color: var(--dm-education-bg) !important; }
-        [data-theme="dark"] #education .bg-white          { background-color: var(--dm-surface) !important; }
         [data-theme="dark"] #education .border-sage       { border-color: var(--dm-border) !important; }
-        [data-theme="dark"] #education h2,
-        [data-theme="dark"] #education h3                 { color: var(--dm-text) !important; }
-        [data-theme="dark"] #education p                  { color: var(--dm-text-mid) !important; }
-        [data-theme="dark"] #education img[alt="SAE Institute Logo"] { filter: var(--dm-icon-filter); }
+        [data-theme="dark"] #education h2                 { color: var(--dm-text) !important; }
+        
+        /* Keep education card white and its text dark in dark mode */
+        [data-theme="dark"] #education .always-white-card { background-color: #ffffff !important; }
+        [data-theme="dark"] #education .always-white-card h3 { color: #2C2C2C !important; }
+        [data-theme="dark"] #education .always-white-card p { color: #8A7E72 !important; }
+        [data-theme="dark"] #education .always-white-card img { filter: none !important; }
 
         /* ── Portfolio folders ── */
         [data-theme="dark"] #portfolio                    { background-color: var(--dm-bg); }
@@ -366,11 +373,52 @@
         [data-theme="dark"] #contact                      { background-color: var(--dm-contact-bg) !important; }
         [data-theme="dark"] #contact h2                   { color: #F0E6D4 !important; }
         [data-theme="dark"] #contact .text-yellow_gold    { color: #F2B11C !important; }
+        [data-theme="dark"] #contact .text-white          { color: #F0E6D4 !important; }
+        [data-theme="dark"] #contact span                  { color: #D4C8B4 !important; }
+
+        /* ── Global dark section glow consistency ── */
+        /* Contact/footer dark sections get the same warm radial glow as the About section */
+        [data-theme="dark"] #contact,
+        [data-theme="dark"] footer {
+            background-image:
+                radial-gradient(ellipse 70% 50% at 20% 30%, rgba(66,138,151,0.07) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 40% at 80% 70%, rgba(180,140,100,0.05) 0%, transparent 60%);
+        }
+        /* Skills section dark glow */
+        [data-theme="dark"] #skills {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                radial-gradient(ellipse 60% 40% at 50% 50%, rgba(66,138,151,0.05) 0%, transparent 70%) !important;
+        }
+        /* Petra and Al Ameed section dark glow */
+        [data-theme="dark"] .petra-section {
+            background-color: var(--dm-bg);
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% 20%, rgba(66,138,151,0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(180,140,100,0.04) 0%, transparent 60%);
+        }
 
         /* Footer */
         [data-theme="dark"] footer                        { background-color: var(--dm-footer-bg) !important; border-color: rgba(255,255,255,0.06) !important; }
         [data-theme="dark"] footer span,
         [data-theme="dark"] footer p                      { color: var(--dm-text-sub) !important; }
+
+        /* ── Dark mode: Contact tear-tag card readability ── */
+        /* The yellow card itself stays yellow — it's on purpose */
+        /* But in dark mode soften it slightly to not feel harsh */
+        [data-theme="dark"] .tear-tag-card {
+            background-color: #D4960F !important; /* darker gold — less garish on dark bg */
+        }
+        [data-theme="dark"] .tear-tag-card h3,
+        [data-theme="dark"] .tear-tag-card p { color: #1E1A14 !important; }
+        /* Tear tab text — currently near-invisible on dark */
+        [data-theme="dark"] .tear-tag span {
+            color: rgba(30,26,20,0.75) !important;
+            opacity: 1 !important;
+        }
+        /* Tear tabs background stays white-ish */
+        [data-theme="dark"] .tear-tag { background: rgba(255,255,255,0.88) !important; }
 
         /* Global bg/surface Tailwind class overrides */
         [data-theme="dark"] .bg-white                     { background-color: var(--dm-surface) !important; }
@@ -606,6 +654,80 @@
             .folders-grid { grid-template-columns: repeat(4, 1fr); gap: 2.5rem 1.5rem; }
             #video-projects .grid { grid-template-columns: repeat(3, 1fr) !important; }
             #web-projects .grid   { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+
+        /* ── Performance — GPU containment ── */
+        .smd-section,
+        #highlighted-projects,
+        #plastic-art-section,
+        #video-projects,
+        #social-media-projects,
+        #packaging-projects {
+            contain: layout style;
+        }
+        /* Limit will-change to animating elements only — prevents layer explosion */
+        .smd-card { will-change: transform; }
+        .skill-note { will-change: transform, box-shadow; }
+        .vcine-item { will-change: opacity, box-shadow; }
+        /* Defer off-screen section rendering */
+        #video-projects.hidden,
+        #web-projects.hidden,
+        #social-media-projects.hidden,
+        #plastic-art-section.hidden,
+        #packaging-projects.hidden {
+            content-visibility: hidden;
+        }
+        /* Reduce expensive blur repaints on inactive modals */
+        #showcase-modal:not(.open) { display: none !important; }
+        #showcase-modal.open { display: flex !important; }
+        /* Artwork images: always show the full work, centered */
+        .petra-slide img,
+        .ameed-slide img,
+        .sm-card img,
+        .web-project-card img,
+        .pa-page img {
+            object-fit: contain;
+            object-position: center center;
+        }
+        /* Media that fills frame — keep subject at top */
+        .vcine-item video,
+        .petra-video {
+            object-fit: cover;
+            object-position: center top;
+        }
+        /* Social cards — poster fill, centered */
+        .smd-card img {
+            object-fit: cover;
+            object-position: center center;
+        }
+
+        /* ── Portfolio image showcases — natural framing on mobile ── */
+        @media (max-width: 640px) {
+            /* Petra video + carousel aspect ratio — less tall on small screens */
+            .petra-video-wrap,
+            .petra-carousel { aspect-ratio: 1/1; }
+            /* Al Ameed cinema — shorter on mobile */
+            .ameed-main-img { height: clamp(120px, 38vw, 200px); }
+            /* Al Ameed carousel — natural 4:3 on mobile */
+            .ameed-carousel { aspect-ratio: 4/3; }
+            /* Vcine items — slightly narrower, still 9:16 */
+            .vcine-item { width: clamp(140px, 52vw, 220px); }
+            /* Web project iframe previews — shorter height on mobile */
+            .web-project-card [style*="clamp(140px"] {
+                height: clamp(110px, 30vw, 160px) !important;
+            }
+            /* Sketchbook — compact on mobile */
+            .pa-book { aspect-ratio: 10/8; }
+            .pa-page img { padding: clamp(10px, 2.5vw, 18px); }
+            /* Social media showcase carousel cards */
+            .sm-card { width: clamp(140px, 48vw, 220px); }
+        }
+
+        /* ── Small tablet 641–767px ── */
+        @media (min-width: 641px) and (max-width: 767px) {
+            .petra-video-wrap,
+            .petra-carousel { aspect-ratio: 3/4; }
+            .vcine-item { width: clamp(180px, 42vw, 280px); }
         }
  
         /* Skills Section */
@@ -1069,8 +1191,8 @@
             position: relative;
             background: #1a1a1a;
             box-shadow: 0 16px 48px -10px rgba(0,0,0,0.16);
-            /* Tighter aspect ratio — less vertical dominance */
-            aspect-ratio: 3/4;
+            /* Reduced aspect ratio — more compact media presence */
+            aspect-ratio: 2/3;
         }
         .petra-video {
             width: 100%;
@@ -1083,7 +1205,7 @@
         .petra-gallery-wrap {
             display: flex;
             flex-direction: column;
-            gap: 0.625rem;
+            gap: 0.5rem;
         }
 
         /* Carousel — matches video aspect ratio */
@@ -1092,7 +1214,7 @@
             border-radius: 1.25rem;
             overflow: hidden;
             background: #111;
-            aspect-ratio: 3/4;
+            aspect-ratio: 2/3;
             box-shadow: 0 16px 48px -10px rgba(0,0,0,0.14);
             cursor: grab;
             user-select: none;
@@ -1104,7 +1226,7 @@
             width: 100%;
             height: 100%;
             will-change: transform;
-            transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
         }
         .petra-carousel-track.dragging {
             transition: none;
@@ -1120,14 +1242,13 @@
         .petra-slide img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center center;
             display: block;
             pointer-events: none;
-            transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            /* No zoom — keeps images visually stable during swipe */
         }
-        .petra-carousel:not(.dragging) .petra-slide.active img {
-            transform: scale(1.03);
-        }
+        /* Active slide: no transform to prevent edge drift */
 
         /* Arrow nav buttons */
         .petra-arrow {
@@ -1212,19 +1333,20 @@
             to   { opacity: 1; }
         }
 
-        /* ── Petra info cards (hover-expand, staggered) ── */
+        /* ── Petra info cards — compact 4-col single row ── */
         .petra-case-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.375rem;
         }
-        @media (max-width: 640px) { .petra-case-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px)  { .petra-case-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px)  { .petra-case-grid { grid-template-columns: 1fr; } }
 
         .petra-case-block {
             background: #fff;
             border: 1px solid rgba(0,0,0,0.055);
-            border-radius: 1rem;
-            padding: clamp(1rem, 2vw, 1.5rem);
+            border-radius: 0.875rem;
+            padding: clamp(0.75rem, 1.5vw, 1.1rem);
             position: relative;
             overflow: hidden;
             cursor: default;
@@ -1263,37 +1385,37 @@
 
         .petra-case-number {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
             letter-spacing: 0.14em;
             color: #B7C7C9;
-            margin-bottom: 0.625rem;
+            margin-bottom: 0.4rem;
         }
         .petra-case-divider {
-            width: 1.75rem;
+            width: 1.25rem;
             height: 2px;
             background: linear-gradient(to right, #428A97, #65C6BE);
-            margin-bottom: 0.875rem;
+            margin-bottom: 0.6rem;
             border-radius: 999px;
             transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1);
         }
-        .petra-case-block:hover .petra-case-divider { width: 3rem; }
+        .petra-case-block:hover .petra-case-divider { width: 2.25rem; }
 
         .petra-case-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(0.9rem, 1.1vw + 0.3rem, 1.1rem);
+            font-size: clamp(0.75rem, 0.9vw + 0.2rem, 0.92rem);
             font-weight: 700;
             color: #2C2C2C;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.375rem;
             transition: color 0.2s;
         }
         .petra-case-block:hover .petra-case-title { color: #428A97; }
 
         .petra-case-desc {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(0.8rem, 0.85vw + 0.2rem, 0.9rem);
+            font-size: clamp(0.72rem, 0.75vw + 0.15rem, 0.8rem);
             color: #8A7E72;
-            line-height: 1.72;
+            line-height: 1.62;
             max-height: 0;
             overflow: hidden;
             opacity: 0;
@@ -1303,23 +1425,23 @@
             margin-top: 0;
         }
         .petra-case-block:hover .petra-case-desc {
-            max-height: 160px;
+            max-height: 120px;
             opacity: 1;
-            margin-top: 0.5rem;
+            margin-top: 0.375rem;
         }
 
         /* Mobile: always show desc on touch (no hover) */
         @media (hover: none) {
-            .petra-case-desc { max-height: none; opacity: 1; margin-top: 0.5rem; }
+            .petra-case-desc { max-height: none; opacity: 1; margin-top: 0.375rem; }
             .petra-case-block::before { transform: scaleY(1); }
         }
 
         /* Mobile responsive for petra section */
         @media (max-width: 640px) {
             .petra-project-title { font-size: clamp(1.8rem, 9vw, 2.8rem); }
-            .petra-video-wrap  { border-radius: 0.875rem; }
+            .petra-video-wrap  { border-radius: 0.875rem; aspect-ratio: 3/4; }
             .petra-carousel    { border-radius: 0.875rem; aspect-ratio: 3/4; }
-            .petra-case-block  { padding: 0.875rem; }
+            .petra-case-block  { padding: 0.75rem; }
             .petra-arrow { width: 30px; height: 30px; }
         }
 
@@ -1488,70 +1610,95 @@
         .ameed-gallery-wrap {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 0.625rem;
+            align-items: center;
+            width: 100%;
+            gap: 0.375rem;
+            margin-top: 0.75rem;
         }
+        /* ── Ameed gallery: poster-portrait cards, Petra-matched behavior ── */
         .ameed-carousel {
             position: relative;
             border-radius: 1rem;
             overflow: hidden;
-            background: #111;
-            /* Reduced aspect ratio — less vertical space */
-            aspect-ratio: 16/9;
-            box-shadow: 0 12px 36px -8px rgba(0,0,0,0.12);
+            background: #f8f4ee;
+            /* Portrait poster proportion — taller, more intentional */
+            aspect-ratio: 3/4;
+            /* Max width constrains the carousel to a centered poster */
+            max-width: clamp(200px, 34vw, 340px);
+            /* Center it in the gallery wrap */
+            margin: 0 auto;
+            box-shadow:
+                0 4px 16px rgba(0,0,0,0.1),
+                0 16px 40px rgba(0,0,0,0.1);
             cursor: grab;
             user-select: none;
         }
+        [data-theme="dark"] .ameed-carousel { background: #1E1A14; }
         .ameed-carousel:active { cursor: grabbing; }
-        @media (max-width: 640px) { .ameed-carousel { border-radius: 0.75rem; aspect-ratio: 4/3; } }
+        @media (max-width: 640px) {
+            .ameed-carousel {
+                border-radius: 0.875rem;
+                aspect-ratio: 3/4;
+                max-width: clamp(140px, 52vw, 220px);
+            }
+        }
         .ameed-carousel-track {
             display: flex;
             width: 100%;
             height: 100%;
             will-change: transform;
-            transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
+            transition: transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94);
         }
         .ameed-carousel-track.dragging { transition: none; }
         .ameed-slide {
             min-width: 100%; height: 100%;
             flex-shrink: 0; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            background: #f8f4ee;
         }
+        [data-theme="dark"] .ameed-slide { background: #1E1A14; }
         .ameed-slide img {
             width: 100%; height: 100%;
-            object-fit: cover; display: block;
+            /* contain keeps the full poster visible — no aggressive cropping */
+            object-fit: contain;
+            object-position: center center;
+            display: block;
             pointer-events: none;
-            transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);
+            /* Consistent padding creates a card/poster frame feel */
+            padding: clamp(12px, 2.5vw, 24px);
+            box-sizing: border-box;
+            /* No active-slide zoom — keeps images stable during swipe */
         }
-        .ameed-carousel:not(.dragging) .ameed-slide.active img { transform: scale(1.03); }
         .ameed-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
-            z-index: 10; width: 36px; height: 36px; border-radius: 50%;
+            z-index: 10; width: 32px; height: 32px; border-radius: 50%;
             background: rgba(255,255,255,0.92); border: none; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             color: #2C2C2C; box-shadow: 0 4px 16px rgba(0,0,0,0.18);
             transition: background 0.2s, transform 0.2s;
         }
         .ameed-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
-        .ameed-arrow-prev { left: 0.75rem; }
-        .ameed-arrow-next { right: 0.75rem; }
+        .ameed-arrow-prev { left: 0.5rem; }
+        .ameed-arrow-next { right: 0.5rem; }
         .ameed-slide-counter {
-            position: absolute; bottom: 0.75rem; left: 0.75rem;
+            position: absolute; bottom: 0.625rem; right: 0.625rem;
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.8); z-index: 10;
-            background: rgba(0,0,0,0.28); padding: 3px 10px;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+            color: rgba(44,44,44,0.6); z-index: 10;
+            background: rgba(255,255,255,0.7); padding: 2px 8px;
             border-radius: 999px; backdrop-filter: blur(4px);
         }
+        [data-theme="dark"] .ameed-slide-counter { color: rgba(240,230,212,0.7); background: rgba(0,0,0,0.35); }
         .ameed-dots {
             display: flex; justify-content: center;
-            align-items: center; gap: 6px;
+            align-items: center; gap: 6px; margin-top: 0.5rem;
         }
         .ameed-dot {
-            width: 6px; height: 6px; border-radius: 50%;
+            width: 5px; height: 5px; border-radius: 50%;
             background: #B7C7C9; border: none; cursor: pointer; padding: 0;
-            transition: background 0.25s, transform 0.25s;
+            transition: background 0.25s, width 0.3s, border-radius 0.3s;
         }
-        .ameed-dot.active { background: #428A97; transform: scale(1.4); }
+        .ameed-dot.active { background: #428A97; width: 14px; border-radius: 999px; transform: none; }
 
         /* ── Al Ameed case text blocks ── */
         .ameed-case-grid {
@@ -1737,46 +1884,60 @@
         [data-theme="dark"] .vcine-active .vcine-open-btn { background: rgba(255,255,255,0.88); color: #1E1A15; }
 
         /* =============================================
-            SOCIAL MEDIA DESIGN — BRUTALIST HERO SECTION
+            SOCIAL MEDIA DESIGN — EDITORIAL HERO SECTION
         ============================================= */
+
+        /* ── Idle float keyframes — each card gets a unique one ── */
+        @keyframes smdFloat1 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(-5px,-8px)} }
+        @keyframes smdFloat2 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(6px,-10px)} }
+        @keyframes smdFloat3 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(-4px,7px)}  }
+        @keyframes smdFloat4 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(7px,-6px)}  }
+        @keyframes smdFloat5 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(-6px,9px)}  }
+        @keyframes smdFloat6 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(5px,6px)}   }
+        @keyframes smdFloat7 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(-7px,-5px)} }
+        @keyframes smdFloat8 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(8px,8px)}   }
+        @keyframes smdFloat9 { 0%,100%{transform:var(--smd-rot) translate(0px,0px)}  50%{transform:var(--smd-rot) translate(-5px,6px)}  }
+
         .smd-section {
             position: relative;
-            background: #0A0A0A;
             overflow: hidden;
-            /* min-height drives the composition */
             min-height: clamp(520px, 90vh, 900px);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            /* Light mode: warm beige — fully integrated with portfolio */
+            background: #EDE5D8;
+            background-image:
+                radial-gradient(ellipse 70% 50% at 50% 40%, rgba(66,138,151,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 55% 40% at 20% 80%, rgba(180,155,120,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 45% 35% at 80% 20%, rgba(101,198,190,0.05) 0%, transparent 55%);
         }
 
-        /* ── Optional noise texture ── */
+        /* Grain texture overlay */
         .smd-section::before {
             content: '';
             position: absolute; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-            opacity: 0.035;
+            opacity: 0.022;
             pointer-events: none;
             z-index: 1;
         }
 
-        /* ── Bottom gradient bleed into next section ── */
-        .smd-section::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: clamp(80px, 12vw, 160px);
-            background: linear-gradient(to bottom, transparent, #F5EFE6);
-            pointer-events: none;
-            z-index: 8;
+        /* Removed gradient bleed so the section looks like a solid floating card */
+        
+        /* Dark mode only becomes dark when the theme toggle is active */
+        [data-theme="dark"] .smd-section {
+            background: #1A1510;
+            background-image:
+                radial-gradient(ellipse 70% 50% at 50% 40%, rgba(66,138,151,0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 55% 40% at 20% 80%, rgba(180,140,100,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 45% 35% at 80% 20%, rgba(242,177,28,0.05) 0%, transparent 55%);
         }
-        [data-theme="dark"] .smd-section::after { background: linear-gradient(to bottom, transparent, #1E1A15); }
 
-        /* ── Typography layer — sits above cards, below top/bottom labels ── */
+        /* ── Typography layer ── */
         .smd-typography {
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1787,110 +1948,148 @@
             text-align: center;
         }
 
-        /* Top micro-label */
         .smd-label-top {
             font-family: 'Space Grotesk', sans-serif;
             font-size: clamp(9px, 1vw + 5px, 13px);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.28em;
-            color: rgba(255,255,255,0.45);
+            color: rgba(66,138,151,0.5);
             position: absolute;
             top: clamp(1.25rem, 3vw, 2.5rem);
             left: 50%; transform: translateX(-50%);
             white-space: nowrap;
+            z-index: 6;
         }
+        [data-theme="dark"] .smd-label-top { color: rgba(180,155,120,0.55); }
 
-        /* Main title */
         .smd-title {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: -0.025em;
             line-height: 0.9;
-            color: #ffffff;
-            /* 3 lines of huge text */
+            /* Dark charcoal in light mode — reads editorial against beige */
+            color: #2C2C2C;
             font-size: clamp(3.2rem, 10vw + 1rem, 11rem);
-            /* mix-blend lets it read over images but remain punchy on black */
-            mix-blend-mode: normal;
-            /* Subtle text-shadow for depth against image cards */
-            text-shadow: 0 2px 40px rgba(0,0,0,0.7);
+            text-shadow:
+                0 2px 30px rgba(0,0,0,0.08),
+                0 0 60px rgba(66,138,151,0.06);
+        }
+        /* In dark mode, warm off-white */
+        [data-theme="dark"] .smd-title {
+            color: #F0E6D4;
+            text-shadow:
+                0 2px 60px rgba(0,0,0,0.7),
+                0 0 120px rgba(66,138,151,0.12),
+                0 0 40px rgba(0,0,0,0.4);
         }
 
-        /* Bottom micro-label */
         .smd-label-bottom {
             font-family: 'Space Grotesk', sans-serif;
             font-size: clamp(9px, 1vw + 5px, 13px);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.28em;
-            color: rgba(255,255,255,0.45);
+            /* Subtle teal in light mode, warm amber in dark */
+            color: rgba(66,138,151,0.5);
             position: absolute;
             bottom: clamp(1.5rem, 4vw, 3.5rem);
             left: 50%; transform: translateX(-50%);
             white-space: nowrap;
+            z-index: 6;
         }
+        [data-theme="dark"] .smd-label-bottom { color: rgba(180,155,120,0.55); }
 
-        /* ── Floating image cards ── */
+        /* ── Floating cards layer ── */
         .smd-cards {
             position: absolute; inset: 0;
             z-index: 3;
-            pointer-events: none; /* parallax only — no interaction interference */
+            pointer-events: none;
         }
 
         .smd-card {
             position: absolute;
-            border-radius: clamp(0.625rem, 1.5vw, 1.25rem);
+            border-radius: clamp(0.5rem, 1.2vw, 1rem);
             overflow: hidden;
-            background: #111;
+            background: #f0e8dc;
             will-change: transform;
+            /* Lighter shadow for the beige bg — not so heavy */
             box-shadow:
-                0 4px 12px rgba(0,0,0,0.5),
-                0 16px 48px rgba(0,0,0,0.45),
-                0 32px 80px rgba(0,0,0,0.3);
-            transition: box-shadow 0.5s ease;
+                0 2px 8px rgba(0,0,0,0.12),
+                0 8px 28px rgba(0,0,0,0.14),
+                0 20px 50px rgba(0,0,0,0.1);
         }
+        [data-theme="dark"] .smd-card {
+            background: #111;
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.5),
+                0 12px 40px rgba(0,0,0,0.45),
+                0 28px 70px rgba(0,0,0,0.28);
+        }
+
         .smd-card img {
             width: 100%; height: 100%;
             object-fit: cover; display: block;
             pointer-events: none;
         }
 
-        /* ── Card layout definitions ── */
-        /* Each card: top%, left%, width, height, rotation, parallax-speed (data attr, used by JS) */
+        /* Subtle vignette — lighter for beige bg */
+        .smd-card::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 50%, rgba(0,0,0,0.08) 100%);
+            pointer-events: none;
+        }
+        [data-theme="dark"] .smd-card::after {
+            background: linear-gradient(135deg, rgba(255,240,210,0.06) 0%, transparent 50%, rgba(0,0,0,0.18) 100%);
+        }
 
-        /* Card 1 — left cluster, tall */
-        .smd-c1 { top: 8%;   left: -2%; width: clamp(120px,15vw,220px); aspect-ratio: 3/4; transform: rotate(-6deg); }
-        /* Card 2 — left cluster, square */
-        .smd-c2 { top: 42%;  left: 4%;  width: clamp(100px,12vw,180px); aspect-ratio: 1/1; transform: rotate(3deg); }
-        /* Card 3 — left-center, medium tall */
-        .smd-c3 { top: 5%;   left: 18%; width: clamp(110px,13vw,190px); aspect-ratio: 2/3; transform: rotate(8deg); }
-        /* Card 4 — center-left, wide */
-        .smd-c4 { top: 58%;  left: 14%; width: clamp(130px,16vw,240px); aspect-ratio: 4/3; transform: rotate(-4deg); }
-        /* Card 5 — right-center, tall */
-        .smd-c5 { top: 3%;   right: 18%;width: clamp(110px,13vw,190px); aspect-ratio: 2/3; transform: rotate(-8deg); }
-        /* Card 6 — right cluster, wide */
-        .smd-c6 { top: 50%;  right: 12%;width: clamp(130px,16vw,230px); aspect-ratio: 4/3; transform: rotate(5deg); }
-        /* Card 7 — far right, square */
-        .smd-c7 { top: 10%;  right: -1%;width: clamp(100px,12vw,180px); aspect-ratio: 1/1; transform: rotate(10deg); }
-        /* Card 8 — bottom right */
-        .smd-c8 { top: 68%;  right: 2%; width: clamp(90px, 11vw,160px); aspect-ratio: 3/4; transform: rotate(-7deg); }
-        /* Card 9 — bottom center-right */
-        .smd-c9 { top: 70%;  left: 32%; width: clamp(90px, 11vw,155px); aspect-ratio: 1/1; transform: rotate(4deg); }
+        /* ── 17 card positions — ALL uniform 4:5 ratio ── */
+        /* LEFT CLUSTER */
+        .smd-c1  { --smd-rot:rotate(-6deg);  top: 6%;  left: -2%;  width:clamp(135px,16vw,250px); aspect-ratio:4/5; animation:smdFloat1 7.2s ease-in-out infinite; }
+        .smd-c2  { --smd-rot:rotate(4deg);   top: 44%; left:  3%;  width:clamp(120px,14vw,205px); aspect-ratio:4/5; animation:smdFloat2 8.8s ease-in-out infinite; animation-delay:-2.1s; }
+        .smd-c3  { --smd-rot:rotate(9deg);   top: 4%;  left: 16%;  width:clamp(125px,15vw,220px); aspect-ratio:4/5; animation:smdFloat3 6.6s ease-in-out infinite; animation-delay:-1.3s; }
+        .smd-c4  { --smd-rot:rotate(-5deg);  top: 60%; left: 12%;  width:clamp(145px,17.5vw,260px); aspect-ratio:4/5; animation:smdFloat4 9.1s ease-in-out infinite; animation-delay:-3.5s; }
+        /* RIGHT CLUSTER */
+        .smd-c5  { --smd-rot:rotate(-9deg);  top: 2%;  right:17%;  width:clamp(125px,15vw,220px); aspect-ratio:4/5; animation:smdFloat5 7.8s ease-in-out infinite; animation-delay:-0.8s; }
+        .smd-c6  { --smd-rot:rotate(6deg);   top: 52%; right:10%;  width:clamp(145px,17.5vw,250px); aspect-ratio:4/5; animation:smdFloat6 8.2s ease-in-out infinite; animation-delay:-4.2s; }
+        .smd-c7  { --smd-rot:rotate(11deg);  top: 9%;  right: -1%; width:clamp(115px,14vw,205px); aspect-ratio:4/5; animation:smdFloat7 7.0s ease-in-out infinite; animation-delay:-2.8s; }
+        .smd-c8  { --smd-rot:rotate(-8deg);  top: 70%; right:  1%; width:clamp(105px,12.5vw,195px); aspect-ratio:4/5; animation:smdFloat8 9.4s ease-in-out infinite; animation-delay:-1.6s; }
+        /* CENTER-BOTTOM accent */
+        .smd-c9  { --smd-rot:rotate(5deg);   top: 72%; left: 30%;  width:clamp(105px,12.5vw,190px); aspect-ratio:4/5; animation:smdFloat9 6.8s ease-in-out infinite; animation-delay:-5.0s; }
+        /* SECONDARY SET */
+        .smd-c10 { --smd-rot:rotate(-3deg);  top: 28%; left: -3%;  width:clamp(110px,13vw,190px); aspect-ratio:4/5; animation:smdFloat3 8.0s ease-in-out infinite; animation-delay:-0.4s; }
+        .smd-c11 { --smd-rot:rotate(7deg);   top: 18%; right: 5%;  width:clamp(115px,14vw,195px); aspect-ratio:4/5; animation:smdFloat1 7.5s ease-in-out infinite; animation-delay:-3.0s; }
+        .smd-c12 { --smd-rot:rotate(-12deg); top: 36%; right:-2%;  width:clamp(100px,12vw,175px); aspect-ratio:4/5; animation:smdFloat5 9.8s ease-in-out infinite; animation-delay:-1.9s; }
+        .smd-c13 { --smd-rot:rotate(3deg);   top: 75%; left:  6%;  width:clamp(105px,13vw,180px); aspect-ratio:4/5; animation:smdFloat6 7.3s ease-in-out infinite; animation-delay:-4.7s; }
+        .smd-c14 { --smd-rot:rotate(-7deg);  top: 50%; left: 22%;  width:clamp(95px, 11vw,165px); aspect-ratio:4/5; animation:smdFloat2 8.6s ease-in-out infinite; animation-delay:-2.4s; }
+        .smd-c15 { --smd-rot:rotate(13deg);  top: 55%; right:22%;  width:clamp(95px, 11vw,165px); aspect-ratio:4/5; animation:smdFloat4 7.6s ease-in-out infinite; animation-delay:-0.6s; }
+        .smd-c16 { --smd-rot:rotate(-4deg);  top: 15%; left:  5%;  width:clamp(90px, 11vw,155px); aspect-ratio:4/5; animation:smdFloat7 8.4s ease-in-out infinite; animation-delay:-3.8s; }
+        .smd-c17 { --smd-rot:rotate(8deg);   top: 80%; right:15%;  width:clamp(90px, 11vw,155px); aspect-ratio:4/5; animation:smdFloat8 6.4s ease-in-out infinite; animation-delay:-1.1s; }
+        /* TERTIARY SET — 6 new images from the portfolio showcase */
+        .smd-c18 { --smd-rot:rotate(-5deg);  top: 22%; left: 26%;  width:clamp(95px, 11vw,160px); aspect-ratio:4/5; animation:smdFloat9 7.9s ease-in-out infinite; animation-delay:-2.7s; }
+        .smd-c19 { --smd-rot:rotate(10deg);  top: 38%; right:28%;  width:clamp(90px, 11vw,155px); aspect-ratio:4/5; animation:smdFloat1 8.1s ease-in-out infinite; animation-delay:-0.9s; }
+        .smd-c20 { --smd-rot:rotate(-8deg);  top: 62%; left: 34%;  width:clamp(85px, 10vw,145px); aspect-ratio:4/5; animation:smdFloat3 7.4s ease-in-out infinite; animation-delay:-4.1s; }
+        .smd-c21 { --smd-rot:rotate(6deg);   top:  8%; right:32%;  width:clamp(85px, 10vw,145px); aspect-ratio:4/5; animation:smdFloat5 9.2s ease-in-out infinite; animation-delay:-1.5s; }
+        .smd-c22 { --smd-rot:rotate(-11deg); top: 82%; left: 48%;  width:clamp(85px, 10vw,145px); aspect-ratio:4/5; animation:smdFloat2 6.9s ease-in-out infinite; animation-delay:-3.3s; }
+        .smd-c23 { --smd-rot:rotate(4deg);   top: 45%; left: 42%;  width:clamp(80px, 10vw,140px); aspect-ratio:4/5; animation:smdFloat6 8.7s ease-in-out infinite; animation-delay:-5.5s; }
 
-        /* Mobile: pull cards tighter, smaller */
+        /* Mobile: show fewer cards, hide secondaries and tertiaries */
         @media (max-width: 640px) {
             .smd-section { min-height: clamp(420px, 85vh, 680px); }
             .smd-title   { font-size: clamp(2.4rem, 12vw, 4.5rem); }
-            .smd-c1 { width: clamp(70px,18vw,120px); left: -3%; }
-            .smd-c2 { width: clamp(60px,15vw,100px); }
-            .smd-c3 { width: clamp(65px,16vw,110px); left: 14%; }
-            .smd-c4 { width: clamp(75px,18vw,130px); left: 10%; }
-            .smd-c5 { width: clamp(65px,16vw,110px); right: 14%; }
-            .smd-c6 { width: clamp(75px,18vw,130px); right: 8%; }
-            .smd-c7 { width: clamp(60px,15vw,100px); right: -2%; }
-            .smd-c8 { width: clamp(55px,14vw, 90px); }
-            .smd-c9 { width: clamp(55px,14vw, 90px); left: 28%; }
+            .smd-c10,.smd-c11,.smd-c12,.smd-c13,.smd-c14,.smd-c15,.smd-c16,.smd-c17,
+            .smd-c18,.smd-c19,.smd-c20,.smd-c21,.smd-c22,.smd-c23 { display: none; }
+            .smd-c1 { width:clamp(90px,22vw,150px); left:-3%; }
+            .smd-c2 { width:clamp(75px,18vw,125px); }
+            .smd-c3 { width:clamp(80px,20vw,135px); left:14%; }
+            .smd-c4 { width:clamp(95px,22vw,160px); left:10%; }
+            .smd-c5 { width:clamp(80px,20vw,135px); right:14%; }
+            .smd-c6 { width:clamp(95px,22vw,160px); right:8%;  }
+            .smd-c7 { width:clamp(75px,18vw,125px); right:-2%; }
+            .smd-c8 { width:clamp(70px,17vw, 115px); }
+            .smd-c9 { width:clamp(70px,17vw, 115px); left:28%; }
         }
 
         /* =============================================
@@ -1962,6 +2161,309 @@
         .sm-arrow-prev { left: 0.5rem; }
         .sm-arrow-next { right: 0.5rem; }
         [data-theme="dark"] .sm-arrow { background: var(--dm-surface-hi); border-color: var(--dm-border-hi); color: var(--dm-text); }
+        /* =============================================
+            UNIVERSAL MUTE / UNMUTE BUTTON
+        ============================================= */
+        .vid-mute-btn {
+            position: absolute;
+            z-index: 20;
+            bottom: 0.75rem;
+            left: 0.75rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Glassmorphism */
+            background: rgba(15, 12, 10, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+            color: #ffffff;
+            transition:
+                transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+                background 0.2s ease,
+                opacity 0.2s ease;
+        }
+        .vid-mute-btn:hover {
+            transform: scale(1.12);
+            background: rgba(15, 12, 10, 0.75);
+        }
+        .vid-mute-btn svg {
+            width: 15px; height: 15px;
+            transition: opacity 0.18s ease;
+            flex-shrink: 0;
+        }
+        /* Icon states — toggled via data-muted attr on the button */
+        .vid-mute-btn .icon-muted   { display: block; }
+        .vid-mute-btn .icon-unmuted { display: none; }
+        .vid-mute-btn[data-muted="false"] .icon-muted   { display: none; }
+        .vid-mute-btn[data-muted="false"] .icon-unmuted { display: block; }
+
+        /* In modal, position the mute btn more centrally */
+        #modal-media-container .vid-mute-btn {
+            bottom: 1rem; left: 1rem;
+            width: 38px; height: 38px;
+        }
+        /* Slightly larger tap target on touch screens */
+        @media (max-width: 640px) {
+            .vid-mute-btn { width: 32px; height: 32px; bottom: 0.5rem; left: 0.5rem; }
+        }
+        [data-theme="dark"] .vid-mute-btn {
+            background: rgba(0,0,0,0.6);
+        }
+        /* =============================================
+            PLASTIC ART — SKETCHBOOK SECTION
+        ============================================= */
+        #plastic-art-section {
+            background-color: #F0E9DC;
+            position: relative;
+            overflow: hidden;
+        }
+        [data-theme="dark"] #plastic-art-section {
+            background-color: #1E1A14;
+        }
+
+        /* Section heading style — softer, editorial */
+        .pa-section-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #8A7E72;
+            margin-bottom: 0.375rem;
+        }
+        .pa-section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(2.2rem, 5vw + 0.5rem, 5rem);
+            font-weight: 600;
+            color: #2C2C2C;
+            letter-spacing: -0.015em;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+        .pa-section-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.78rem, 0.9vw + 0.2rem, 0.9rem);
+            color: #8A7E72;
+            font-style: italic;
+        }
+        [data-theme="dark"] .pa-section-title { color: #F0E6D4; }
+
+        /* ── Book wrapper ── */
+        .pa-book-outer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1600px;
+            margin: 0 auto;
+            padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem);
+            user-select: none;
+        }
+
+        .pa-book {
+            position: relative;
+            width: min(780px, 94vw);
+            /* Book height = width * 0.72 for landscape sketchbook feel */
+            aspect-ratio: 10 / 7.2;
+            transform-style: preserve-3d;
+            /* Subtle 3-D tilt at rest */
+            transform: rotateX(3deg) rotateY(-1deg);
+            transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .pa-book:hover { transform: rotateX(1deg) rotateY(0deg); }
+
+        /* Book cover / back — warm cream board */
+        .pa-book-bg {
+            position: absolute; inset: 0;
+            border-radius: 4px 14px 14px 4px;
+            background: #E8DFD0;
+            box-shadow:
+                -6px 0 14px rgba(0,0,0,0.12),
+                0 8px 32px rgba(0,0,0,0.14),
+                0 2px 6px rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] .pa-book-bg { background: #2C2620; }
+
+        /* Spine — left edge dark band */
+        .pa-spine {
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: clamp(18px, 3vw, 30px);
+            background: linear-gradient(to right, #B8A898 0%, #D4C9BA 60%, transparent 100%);
+            border-radius: 4px 0 0 4px;
+            z-index: 2;
+        }
+        [data-theme="dark"] .pa-spine { background: linear-gradient(to right, #1a1510 0%, #2c2418 60%, transparent 100%); }
+
+        /* Spiral binding dots on spine */
+        .pa-spiral {
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: clamp(14px, 2.2vw, 22px);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 8% 0;
+        }
+        .pa-spiral-ring {
+            width: clamp(8px, 1.4vw, 14px);
+            height: clamp(8px, 1.4vw, 14px);
+            border-radius: 50%;
+            background: #9A8E82;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.15);
+        }
+        [data-theme="dark"] .pa-spiral-ring { background: #4A4036; }
+
+        /* Page stack — sits inside the book */
+        .pa-pages-stack {
+            position: absolute;
+            top: 4%; left: 5%; right: 2%; bottom: 3%;
+            border-radius: 2px 10px 10px 2px;
+            overflow: hidden;
+        }
+
+        /* Individual page */
+        .pa-page {
+            position: absolute; inset: 0;
+            border-radius: 2px 8px 8px 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: opacity 0.06s linear;
+            /* Warm cream paper — consistent base for all artworks */
+            background: #FDFAF5;
+            background-image:
+                linear-gradient(105deg, rgba(255,255,255,0.55) 0%, transparent 50%),
+                linear-gradient(to bottom, #FDFAF5, #F5F0E8);
+        }
+        [data-theme="dark"] .pa-page {
+            background: #2A2318;
+            background-image:
+                linear-gradient(105deg, rgba(255,255,255,0.06) 0%, transparent 50%),
+                linear-gradient(to bottom, #2E2820, #261F18);
+        }
+
+        /* Page turn — CSS flip animation */
+        .pa-page { backface-visibility: hidden; }
+
+        .pa-page img {
+            width: 100%; height: 100%;
+            /* object-fit: contain keeps full artwork visible */
+            object-fit: contain;
+            object-position: center center;
+            /* Consistent, slightly generous padding on all sides */
+            padding: clamp(16px, 3vw, 32px);
+            box-sizing: border-box;
+            display: block;
+        }
+
+        /* Page curl shadow on right edge of current page */
+        .pa-page::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 14px;
+            background: linear-gradient(to right, transparent, rgba(0,0,0,0.06));
+            border-radius: 0 8px 8px 0;
+            pointer-events: none;
+        }
+
+        /* ── Flip animation (CSS class-based) ── */
+        @keyframes paFlipOut {
+            0%   { transform: perspective(900px) rotateY(0deg);    opacity: 1; z-index: 10; }
+            49%  { opacity: 1; z-index: 10; }
+            50%  { opacity: 0; z-index: 1;  }
+            100% { transform: perspective(900px) rotateY(-90deg);  opacity: 0; z-index: 1; }
+        }
+        @keyframes paFlipIn {
+            0%   { transform: perspective(900px) rotateY(90deg);  opacity: 0; z-index: 9; }
+            49%  { opacity: 0; z-index: 9; }
+            50%  { opacity: 1; z-index: 9; }
+            100% { transform: perspective(900px) rotateY(0deg);   opacity: 1; z-index: 9; }
+        }
+        @keyframes paFlipOutBack {
+            0%   { transform: perspective(900px) rotateY(0deg);   opacity: 1; z-index: 10; }
+            49%  { opacity: 1; z-index: 10; }
+            50%  { opacity: 0; z-index: 1;  }
+            100% { transform: perspective(900px) rotateY(90deg);  opacity: 0; z-index: 1; }
+        }
+        @keyframes paFlipInBack {
+            0%   { transform: perspective(900px) rotateY(-90deg); opacity: 0; z-index: 9; }
+            49%  { opacity: 0; z-index: 9; }
+            50%  { opacity: 1; z-index: 9; }
+            100% { transform: perspective(900px) rotateY(0deg);   opacity: 1; z-index: 9; }
+        }
+        .pa-flip-out      { animation: paFlipOut     0.48s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .pa-flip-in       { animation: paFlipIn      0.48s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .pa-flip-out-back { animation: paFlipOutBack 0.48s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .pa-flip-in-back  { animation: paFlipInBack  0.48s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+        /* ── Navigation controls ── */
+        .pa-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+            margin-top: 0.75rem;
+        }
+        .pa-nav-btn {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(0,0,0,0.12);
+            background: rgba(255,255,255,0.75);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #2C2C2C;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), background 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .pa-nav-btn:hover { transform: scale(1.12); background: #fff; }
+        [data-theme="dark"] .pa-nav-btn { background: rgba(40,34,26,0.8); border-color: rgba(200,175,140,0.2); color: #F0E6D4; }
+
+        .pa-page-counter {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #8A7E72;
+            min-width: 52px;
+            text-align: center;
+        }
+
+        /* Corner flip hint */
+        .pa-corner-hint {
+            position: absolute;
+            bottom: 4%; right: 2%;
+            width: clamp(28px, 4vw, 42px);
+            height: clamp(28px, 4vw, 42px);
+            cursor: pointer;
+            z-index: 20;
+        }
+        .pa-corner-hint::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, transparent 50%, rgba(180,165,148,0.55) 50%);
+            border-radius: 0 0 8px 0;
+            transition: transform 0.25s ease;
+        }
+        .pa-corner-hint:hover::before { transform: scale(1.25) rotate(-3deg); }
+
+        /* Mobile: slightly simpler book depth */
+        @media (max-width: 640px) {
+            .pa-book { transform: rotateX(0deg) rotateY(0deg); width: min(420px, 96vw); }
+            .pa-book:hover { transform: none; }
+            .pa-spiral-ring { width: 8px; height: 8px; }
+        }
+
+        
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -2032,10 +2534,69 @@
                     </a>
                 </div>
             </div>
-            <div class="relative flex justify-center reveal" style="transition-delay: 0.2s">
-                <div class="relative w-full max-w-[220px] sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square flex items-center justify-center mx-auto">
-                    <div class="absolute w-[105%] h-[105%] rounded-full opacity-20 bg-teal_primary transform -translate-x-8 lg:-translate-x-12 translate-y-2"></div>
-                    <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa" class="hero-img-offset relative w-full h-auto object-contain drop-shadow-2xl z-10 max-h-[50vh] sm:max-h-[60vh] lg:max-h-[80vh] transform -translate-y-8">
+            <div class="relative flex justify-center reveal mt-20 lg:mt-0" style="transition-delay: 0.2s">
+                
+                <svg class="absolute -left-4 md:-left-12 top-10 md:-top-6 w-48 h-48 md:w-64 md:h-64 text-[#F2B11C] z-0 animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
+                    <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
+                </svg>
+                <svg class="absolute -right-4 md:-right-10 -bottom-10 md:-bottom-20 w-40 h-40 md:w-64 md:h-64 text-[#F2B11C] z-0 animate-[spin_35s_linear_infinite_reverse]" viewBox="0 0 100 100" fill="currentColor">
+                    <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
+                </svg>
+
+                <div class="relative z-10 animate-float flex justify-center" style="--tw-rotate: -3deg; transform-origin: top center;">
+                    
+                    <div class="absolute bottom-[calc(100%-24px)] left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-20">
+                        <div class="w-12 h-32 md:w-14 md:h-48 bg-[#E36A67] shadow-md flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, #000 10px, #000 20px);"></div>
+                            <div class="absolute bottom-2 w-3 h-3 bg-gray-200 rounded-full border border-gray-400 z-10"></div>
+                        </div>
+                        <svg width="50" height="70" viewBox="0 0 40 60" fill="none" class="-mt-4 drop-shadow-md z-20">
+                            <rect x="10" y="0" width="20" height="12" rx="3" fill="#E2E8F0" stroke="#64748B" stroke-width="2"/>
+                            <path d="M14 12 L26 12 L28 25 L12 25 Z" fill="#CBD5E1" stroke="#64748B" stroke-width="2"/>
+                            <path d="M20 25 C20 50 8 55 8 45 C8 40 18 35 25 35 C32 35 32 45 28 50" fill="none" stroke="#64748B" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="relative w-[260px] sm:w-[280px] md:w-[320px] bg-[#FDFBF7] rounded-[2rem] shadow-2xl p-5 md:p-6 flex flex-col items-center justify-between border border-gray-200 z-10" style="background-image: url('https://www.transparenttextures.com/patterns/crumpled-paper.png');">
+                        
+                        <div class="w-14 h-3.5 md:w-16 md:h-4 rounded-full shadow-[inset_0px_3px_6px_rgba(0,0,0,0.3)] mb-5 md:mb-6 border border-gray-300 relative overflow-hidden mt-1">
+                            <div class="absolute inset-0 bg-black/10"></div>
+                        </div>
+
+                        <div class="text-center flex flex-col items-center leading-none mb-5 md:mb-6 w-full">
+                            <span class="font-space font-bold text-[#2C2C2C] text-[10px] md:text-xs uppercase tracking-widest border border-[#2C2C2C] px-3 py-0.5 rounded-full mb-2">Your New</span>
+                            <span class="font-fredoka font-black text-[#2C2C2C] text-4xl sm:text-5xl md:text-6xl tracking-tighter" style="text-shadow: 1.5px 1.5px 0px rgba(0,0,0,0.1);">Favorite</span>
+                            <span class="font-space font-black text-[#FDFBF7] bg-[#2C2C2C] px-3 py-1 text-xl sm:text-2xl md:text-[1.7rem] transform -rotate-2 -mt-1 md:-mt-2">DESIGNER</span>
+                        </div>
+
+                        <div class="w-36 h-36 sm:w-40 sm:h-40 md:w-44 md:h-44 bg-transparent rounded-xl overflow-hidden mb-5 relative flex items-end justify-center">
+                            <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa" class="w-full h-full object-cover object-top drop-shadow-md relative z-10" fetchpriority="high">
+                        </div>
+
+                        <div class="text-center mb-4 md:mb-5 flex flex-col items-center">
+                            <h3 class="font-space font-bold text-[#2C2C2C] text-lg sm:text-xl md:text-2xl bg-[#F2B11C] px-3 py-0.5 leading-none">Zaina Alissa</h3>
+                            <p class="font-inter text-[#2C2C2C] text-[10px] sm:text-xs font-semibold mt-2 tracking-widest uppercase">Digital Media Designer</p>
+                        </div>
+
+                        <div class="flex items-center justify-center h-6 md:h-8 w-4/5 gap-[2px] opacity-80 mix-blend-multiply mt-2 mb-2">
+                            <div class="w-1.5 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-2.5 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-1 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-0.5 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-2 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-1.5 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-3 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-1 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-0.5 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-2 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-1 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-1.5 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-0.5 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-2.5 h-full bg-[#2C2C2C]"></div>
+                            <div class="w-1 h-full bg-[#2C2C2C]"></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -2072,7 +2633,14 @@
     </section>
  
     <!-- Skills Section -->
-    <section id="skills" class="fluid-section-py fluid-section-px -mt-16 md:-mt-24 relative z-10 overflow-visible">
+ <section id="skills" class="fluid-section-py fluid-section-px -mt-16 md:-mt-24 relative z-10 overflow-visible overflow-x-hidden">
+        <svg class="absolute -left-10 top-40 w-40 h-40 md:w-52 md:h-52 text-yellow_gold/60 z-0 animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
+            <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
+        </svg>
+        <svg class="absolute -right-10 bottom-20 w-48 h-48 md:w-64 md:h-64 text-mint/60 z-0 animate-[spin_30s_linear_infinite_reverse]" viewBox="0 0 100 100" fill="currentColor">
+            <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
+        </svg>
+
         <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-10 z-0" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
             <path d="M50 300 Q200 200 400 300 T750 280 T1100 320" stroke="#2C2C2C" stroke-width="2" stroke-dasharray="6 8" fill="none"/>
             <path d="M120 520 Q350 420 600 470 T1000 450" stroke="#2C2C2C" stroke-width="2" stroke-dasharray="6 8" fill="none"/>
@@ -2176,24 +2744,32 @@
          CINEMATIC CREATIVE REEL
     ============================================= -->
     <!-- =============================================
-         SOCIAL MEDIA DESIGN — BRUTALIST HERO SECTION
+         SOCIAL MEDIA DESIGN — EDITORIAL HERO SECTION
     ============================================= -->
-    <section class="smd-section" id="social-design-hero" aria-label="Social Media Design showcase">
+    <section class="smd-section rounded-[3rem] sm:rounded-[4rem] md:rounded-[6rem] lg:rounded-[100px] about-card-shadow mx-4 md:mx-8 my-8 md:my-12 relative z-20" id="social-design-hero" aria-label="Social Media Design showcase">
 
-        <!-- Top label -->
-        <span class="smd-label-top">Web Banners</span>
+        <div class="absolute top-6 left-8 md:top-10 md:left-14 w-[14px] h-[16px] md:w-[18px] md:h-[20px] rounded-full z-40" style="background: radial-gradient(circle at 35% 35%, #9fd5df 0%, #428A97 50%, #1a3a41 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.35), inset -2px -3px 4px rgba(0,0,0,0.3);"></div>
+        <div class="absolute top-6 right-8 md:top-10 md:right-14 w-[14px] h-[16px] md:w-[18px] md:h-[20px] rounded-full z-40" style="background: radial-gradient(circle at 35% 35%, #ffe9b1 0%, #F2B11C 50%, #7c5a08 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.35), inset -2px -3px 4px rgba(0,0,0,0.3);"></div>
 
-        <!-- Floating image cards — parallax via JS -->
-        <div class="smd-cards" id="smdCards" aria-hidden="true">
-            <div class="smd-card smd-c1" data-speed="0.035"><img src="https://i.ibb.co/zhD2XDQZ/al-hayat-17.jpg"          alt="" loading="lazy"></div>
-            <div class="smd-card smd-c2" data-speed="0.055"><img src="https://i.ibb.co/Kzpp40wv/armaniiiiiiiiiiiiii-10.jpg" alt="" loading="lazy"></div>
-            <div class="smd-card smd-c3" data-speed="0.025"><img src="https://i.ibb.co/VYXCR45G/IMG-5286.png"              alt="" loading="lazy"></div>
-            <div class="smd-card smd-c4" data-speed="0.045"><img src="https://i.ibb.co/0jSHZvx4/badges-Bahrin.png"         alt="" loading="lazy"></div>
-            <div class="smd-card smd-c5" data-speed="0.030"><img src="https://i.ibb.co/nN0jRbGM/Copy-of-The-Nature-of-Trauma.png" alt="" loading="lazy"></div>
-            <div class="smd-card smd-c6" data-speed="0.050"><img src="https://i.ibb.co/zchMKBb/IMG-5300.png"               alt="" loading="lazy"></div>
-            <div class="smd-card smd-c7" data-speed="0.020"><img src="https://i.ibb.co/n86FWbrF/IMG-5303.png"              alt="" loading="lazy"></div>
-            <div class="smd-card smd-c8" data-speed="0.060"><img src="https://i.ibb.co/0yPkFnR0/IMG-5929.png"              alt="" loading="lazy"></div>
-            <div class="smd-card smd-c9" data-speed="0.040"><img src="https://i.ibb.co/rRf87SS1/image.png"                 alt="" loading="lazy"></div>
+        <!-- Floating image cards — idle float + parallax via JS -->
+       <div class="smd-cards" id="smdCards" aria-hidden="true">
+            <div class="smd-card smd-c1"  data-speed="0.035" data-float-anim="smdFloat1"><img src="https://i.ibb.co/zhD2XDQZ/al-hayat-17.jpg"          alt="" loading="lazy"></div>
+            <div class="smd-card smd-c2"  data-speed="0.055" data-float-anim="smdFloat2"><img src="https://i.ibb.co/Kzpp40wv/armaniiiiiiiiiiiiii-10.jpg" alt="" loading="lazy"></div>
+            <div class="smd-card smd-c3"  data-speed="0.025" data-float-anim="smdFloat3"><img src="https://i.ibb.co/VYXCR45G/IMG-5286.png"              alt="" loading="lazy"></div>
+            <div class="smd-card smd-c4"  data-speed="0.045" data-float-anim="smdFloat4"><img src="https://i.ibb.co/0jSHZvx4/badges-Bahrin.png"         alt="" loading="lazy"></div>
+            <div class="smd-card smd-c5"  data-speed="0.030" data-float-anim="smdFloat5"><img src="https://i.ibb.co/nN0jRbGM/Copy-of-The-Nature-of-Trauma.png" alt="" loading="lazy"></div>
+            <div class="smd-card smd-c6"  data-speed="0.050" data-float-anim="smdFloat6"><img src="https://i.ibb.co/zchMKBb/IMG-5300.png"                alt="" loading="lazy"></div>
+            <div class="smd-card smd-c7"  data-speed="0.020" data-float-anim="smdFloat7"><img src="https://i.ibb.co/n86FWbrF/IMG-5303.png"              alt="" loading="lazy"></div>
+            <div class="smd-card smd-c8"  data-speed="0.060" data-float-anim="smdFloat8"><img src="https://i.ibb.co/0yPkFnR0/IMG-5929.png"              alt="" loading="lazy"></div>
+            <div class="smd-card smd-c9"  data-speed="0.040" data-float-anim="smdFloat9"><img src="https://i.ibb.co/rRf87SS1/image.png"                  alt="" loading="lazy"></div>
+            <div class="smd-card smd-c10" data-speed="0.032" data-float-anim="smdFloat3"><img src="https://i.ibb.co/Rr5rmzh/Labour-Day.png"            alt="" loading="lazy"></div>
+            <div class="smd-card smd-c11" data-speed="0.042" data-float-anim="smdFloat1"><img src="https://i.ibb.co/05xQwZV/MALAMEH.png"               alt="" loading="lazy"></div>
+            <div class="smd-card smd-c12" data-speed="0.022" data-float-anim="smdFloat5"><img src="https://i.ibb.co/kVZ4jgqT/Alnassr.png"              alt="" loading="lazy"></div>
+            <div class="smd-card smd-c13" data-speed="0.048" data-float-anim="smdFloat6"><img src="https://i.ibb.co/TDz6zZWQ/WAFF-Dwarf-Football-Championship.png" alt="" loading="lazy"></div>
+            <div class="smd-card smd-c14" data-speed="0.038" data-float-anim="smdFloat2"><img src="https://i.ibb.co/LdYQkkXP/Development-Peace.png"    alt="" loading="lazy"></div>
+            <div class="smd-card smd-c15" data-speed="0.028" data-float-anim="smdFloat4"><img src="https://i.ibb.co/WWhLf1rF/English-Not-every-negative-thought-is-a-problem-But-the-moment-you-believe-it-without-question-it.png" alt="" loading="lazy"></div>
+            <div class="smd-card smd-c16" data-speed="0.052" data-float-anim="smdFloat7"><img src="https://i.ibb.co/qY4b89bj/Copy-of-Copy-of-The-Nature-of-Trauma-3.png" alt="" loading="lazy"></div>
+            <div class="smd-card smd-c17" data-speed="0.036" data-float-anim="smdFloat8"><img src="https://i.ibb.co/qMXPLtk0/Copy-of-Copy-of-The-Nature-of-Trauma-2.png" alt="" loading="lazy"></div>
         </div>
 
         <!-- Main typography — above cards via z-index -->
@@ -2208,6 +2784,8 @@
 
     </section>
 
+
+    
     <!-- =============================================
          HIGHLIGHTED PROJECTS — Petra Chocolate
     ============================================= -->
@@ -2225,238 +2803,246 @@
             </div>
 
             <!-- Project Header -->
-            <div class="petra-project-header reveal mb-5 md:mb-7">
-                <div class="flex flex-wrap items-center gap-3 mb-4">
-                    <span class="petra-tag">Branding</span>
-                    <span class="petra-tag">Packaging</span>
-                    <span class="petra-tag">UI/UX</span>
-                    <span class="petra-tag">Visual Direction</span>
-                </div>
-                <h3 class="petra-project-title">Petra Chocolate</h3>
-                <p class="petra-project-subtitle">A luxury chocolate brand rooted in Jordanian identity — where heritage architecture meets modern visual storytelling.</p>
-            </div>
-
-            <!-- Main Visual Layout: Video + Carousel -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-5 md:mb-7 items-stretch">
-
-                <!-- LEFT: Cinematic brand video -->
-                <div class="reveal petra-video-wrap" style="transition-delay:0.1s">
-                    <video autoplay muted loop playsinline class="petra-video">
-                        <source src="https://files.catbox.moe/paacsw.mov" type="video/mp4">
-                    </video>
-                </div>
-
-                <!-- RIGHT: Clean image carousel — same aspect ratio as video -->
-                <div class="petra-gallery-wrap reveal" style="transition-delay:0.2s">
-                    <div class="petra-carousel" id="petraCarousel">
-
-                        <div class="petra-carousel-track" id="petraTrack">
-                            <div class="petra-slide active">
-                                <img src="https://i.ibb.co/xtdnp6vy/1.png" alt="Petra Chocolate — Brand Identity" loading="lazy">
-                            </div>
-                            <div class="petra-slide">
-                                <img src="https://i.ibb.co/fVqBcT7k/2.png" alt="Petra Chocolate — Packaging" loading="lazy">
-                            </div>
-                            <div class="petra-slide">
-                                <img src="https://i.ibb.co/KpLPbVZb/3.png" alt="Petra Chocolate — Visual" loading="lazy">
-                            </div>
-                            <div class="petra-slide">
-                                <img src="https://i.ibb.co/3m70n1c1/4.png" alt="Petra Chocolate — UI/UX" loading="lazy">
-                            </div>
-                            <div class="petra-slide">
-                                <img src="https://i.ibb.co/fzRJpVCF/5.png" alt="Petra Chocolate — Creative Direction" loading="lazy">
-                            </div>
+          <div id="project-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 reveal mb-6">
+                
+                <div class="group/card bg-white dark:bg-[#2C2620] border border-sage/30 dark:border-white/10 rounded-[1.5rem] p-5 md:p-6 shadow-sm flex flex-col justify-between transition-all hover:translate-y-[-6px] hover:shadow-xl">
+                    <div>
+                        <div class="relative w-full rounded-xl overflow-hidden mb-5 bg-[#F5EFE6] dark:bg-[#1E1A15] border border-sage/10" style="height: clamp(160px, 24vw, 240px);">
+                            <img src="https://i.ibb.co/xtdnp6vy/1.png" alt="Petra Chocolate Showcase" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover/card:scale-105" loading="lazy">
                         </div>
-
-                        <!-- Prev / Next arrows -->
-                        <button class="petra-arrow petra-arrow-prev" id="petraPrev" aria-label="Previous image">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-                        </button>
-                        <button class="petra-arrow petra-arrow-next" id="petraNext" aria-label="Next image">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                        </button>
-
-                        <!-- Slide counter -->
-                        <div class="petra-slide-counter" id="petraCounter">1 / 5</div>
-
+                        <div class="flex flex-wrap items-center gap-2 mb-3">
+                            <span class="petra-tag">Branding</span>
+                            <span class="petra-tag">Packaging</span>
+                            <span class="petra-tag">UI/UX</span>
+                        </div>
+                        <h3 class="font-fredoka font-bold text-2xl md:text-3xl text-charcoal dark:text-[#F0E6D4] mb-2 group-hover/card:text-teal_primary transition-colors">Petra Chocolate</h3>
+                        <p class="font-inter text-xs md:text-sm text-subtitle_beige dark:text-[#C4B49A] leading-relaxed mb-6">A luxury chocolate brand rooted in Jordanian identity — where heritage architecture meets modern visual storytelling.</p>
                     </div>
-
-                    <!-- Dot navigation -->
-                    <div class="petra-dots" id="petraDots">
-                        <button class="petra-dot active" data-index="0" aria-label="Image 1"></button>
-                        <button class="petra-dot" data-index="1" aria-label="Image 2"></button>
-                        <button class="petra-dot" data-index="2" aria-label="Image 3"></button>
-                        <button class="petra-dot" data-index="3" aria-label="Image 4"></button>
-                        <button class="petra-dot" data-index="4" aria-label="Image 5"></button>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Case Study Text Blocks -->
-            <div class="petra-case-grid reveal" style="transition-delay:0.15s">
-
-                <div class="petra-case-block">
-                    <div class="petra-case-number">01</div>
-                    <div class="petra-case-divider"></div>
-                    <h4 class="petra-case-title">Brand Identity</h4>
-                    <p class="petra-case-desc">A visual identity inspired by the ancient city of Petra — its rose-red stone, geometric reliefs, and cultural grandeur. The mark fuses Jordanian heritage with a luxury-first aesthetic built for premium gifting markets.</p>
-                </div>
-
-                <div class="petra-case-block">
-                    <div class="petra-case-number">02</div>
-                    <div class="petra-case-divider"></div>
-                    <h4 class="petra-case-title">Packaging Design</h4>
-                    <p class="petra-case-desc">A full packaging system across multiple flavours — featuring custom dielines, a signature triangular form, and sustainable luxury materials. Every unboxing moment is crafted as a cultural experience in itself.</p>
-                </div>
-
-                <div class="petra-case-block">
-                    <div class="petra-case-number">03</div>
-                    <div class="petra-case-divider"></div>
-                    <h4 class="petra-case-title">UI/UX Design</h4>
-                    <p class="petra-case-desc">A complete digital concept for the brand's e-commerce presence — from wireframes to high-fidelity screens. Designed to balance luxury aesthetics with intuitive navigation and seamless product discovery.</p>
-                </div>
-
-                <div class="petra-case-block">
-                    <div class="petra-case-number">04</div>
-                    <div class="petra-case-divider"></div>
-                    <h4 class="petra-case-title">Creative Direction</h4>
-                    <p class="petra-case-desc">End-to-end art direction unifying brand, print, and digital touchpoints. Every visual decision — from colour palette to typographic rhythm — serves a single narrative: Jordanian luxury, reimagined for the world.</p>
-                </div>
-
-            </div>
-
-            <!-- Petra — Download Project Files -->
-            <div class="petra-downloads reveal mt-4 md:mt-6" style="transition-delay:0.2s">
-                <p class="petra-dl-label">Project Files</p>
-                <div class="petra-dl-grid">
-                    <a href="https://drive.google.com/file/d/1eKoZFdRui0TLOPo-AEyi-jIEUHlPU1FC/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
-                        <div class="petra-dl-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        </div>
-                        <div>
-                            <p class="petra-dl-title">Branding Presentation</p>
-                            <p class="petra-dl-sub">Brand Identity & Visual System</p>
-                        </div>
-                        <div class="petra-dl-arrow">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                        </div>
-                    </a>
-                    <a href="https://drive.google.com/file/d/1W_ySWu9uFxmJWpgpp3bmQU1F54Nkp_cW/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
-                        <div class="petra-dl-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        </div>
-                        <div>
-                            <p class="petra-dl-title">Packaging Design</p>
-                            <p class="petra-dl-sub">Full Packaging System & Dielines</p>
-                        </div>
-                        <div class="petra-dl-arrow">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                        </div>
-                    </a>
-                    <a href="https://drive.google.com/file/d/1_ogMQAIFgDCbbXCG6et7FjA4bNaINp8b/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
-                        <div class="petra-dl-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        </div>
-                        <div>
-                            <p class="petra-dl-title">UI/UX Web Design</p>
-                            <p class="petra-dl-sub">Wireframes & High-Fidelity Screens</p>
-                        </div>
-                        <div class="petra-dl-arrow">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Section Divider -->
-            <div class="petra-project-divider reveal" style="transition-delay:0.1s"></div>
-
-            <!-- ── AL AMEED PROJECT ── -->
-            <div class="petra-project-header reveal mb-5 md:mb-7">
-                <div class="flex flex-wrap items-center gap-3 mb-4">
-                    <span class="petra-tag">Competition Entry</span>
-                    <span class="petra-tag">Visual Design</span>
-                    <span class="petra-tag">Cultural Storytelling</span>
-                    <span class="ameed-award-badge">🏆 2nd Place</span>
-                </div>
-                <h3 class="petra-project-title">Al Ameed Drive Through</h3>
-                <p class="petra-project-subtitle">A competition entry for Al Ameed Coffee's drive-through experience — a cinematic visual journey through Jordanian civilisation, flowing from north to south through cultural motifs, heritage architecture, and symbolic storytelling. <strong style="color:#2C2C2C; font-weight:700;">Awarded 2nd Place.</strong></p>
-            </div>
-
-            <!-- Al Ameed: Cinematic wide artwork with horizontal scroll -->
-            <div class="ameed-cinema-wrap reveal mb-3 md:mb-4" style="transition-delay:0.1s">
-                <div class="ameed-scroll-hint">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    <span>Scroll to explore</span>
-                </div>
-                <div class="ameed-cinema-viewport" id="ameedViewport">
-                    <div class="ameed-cinema-track" id="ameedTrack">
-                        <img src="https://i.ibb.co/whJD34dH/AL-AMEED-DRIVE-THROUGH.png" alt="Al Ameed Drive Through — Full artwork" class="ameed-main-img" draggable="false">
-                    </div>
-                </div>
-                <!-- Drag progress indicator -->
-                <div class="ameed-progress-bar">
-                    <div class="ameed-progress-fill" id="ameedProgress"></div>
-                </div>
-            </div>
-
-            <!-- Al Ameed: Supporting images carousel -->
-            <div class="ameed-gallery-wrap reveal" style="transition-delay:0.15s">
-                <div class="ameed-carousel" id="ameedCarousel">
-                    <div class="ameed-carousel-track" id="ameedCarouselTrack">
-                        <div class="ameed-slide active">
-                            <img src="https://i.ibb.co/7t7Vmy3C/AL-AMEED.png" alt="Al Ameed — Tote bag illustration" loading="lazy">
-                        </div>
-                        <div class="ameed-slide">
-                            <img src="https://i.ibb.co/rGQmXTqN/1.png" alt="Al Ameed — Mockup" loading="lazy">
-                        </div>
-                        <div class="ameed-slide">
-                            <img src="https://i.ibb.co/RJVdfsm/7.png" alt="Al Ameed — Design elements" loading="lazy">
-                        </div>
-                    </div>
-                    <button class="ameed-arrow ameed-arrow-prev" id="ameedPrev" aria-label="Previous">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                    <button onclick="toggleProjectShowcase('petra')" class="w-full py-3.5 rounded-full font-space font-bold text-sm text-white bg-teal_primary hover:bg-teal_primary/90 transition-all flex items-center justify-center gap-2 group shadow-md">
+                        <span>Explore Case Study</span>
+                        <i data-lucide="arrow-right" size="16" class="group-hover:translate-x-1 transition-transform"></i>
                     </button>
-                    <button class="ameed-arrow ameed-arrow-next" id="ameedNext" aria-label="Next">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+
+                <div class="group/card bg-white dark:bg-[#2C2620] border border-sage/30 dark:border-white/10 rounded-[1.5rem] p-5 md:p-6 shadow-sm flex flex-col justify-between transition-all hover:translate-y-[-6px] hover:shadow-xl">
+                    <div>
+                        <div class="relative w-full rounded-xl overflow-hidden mb-5 bg-[#F5EFE6] dark:bg-[#1E1A15] border border-sage/10" style="height: clamp(160px, 24vw, 240px);">
+                            <img src="https://i.ibb.co/7t7Vmy3C/AL-AMEED.png" alt="Al Ameed Drive Through Showcase" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover/card:scale-105" loading="lazy">
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 mb-3">
+                            <span class="petra-tag">Competition Entry</span>
+                            <span class="petra-tag">Visual Design</span>
+                            <span class="ameed-award-badge">🏆 2nd Place</span>
+                        </div>
+                        <h3 class="font-fredoka font-bold text-2xl md:text-3xl text-charcoal dark:text-[#F0E6D4] mb-2 group-hover/card:text-teal_primary transition-colors">Al Ameed Drive Through</h3>
+                        <p class="font-inter text-xs md:text-sm text-subtitle_beige dark:text-[#C4B49A] leading-relaxed mb-6">A visual journey through Jordanian civilisation, translating heritage architecture and symbolic storytelling into a continuous flow.</p>
+                    </div>
+                    <button onclick="toggleProjectShowcase('ameed')" class="w-full py-3.5 rounded-full font-space font-bold text-sm text-white bg-teal_primary hover:bg-teal_primary/90 transition-all flex items-center justify-center gap-2 group shadow-md">
+                        <span>Explore Case Study</span>
+                        <i data-lucide="arrow-right" size="16" class="group-hover:translate-x-1 transition-transform"></i>
                     </button>
-                    <div class="ameed-slide-counter" id="ameedCarouselCounter">1 / 3</div>
                 </div>
-                <div class="ameed-dots" id="ameedCarouselDots">
-                    <button class="ameed-dot active" data-index="0" aria-label="Image 1"></button>
-                    <button class="ameed-dot" data-index="1" aria-label="Image 2"></button>
-                    <button class="ameed-dot" data-index="2" aria-label="Image 3"></button>
-                </div>
+
             </div>
 
-            <!-- Al Ameed: Case study text blocks -->
-            <div class="ameed-case-grid reveal" style="transition-delay:0.2s">
+            <div id="detailed-project-showcase" class="hidden w-full space-y-12">
+                
+                <div id="details-petra" class="hidden space-y-6 md:space-y-8">
+                    <div class="petra-project-header mb-5 md:mb-7">
+                        <div class="flex flex-wrap items-center gap-3 mb-4">
+                            <span class="petra-tag">Branding</span>
+                            <span class="petra-tag">Packaging</span>
+                            <span class="petra-tag">UI/UX</span>
+                            <span class="petra-tag">Visual Direction</span>
+                        </div>
+                        <h3 class="petra-project-title">Petra Chocolate</h3>
+                        <p class="petra-project-subtitle">A luxury chocolate brand rooted in Jordanian identity — where heritage architecture meets modern visual storytelling.</p>
+                    </div>
 
-                <div class="petra-case-block">
-                    <div class="petra-case-number">01</div>
-                    <div class="petra-case-divider"></div>
-                    <h4 class="petra-case-title">The Concept</h4>
-                    <p class="petra-case-desc">Designed for a drive-through branding competition hosted by Al Ameed Coffee, the concept translates Jordanian civilisation into a continuous visual narrative — guiding the visitor's eye from north to south through the country's most iconic cultural landmarks and motifs.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-5 md:mb-7 items-stretch">
+                        <div class="petra-video-wrap" style="position:relative;">
+                            <video id="petraCaseVideo" muted loop playsinline class="petra-video">
+                                <source src="https://files.catbox.moe/paacsw.mov" type="video/mp4">
+                            </video>
+                            <button class="vid-mute-btn" data-muted="true" aria-label="Unmute video" onclick="toggleMute(this)">
+                                <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                                <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                            </button>
+                        </div>
+
+                        <div class="petra-gallery-wrap">
+                            <div class="petra-carousel" id="petraCarousel">
+                                <div class="petra-carousel-track" id="petraTrack">
+                                    <div class="petra-slide active">
+                                        <img src="https://i.ibb.co/xtdnp6vy/1.png" alt="Petra Chocolate — Brand Identity" loading="lazy">
+                                    </div>
+                                    <div class="petra-slide">
+                                        <img src="https://i.ibb.co/fVqBcT7k/2.png" alt="Petra Chocolate — Packaging" loading="lazy">
+                                    </div>
+                                    <div class="petra-slide">
+                                        <img src="https://i.ibb.co/KpLPbVZb/3.png" alt="Petra Chocolate — Visual" loading="lazy">
+                                    </div>
+                                    <div class="petra-slide">
+                                        <img src="https://i.ibb.co/3m70n1c1/4.png" alt="Petra Chocolate — UI/UX" loading="lazy">
+                                    </div>
+                                    <div class="petra-slide">
+                                        <img src="https://i.ibb.co/fzRJpVCF/5.png" alt="Petra Chocolate — Creative Direction" loading="lazy">
+                                    </div>
+                                </div>
+                                <button class="petra-arrow petra-arrow-prev" id="petraPrev" aria-label="Previous image">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                                </button>
+                                <button class="petra-arrow petra-arrow-next" id="petraNext" aria-label="Next image">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                                </button>
+                                <div class="petra-slide-counter" id="petraCounter">1 / 5</div>
+                            </div>
+                            <div class="petra-dots" id="petraDots">
+                                <button class="petra-dot active" data-index="0" aria-label="Image 1"></button>
+                                <button class="petra-dot" data-index="1" aria-label="Image 2"></button>
+                                <button class="petra-dot" data-index="2" aria-label="Image 3"></button>
+                                <button class="petra-dot" data-index="3" aria-label="Image 4"></button>
+                                <button class="petra-dot" data-index="4" aria-label="Image 5"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="petra-case-grid">
+                        <div class="petra-case-block">
+                            <div class="petra-case-number">01</div>
+                            <div class="petra-case-divider"></div>
+                            <h4 class="petra-case-title">Brand Identity</h4>
+                            <p class="petra-case-desc">A luxury visual identity fusing Jordanian heritage with rose-red stone geometry and a premium gifting aesthetic.</p>
+                        </div>
+                        <div class="petra-case-block">
+                            <div class="petra-case-number">02</div>
+                            <div class="petra-case-divider"></div>
+                            <h4 class="petra-case-title">Packaging Design</h4>
+                            <p class="petra-case-desc">Full multi-flavour packaging system with custom dielines, a signature triangular form, and sustainable luxury materials.</p>
+                        </div>
+                        <div class="petra-case-block">
+                            <div class="petra-case-number">03</div>
+                            <div class="petra-case-divider"></div>
+                            <h4 class="petra-case-title">UI/UX Design</h4>
+                            <p class="petra-case-desc">Complete e-commerce concept from wireframes to high-fidelity screens, balancing luxury aesthetics with intuitive navigation.</p>
+                        </div>
+                        <div class="petra-case-block">
+                            <div class="petra-case-number">04</div>
+                            <div class="petra-case-divider"></div>
+                            <h4 class="petra-case-title">Creative Direction</h4>
+                            <p class="petra-case-desc">End-to-end art direction across brand, print, and digital — one narrative: Jordanian luxury reimagined.</p>
+                        </div>
+                    </div>
+
+                    <div class="petra-downloads mt-4 md:mt-6">
+                        <p class="petra-dl-label">Project Files</p>
+                        <div class="petra-dl-grid">
+                            <a href="https://drive.google.com/file/d/1eKoZFdRui0TLOPo-AEyi-jIEUHlPU1FC/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
+                                <div class="petra-dl-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                                <div><p class="petra-dl-title">Branding Presentation</p><p class="petra-dl-sub">Brand Identity & Visual System</p></div>
+                                <div class="petra-dl-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1W_ySWu9uFxmJWpgpp3bmQU1F54Nkp_cW/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
+                                <div class="petra-dl-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                                <div><p class="petra-dl-title">Packaging Design</p><p class="petra-dl-sub">Full Packaging System & Dielines</p></div>
+                                <div class="petra-dl-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1_ogMQAIFgDCbbXCG6et7FjA4bNaINp8b/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card">
+                                <div class="petra-dl-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                                <div><p class="petra-dl-title">UI/UX Web Design</p><p class="petra-dl-sub">Wireframes & High-Fidelity Screens</p></div>
+                                <div class="petra-dl-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="petra-case-block">
-                    <div class="petra-case-number">02</div>
-                    <div class="petra-case-divider"></div>
-                    <h4 class="petra-case-title">Visual Language</h4>
-                    <p class="petra-case-desc">Environmental graphics drew from traditional Jordanian patterns, architectural heritage, and natural landscapes. The flow of imagery was intentionally designed as a journey — immersive, symbolic, and culturally resonant for every visitor passing through.</p>
+                <div id="details-ameed" class="hidden space-y-6 md:space-y-8">
+                    <div class="petra-project-header mb-5 md:mb-7">
+                        <div class="flex flex-wrap items-center gap-3 mb-4">
+                            <span class="petra-tag">Competition Entry</span>
+                            <span class="petra-tag">Visual Design</span>
+                            <span class="petra-tag">Cultural Storytelling</span>
+                            <span class="ameed-award-badge">🏆 2nd Place</span>
+                        </div>
+                        <h3 class="petra-project-title">Al Ameed Drive Through</h3>
+                        <p class="petra-project-subtitle">A competition entry for Al Ameed Coffee's drive-through experience — a cinematic visual journey through Jordanian civilisation. <strong style="color:#2C2C2C; font-weight:700;" class="dark:text-[#F0E6D4]">Awarded 2nd Place.</strong></p>
+                    </div>
+
+                    <div class="ameed-cinema-wrap mb-3 md:mb-4">
+                        <div class="ameed-scroll-hint">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            <span>Scroll to explore</span>
+                        </div>
+                        <div class="ameed-cinema-viewport" id="ameedViewport">
+                            <div class="ameed-cinema-track" id="ameedTrack">
+                                <img src="https://i.ibb.co/whJD34dH/AL-AMEED-DRIVE-THROUGH.png" alt="Al Ameed Drive Through" class="ameed-main-img" draggable="false">
+                            </div>
+                        </div>
+                        <div class="ameed-progress-bar">
+                            <div class="ameed-progress-fill" id="ameedProgress"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center mt-4 mb-2" id="ameedShowMoreBtnWrap">
+                        <button onclick="document.getElementById('ameedGalleryContainer').classList.remove('hidden'); this.parentElement.classList.add('hidden'); setTimeout(() => window.dispatchEvent(new Event('resize')), 50);" class="px-6 py-2.5 rounded-full font-space font-bold text-charcoal dark:text-[#F0E6D4] bg-transparent border-2 border-sage hover:border-teal_primary hover:text-teal_primary transition-all flex items-center gap-2 text-sm md:text-base group">
+                            <i data-lucide="image" size="18" class="group-hover:scale-110 transition-transform"></i>
+                            Show More Images
+                        </button>
+                    </div>
+
+                    <div id="ameedGalleryContainer" class="hidden w-full">
+                        <div class="ameed-gallery-wrap mb-4">
+                            <div class="ameed-carousel" id="ameedCarousel">
+                                <div class="ameed-carousel-track" id="ameedCarouselTrack">
+                                    <div class="ameed-slide active"><img src="https://i.ibb.co/7t7Vmy3C/AL-AMEED.png" alt="Al Ameed 1" loading="lazy"></div>
+                                    <div class="ameed-slide"><img src="https://i.ibb.co/rGQmXTqN/1.png" alt="Al Ameed 2" loading="lazy"></div>
+                                    <div class="ameed-slide"><img src="https://i.ibb.co/RJVdfsm/7.png" alt="Al Ameed 3" loading="lazy"></div>
+                                </div>
+                                <button class="ameed-arrow ameed-arrow-prev" id="ameedPrev" aria-label="Previous"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+                                <button class="ameed-arrow ameed-arrow-next" id="ameedNext" aria-label="Next"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+                                <div class="ameed-slide-counter" id="ameedCarouselCounter">1 / 3</div>
+                            </div>
+                            <div class="ameed-dots" id="ameedCarouselDots">
+                                <button class="ameed-dot active" data-index="0"></button>
+                                <button class="ameed-dot" data-index="1"></button>
+                                <button class="ameed-dot" data-index="2"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ameed-case-grid">
+                        <div class="petra-case-block">
+                            <div class="petra-case-number">01</div>
+                            <div class="petra-case-divider"></div>
+                            <h4 class="petra-case-title">The Concept</h4>
+                            <p class="petra-case-desc">A drive-through branding competition entry translating Jordanian civilisation into a continuous visual journey from north to south.</p>
+                        </div>
+                        <div class="petra-case-block">
+                            <div class="petra-case-number">02</div>
+                            <div class="petra-case-divider"></div>
+                            <h4 class="petra-case-title">Visual Language</h4>
+                            <p class="petra-case-desc">Environmental graphics drawn from traditional Jordanian patterns, architecture, and landscape.</p>
+                        </div>
+                        <div class="petra-case-block">
+                            <div class="petra-case-number">03</div>
+                            <div class="petra-case-divider"></div>
+                            <h4 class="petra-case-title">Result</h4>
+                            <p class="petra-case-desc">Awarded 2nd Place — the concept extended into merchandise including illustrated tote bags.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="petra-case-block">
-                    <div class="petra-case-number">03</div>
-                    <div class="petra-case-divider"></div>
-                    <h4 class="petra-case-title">Result</h4>
-                    <p class="petra-case-desc">The design was recognised with Second Place in the competition — a validation of both the cultural depth and the visual craft invested in the project. Merchandise concepts, including illustrated tote bags, were developed as extensions of the visual identity.</p>
+                <div class="flex justify-center pt-4">
+                    <button onclick="hideProjectShowcase()" class="px-8 py-3 rounded-full font-space font-bold text-charcoal dark:text-[#F0E6D4] bg-transparent border-2 border-sage hover:border-coral hover:text-coral transition-all flex items-center gap-2 text-sm md:text-base group">
+                        <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i>
+                        Collapse Project
+                    </button>
                 </div>
 
             </div>
 
         </div>
+        
     </section>
     <!-- =============================================
          PORTFOLIO SECTION — Animated Folders
@@ -2496,34 +3082,19 @@
                     <div class="folder-sub">UX/UI + DEV</div>
                 </div>
 
-                <!-- Graphic Design -->
+                <!-- Packaging Design — links to Petra packaging showcase -->
                 <div class="folder-wrap reveal" data-cat="design">
-                    <div class="folder f-teal" onclick="toggleFolder(this)">
+                    <div class="folder f-gold" onclick="showPackagingProjects()">
                         <div class="folder-back">
-                            <div class="paper"><div class="paper-content">Branding</div></div>
-                            <div class="paper"><div class="paper-content">Visuals</div></div>
-                            <div class="paper"><div class="paper-content">Identity</div></div>
-                            <div class="folder-front"></div>
-                            <div class="folder-front right"></div>
-                        </div>
-                    </div>
-                    <div class="folder-label">Graphic Design</div>
-                    <div class="folder-sub">VISUAL WORK</div>
-                </div>
-
-                <!-- Packaging Design -->
-                <div class="folder-wrap reveal" data-cat="design">
-                    <div class="folder f-gold" onclick="toggleFolder(this)">
-                        <div class="folder-back">
+                            <div class="paper"><div class="paper-content">Petra</div></div>
                             <div class="paper"><div class="paper-content">Packaging</div></div>
-                            <div class="paper"><div class="paper-content">Concept</div></div>
-                            <div class="paper"><div class="paper-content">Mockups</div></div>
+                            <div class="paper"><div class="paper-content">Design</div></div>
                             <div class="folder-front"></div>
                             <div class="folder-front right"></div>
                         </div>
                     </div>
                     <div class="folder-label">Packaging</div>
-                    <div class="folder-sub">PRODUCT DESIGN</div>
+                    <div class="folder-sub">PETRA CHOCOLATE</div>
                 </div>
 
                 <!-- Social Media -->
@@ -2541,6 +3112,21 @@
                     <div class="folder-sub">CONTENT & POSTS</div>
                 </div>
 
+                <!-- Plastic Art -->
+                <div class="folder-wrap reveal" data-cat="design">
+                    <div class="folder f-teal" onclick="showPlasticArt()">
+                        <div class="folder-back">
+                            <div class="paper"><div class="paper-content">Drawings</div></div>
+                            <div class="paper"><div class="paper-content">Sketches</div></div>
+                            <div class="paper"><div class="paper-content">Works</div></div>
+                            <div class="folder-front"></div>
+                            <div class="folder-front right"></div>
+                        </div>
+                    </div>
+                    <div class="folder-label">Plastic Art</div>
+                    <div class="folder-sub">TRADITIONAL WORKS</div>
+                </div>
+
                 <!-- Videography -->
                 <div class="folder-wrap reveal" data-cat="video">
                     <div class="folder f-coral" onclick="showVideoProjects()">
@@ -2556,6 +3142,64 @@
                     <div class="folder-sub">REELS & EDITING</div>
                 </div>
 
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         PLASTIC ART — SKETCHBOOK SECTION
+    ============================================= -->
+    <section id="plastic-art-section" class="fluid-section-py fluid-section-px relative z-20 hidden">
+        <div class="container mx-auto">
+
+            <!-- Header -->
+            <div class="mb-6 md:mb-8 reveal">
+                <p class="pa-section-label">Sketchbook Archive</p>
+                <h2 class="pa-section-title">Plastic Art</h2>
+                <p class="pa-section-sub">Traditional drawings &amp; handcrafted works</p>
+            </div>
+
+            <!-- Sketchbook -->
+            <div class="pa-book-outer reveal" style="transition-delay:0.1s">
+                <div class="pa-book" id="paBook">
+
+                    <!-- Book back board -->
+                    <div class="pa-book-bg"></div>
+
+                    <!-- Spine gradient -->
+                    <div class="pa-spine"></div>
+
+                    <!-- Spiral rings (12 rings) -->
+                    <div class="pa-spiral" id="paSpiral"></div>
+
+                    <!-- Page stack — JS renders pages here -->
+                    <div class="pa-pages-stack" id="paPagesStack">
+                        <!-- Pages injected by JS -->
+                    </div>
+
+                    <!-- Corner flip tap target -->
+                    <div class="pa-corner-hint" id="paCornerHint" title="Flip page"></div>
+
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="pa-nav reveal" style="transition-delay:0.15s">
+                <button class="pa-nav-btn" id="paPrev" aria-label="Previous page">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <span class="pa-page-counter" id="paCounter">1 / 27</span>
+                <button class="pa-nav-btn" id="paNext" aria-label="Next page">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+
+            <!-- Close button -->
+            <div class="mt-8 md:mt-10 flex justify-center reveal">
+                <button onclick="hidePlasticArt()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-teal_primary hover:text-teal_primary transition-all flex items-center gap-2 text-sm md:text-base group">
+                    <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i>
+                    Close Sketchbook
+                </button>
             </div>
         </div>
     </section>
@@ -2787,6 +3431,68 @@
     </section>
 
     <!-- =============================================
+         PACKAGING SHOWCASE — Petra Chocolate
+    ============================================= -->
+    <section id="packaging-projects" class="fluid-section-py fluid-section-px relative z-20 hidden">
+        <div class="container mx-auto">
+
+            <div class="mb-6 md:mb-8 reveal">
+                <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-yellow_gold">Showcase</h3>
+                <h2 class="fluid-h2-section font-bold font-space text-charcoal mb-2">Packaging Design</h2>
+                <p class="fluid-body text-subtitle_beige max-w-lg">Petra Chocolate — a full luxury packaging system rooted in Jordanian heritage.</p>
+            </div>
+
+            <!-- Packaging image carousel (reuses petra carousel images) -->
+            <div class="petra-carousel reveal" id="packagingCarousel" style="aspect-ratio:4/3; max-width:720px; margin:0 auto;" style="transition-delay:0.1s">
+                <div class="petra-carousel-track" id="packagingTrack">
+                    <div class="petra-slide active"><img src="https://i.ibb.co/fVqBcT7k/2.png" alt="Petra Packaging 1" loading="lazy"></div>
+                    <div class="petra-slide"><img src="https://i.ibb.co/KpLPbVZb/3.png" alt="Petra Packaging 2" loading="lazy"></div>
+                    <div class="petra-slide"><img src="https://i.ibb.co/3m70n1c1/4.png" alt="Petra Packaging 3" loading="lazy"></div>
+                    <div class="petra-slide"><img src="https://i.ibb.co/fzRJpVCF/5.png" alt="Petra Packaging 4" loading="lazy"></div>
+                </div>
+                <button class="petra-arrow petra-arrow-prev" id="packPrev" aria-label="Previous">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button class="petra-arrow petra-arrow-next" id="packNext" aria-label="Next">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <div class="petra-slide-counter" id="packCounter">1 / 4</div>
+            </div>
+
+            <!-- Dots -->
+            <div class="petra-dots mt-3 reveal" id="packDots">
+                <button class="petra-dot active" data-index="0"></button>
+                <button class="petra-dot" data-index="1"></button>
+                <button class="petra-dot" data-index="2"></button>
+                <button class="petra-dot" data-index="3"></button>
+            </div>
+
+            <!-- Download card -->
+            <div class="mt-6 reveal">
+                <a href="https://drive.google.com/file/d/1W_ySWu9uFxmJWpgpp3bmQU1F54Nkp_cW/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="petra-dl-card" style="max-width:360px; opacity:1; transform:none;">
+                    <div class="petra-dl-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <div>
+                        <p class="petra-dl-title">Packaging Design PDF</p>
+                        <p class="petra-dl-sub">Full Packaging System & Dielines</p>
+                    </div>
+                    <div class="petra-dl-arrow">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </div>
+                </a>
+            </div>
+
+            <div class="mt-8 flex justify-center reveal">
+                <button onclick="hidePackagingProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-yellow_gold hover:text-yellow_gold transition-all flex items-center gap-2 text-sm md:text-base group">
+                    <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i>
+                    Close Showcase
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
          SOCIAL MEDIA SHOWCASE SECTION
     ============================================= -->
     <section id="social-media-projects" class="fluid-section-py fluid-section-px relative z-20 hidden">
@@ -2856,11 +3562,16 @@
                 </a>
             </div>
             <div id="modal-media-container">
-                <video id="modal-video" controls playsinline>
+                <video id="modal-video" playsinline>
                     <source id="modal-video-src" src="" type="video/mp4">
                 </video>
                 <img id="modal-img" src="" alt="Project showcase">
                 <iframe id="modal-iframe" src="" title="Project preview" style="display:none; width:100%; height:80vh; border:0; border-radius:1rem;"></iframe>
+                <!-- Mute control for modal video -->
+                <button class="vid-mute-btn" id="modalMuteBtn" data-muted="false" aria-label="Mute video" onclick="toggleMute(this)" style="display:none;">
+                    <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                    <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                </button>
             </div>
             <div id="modal-nav">
                 <button class="modal-nav-btn" onclick="modalNav(-1)">
@@ -2880,21 +3591,28 @@
             <div class="mb-6 md:mb-8">
                 <h2 class="fluid-h2-section font-bold font-fredoka text-charcoal">Education</h2>
             </div>
-            <div class="p-5 md:p-8 rounded-[1.5rem] md:rounded-[32px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-5 md:gap-6 border-sage bg-white">
+            <div class="always-white-card p-5 md:p-8 rounded-[1.5rem] md:rounded-[32px] custom-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-5 md:gap-6 border-sage bg-white">
                 <div>
                     <h3 class="fluid-h3-card font-space font-bold mb-2 text-charcoal">Digital Media Design</h3>
                     <p class="fluid-body opacity-70">SAE Institute Amman</p>
                 </div>
                 <div class="flex flex-col items-start md:items-end">
-                    <img src="https://i.ibb.co/BHkpjXLH/SAE-Institute-Logo.png" alt="SAE Institute Logo" class="h-12 md:h-16 w-auto object-contain">
+                    <img src="https://i.ibb.co/BHkpjXLH/SAE-Institute-Logo.png" alt="SAE Institute Logo" class="h-12 md:h-16 w-auto object-contain" loading="lazy" decoding="async">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="fluid-section-py fluid-section-px pb-32 md:pb-52 bg-charcoal text-white rounded-t-[3rem] sm:rounded-t-[5rem] md:rounded-t-[100px] relative h-auto">
-        <div class="container mx-auto">
+   <section id="contact" class="fluid-section-py fluid-section-px pb-32 md:pb-52 bg-charcoal text-white rounded-t-[3rem] sm:rounded-t-[5rem] md:rounded-t-[100px] relative overflow-hidden h-auto">
+                <svg class="absolute -right-10 md:right-10 top-10 md:top-20 w-48 h-48 md:w-64 md:h-64 text-yellow_gold/10 z-0 animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
+            <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
+        </svg>
+        <svg class="absolute -left-10 md:left-20 bottom-10 md:bottom-20 w-40 h-40 md:w-56 md:h-56 text-teal_primary/10 z-0 animate-[spin_35s_linear_infinite_reverse]" viewBox="0 0 100 100" fill="currentColor">
+            <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
+        </svg>
+
+        <div class="container mx-auto relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center">
                 <div class="reveal">
                     <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-4 text-yellow_gold">Let's Talk</h3>
@@ -3222,6 +3940,7 @@
             // Hide other open showcase sections
             document.getElementById('video-projects').classList.add('hidden');
             document.getElementById('web-projects').classList.add('hidden');
+            document.getElementById('packaging-projects').classList.add('hidden');
             document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
                 section.classList.remove('hidden');
@@ -3238,10 +3957,33 @@
             setTimeout(() => { section.classList.add('hidden'); }, 600);
         }
 
+        function showPackagingProjects() {
+            const section = document.getElementById('packaging-projects');
+            ['video-projects','web-projects','social-media-projects','plastic-art-section'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                section.classList.remove('hidden');
+                reveal();
+                section.scrollIntoView({ behavior: 'smooth' });
+                lucide.createIcons();
+                // Init packaging carousel
+                makeCarousel({ carouselId:'packagingCarousel', trackId:'packagingTrack', counterId:'packCounter', dotsSelector:'#packDots', prevId:'packPrev', nextId:'packNext', slideClass:'petra-slide', dotClass:'petra-dot', autoDelay:5000 });
+            }, 400);
+        }
+        function hidePackagingProjects() {
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => { document.getElementById('packaging-projects').classList.add('hidden'); }, 600);
+        }
+
         function showWebProjects() {
             const section = document.getElementById('web-projects');
             document.getElementById('video-projects').classList.add('hidden');
             document.getElementById('social-media-projects').classList.add('hidden');
+            document.getElementById('plastic-art-section').classList.add('hidden');
+            document.getElementById('packaging-projects').classList.add('hidden');
             document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
                 section.classList.remove('hidden');
@@ -3312,11 +4054,13 @@
         ];
 
         let modalCurrentIndex = 0;
+        window.modalCurrentType = 'video'; // exposed for mute system
         let modalCurrentType = 'video'; // 'video' | 'image' | 'web'
         let modalCurrentSet = videoSources;
 
         function openModal(type, index, set) {
             modalCurrentType = type;
+            window.modalCurrentType = type;
             modalCurrentIndex = index;
 
             const video   = document.getElementById('modal-video');
@@ -3450,98 +4194,335 @@
             });
         }
 
-        // ── Social Media Design — Parallax cards ────────────────
-        (function() {
-            const section = document.getElementById('social-design-hero');
-            const cards   = section ? Array.from(section.querySelectorAll('.smd-card')) : [];
-            if (!cards.length) return;
+        // ── Social Media Design — Idle Float ────
+        // Hover/Parallax JS removed. The floating effect is now entirely handled
+        // by the CSS @keyframes (smdFloat1, smdFloat2, etc.) applied to the cards.
 
-            // Store each card's CSS baseline transform (rotation) separately
-            // so we only ADD to it, never overwrite
-            const baseRotations = cards.map(c => {
-                // Read rotation from computed style by extracting from inline transform
-                const style = window.getComputedStyle(c);
-                const matrix = style.transform;
-                if (matrix && matrix !== 'none') {
-                    const m = matrix.match(/matrix\(([^)]+)\)/);
-                    if (m) {
-                        const [a, b] = m[1].split(',').map(Number);
-                        return Math.round(Math.atan2(b, a) * (180 / Math.PI));
+        // ── UNIVERSAL MUTE / UNMUTE SYSTEM ───────────────────────
+        (function() {
+            // SVG markup for the two icon states (reused by factory)
+            const ICON_MUTED = `<svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
+            const ICON_LIVE  = `<svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+
+            // Global registry — ensures only one video is unmuted at a time
+            let currentUnmuted = null; // { video, btn }
+
+            function muteAll() {
+                if (currentUnmuted) {
+                    currentUnmuted.video.muted = true;
+                    if (currentUnmuted.btn) {
+                        currentUnmuted.btn.setAttribute('data-muted', 'true');
+                        currentUnmuted.btn.setAttribute('aria-label', 'Unmute video');
+                    }
+                    currentUnmuted = null;
+                }
+            }
+
+            // Exposed globally so HTML onclick="toggleMute(this)" works
+            window.toggleMute = function(btn) {
+                const container = btn.closest('[data-muted]') === btn ? btn.parentElement : btn.parentElement;
+                // Find the video in the same container
+                const video = container.querySelector('video') || document.getElementById('modal-video');
+                if (!video) return;
+
+                const isMuted = btn.getAttribute('data-muted') === 'true';
+
+                if (isMuted) {
+                    // Unmuting: first mute any currently unmuted video
+                    if (currentUnmuted && currentUnmuted.video !== video) {
+                        muteAll();
+                    }
+                    video.muted = false;
+                    btn.setAttribute('data-muted', 'false');
+                    btn.setAttribute('aria-label', 'Mute video');
+                    currentUnmuted = { video, btn };
+                    // Ensure it's playing
+                    video.play().catch(() => {});
+                } else {
+                    video.muted = true;
+                    btn.setAttribute('data-muted', 'true');
+                    btn.setAttribute('aria-label', 'Unmute video');
+                    currentUnmuted = null;
+                }
+            };
+
+            // Factory: create a mute button and inject into a container element
+            window.makeMuteBtn = function(container) {
+                if (container.querySelector('.vid-mute-btn')) return; // already has one
+                const btn = document.createElement('button');
+                btn.className = 'vid-mute-btn';
+                btn.setAttribute('data-muted', 'true');
+                btn.setAttribute('aria-label', 'Unmute video');
+                btn.innerHTML = ICON_MUTED + ICON_LIVE;
+                btn.onclick = function() { window.toggleMute(this); };
+                container.appendChild(btn);
+                return btn;
+            };
+
+            // Auto-mute when a vcine slide changes — hook into manageVideo logic
+            // by patching it after initVideoCinema runs (see bottom of script)
+            window._muteOnSlideChange = function() { muteAll(); };
+
+            // Modal mute button — show/hide depending on whether modal shows a video
+            const modalMuteBtn = document.getElementById('modalMuteBtn');
+            const modalVideo   = document.getElementById('modal-video');
+
+            // Patch openModal to show/hide mute btn and reset mute state
+            const _origOpenModal = window.openModal;
+            window.openModal = function(type, index, set) {
+                // Reset any unmuted video on modal open
+                muteAll();
+                _origOpenModal(type, index, set);
+                if (modalMuteBtn) {
+                    if (type === 'video') {
+                        // Modal video starts unmuted by default in modals
+                        modalVideo.muted = false;
+                        modalMuteBtn.setAttribute('data-muted', 'false');
+                        modalMuteBtn.setAttribute('aria-label', 'Mute video');
+                        modalMuteBtn.style.display = 'flex';
+                        currentUnmuted = { video: modalVideo, btn: modalMuteBtn };
+                    } else {
+                        modalMuteBtn.style.display = 'none';
                     }
                 }
-                return 0;
-            });
+            };
 
-            // Per-card state for smooth lerp
-            const state = cards.map(() => ({ x: 0, y: 0, tx: 0, ty: 0 }));
-            let rafId = null;
-            let mouseX = 0, mouseY = 0;
-            let centreX = 0, centreY = 0;
-            let active = false;
+            // Patch closeModal to also mute
+            const _origCloseModal = window.closeModal;
+            window.closeModal = function() {
+                muteAll();
+                _origCloseModal();
+                if (modalMuteBtn) modalMuteBtn.style.display = 'none';
+            };
 
-            function updateCentre() {
-                const rect = section.getBoundingClientRect();
-                centreX = rect.left + rect.width  / 2;
-                centreY = rect.top  + rect.height / 2;
+            // Patch modalNav to reset mute on slide change in modal
+            const _origModalNav = window.modalNav;
+            window.modalNav = function(dir) {
+                muteAll();
+                _origModalNav(dir);
+                if (modalMuteBtn && document.getElementById('showcase-modal').classList.contains('open')) {
+                    const type = window.modalCurrentType;
+                    if (type === 'video') {
+                        modalVideo.muted = false;
+                        modalMuteBtn.setAttribute('data-muted', 'false');
+                        modalMuteBtn.setAttribute('aria-label', 'Mute video');
+                        modalMuteBtn.style.display = 'flex';
+                        currentUnmuted = { video: modalVideo, btn: modalMuteBtn };
+                    } else {
+                        modalMuteBtn.style.display = 'none';
+                    }
+                }
+            };
+
+            // Petra autoplay video — btn is already in HTML, just expose the video ref
+            // (No extra injection needed — button is hardcoded in the wrap)
+
+            // Inject mute btns into vcine items AFTER initVideoCinema runs.
+            // We hook into the showVideoProjects open event.
+            const _origShow = window.showVideoProjects;
+            window.showVideoProjects = function() {
+                _origShow();
+                // After the carousel inits (100ms delay + 200ms buffer)
+                setTimeout(() => {
+                    const track = document.getElementById('vcineTrack');
+                    if (!track) return;
+                    track.querySelectorAll('.vcine-item').forEach(item => {
+                        if (!item.querySelector('.vid-mute-btn')) {
+                            window.makeMuteBtn(item);
+                        }
+                    });
+                }, 350);
+            };
+        })();
+
+        // ── PLASTIC ART SKETCHBOOK ────────────────────────────────
+        (function() {
+            const ARTWORKS = [
+                'https://i.ibb.co/nsY4Q0mw/Whats-App-Image-2026-05-06-at-12-12-33-PM-3.jpg',
+                'https://i.ibb.co/S1ksXTv/Whats-App-Image-2026-05-06-at-12-12-38-PM-7.jpg',
+                'https://i.ibb.co/Fkkwf7Fp/Whats-App-Image-2026-05-06-at-12-12-38-PM-6.jpg',
+                'https://i.ibb.co/hJJBGswy/Whats-App-Image-2026-05-06-at-12-12-38-PM-5.jpg',
+                'https://i.ibb.co/8DK2s27X/Whats-App-Image-2026-05-06-at-12-12-38-PM-4.jpg',
+                'https://i.ibb.co/Lhz0qzm6/Whats-App-Image-2026-05-06-at-12-12-38-PM-3.jpg',
+                'https://i.ibb.co/QvhJhRRV/Whats-App-Image-2026-05-06-at-12-12-37-PM-6.jpg',
+                'https://i.ibb.co/SX9sQCR6/Whats-App-Image-2026-05-06-at-12-12-37-PM-5.jpg',
+                'https://i.ibb.co/CLyC6vd/Whats-App-Image-2026-05-06-at-12-12-37-PM-4.jpg',
+                'https://i.ibb.co/4n5H9017/Whats-App-Image-2026-05-06-at-12-12-37-PM-3.jpg',
+                'https://i.ibb.co/W4ZJWR9v/Whats-App-Image-2026-05-06-at-12-12-37-PM-2.jpg',
+                'https://i.ibb.co/mFRh8F0L/Whats-App-Image-2026-05-06-at-12-12-36-PM-6.jpg',
+                'https://i.ibb.co/1GH7NRb4/Whats-App-Image-2026-05-06-at-12-12-36-PM-5.jpg',
+                'https://i.ibb.co/hh1dy5S/Whats-App-Image-2026-05-06-at-12-12-36-PM-4.jpg',
+                'https://i.ibb.co/7PZgtXf/Whats-App-Image-2026-05-06-at-12-12-36-PM-3.jpg',
+                'https://i.ibb.co/wZJQLy5R/Whats-App-Image-2026-05-06-at-12-12-36-PM-2.jpg',
+                'https://i.ibb.co/fVgx7F1P/Whats-App-Image-2026-05-06-at-12-12-36-PM-1.jpg',
+                'https://i.ibb.co/VpQXh6sk/Whats-App-Image-2026-05-06-at-12-12-35-PM-12.jpg',
+                'https://i.ibb.co/b5BY4LD7/Whats-App-Image-2026-05-06-at-12-12-35-PM-11.jpg',
+                'https://i.ibb.co/yB45WPXy/Whats-App-Image-2026-05-06-at-12-12-35-PM-10.jpg',
+                'https://i.ibb.co/mFc4mdTd/Whats-App-Image-2026-05-06-at-12-12-35-PM-9.jpg',
+                'https://i.ibb.co/G3PZ4wNW/Whats-App-Image-2026-05-06-at-12-12-35-PM-8.jpg',
+                'https://i.ibb.co/NdfwHG5B/Whats-App-Image-2026-05-06-at-12-12-35-PM-7.jpg',
+                'https://i.ibb.co/xKkb71Q1/Whats-App-Image-2026-05-06-at-12-12-35-PM-6.jpg',
+                'https://i.ibb.co/hJp3374n/Whats-App-Image-2026-05-06-at-12-12-34-PM-6.jpg',
+                'https://i.ibb.co/hRnQ1Czj/Whats-App-Image-2026-05-06-at-12-12-34-PM-5.jpg',
+                'https://i.ibb.co/bkg1RMK/Whats-App-Image-2026-05-06-at-12-12-34-PM-3.jpg',
+            ];
+            const TOTAL = ARTWORKS.length;
+
+            let current  = 0;
+            let animating = false;
+            let pages    = [];
+            let inited   = false;
+
+            // Build spiral rings
+            function buildSpiral() {
+                const spiral = document.getElementById('paSpiral');
+                if (!spiral || spiral.children.length > 0) return;
+                for (let i = 0; i < 12; i++) {
+                    const r = document.createElement('div');
+                    r.className = 'pa-spiral-ring';
+                    spiral.appendChild(r);
+                }
             }
 
-            // On mouse move over the section, compute delta from centre
-            section.addEventListener('mousemove', e => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                active = true;
-                updateCentre();
-                cards.forEach((c, i) => {
-                    const speed  = parseFloat(c.dataset.speed) || 0.04;
-                    state[i].tx  = (mouseX - centreX) * speed;
-                    state[i].ty  = (mouseY - centreY) * speed;
+            // Build all page elements once
+            function buildPages() {
+                const stack = document.getElementById('paPagesStack');
+                if (!stack) return;
+                stack.innerHTML = '';
+                pages = [];
+                ARTWORKS.forEach((src, i) => {
+                    const pg = document.createElement('div');
+                    pg.className = 'pa-page';
+                    pg.style.zIndex = i === 0 ? 10 : 1;
+                    pg.style.opacity = i === 0 ? 1 : 0;
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.loading = i < 3 ? 'eager' : 'lazy';
+                    img.alt = 'Artwork ' + (i + 1);
+                    img.draggable = false;
+                    pg.appendChild(img);
+                    stack.appendChild(pg);
+                    pages.push(pg);
                 });
-                if (!rafId) rafId = requestAnimationFrame(tick);
-            });
-
-            // Ease back to centre on mouse leave
-            section.addEventListener('mouseleave', () => {
-                active = false;
-                cards.forEach((_, i) => { state[i].tx = 0; state[i].ty = 0; });
-                if (!rafId) rafId = requestAnimationFrame(tick);
-            });
-
-            function tick() {
-                let stillMoving = false;
-                cards.forEach((c, i) => {
-                    const s   = state[i];
-                    const lerpF = active ? 0.085 : 0.065; // slightly slower easing out
-                    s.x += (s.tx - s.x) * lerpF;
-                    s.y += (s.ty - s.y) * lerpF;
-                    if (Math.abs(s.tx - s.x) > 0.08 || Math.abs(s.ty - s.y) > 0.08) stillMoving = true;
-                    const rot = baseRotations[i];
-                    c.style.transform = 'rotate(' + rot + 'deg) translate(' + s.x.toFixed(2) + 'px,' + s.y.toFixed(2) + 'px)';
-                });
-                rafId = stillMoving ? requestAnimationFrame(tick) : null;
             }
 
-            // Touch: subtle tilt on touch move
-            section.addEventListener('touchmove', e => {
-                const t = e.touches[0];
-                updateCentre();
-                active = true;
-                cards.forEach((c, i) => {
-                    const speed  = parseFloat(c.dataset.speed) || 0.04;
-                    state[i].tx  = (t.clientX - centreX) * speed * 0.5; // halved on touch
-                    state[i].ty  = (t.clientY - centreY) * speed * 0.5;
+            function updateCounter() {
+                const el = document.getElementById('paCounter');
+                if (el) el.textContent = (current + 1) + ' / ' + TOTAL;
+            }
+
+            function flipTo(nextIndex, direction) {
+                if (animating || nextIndex === current) return;
+                if (nextIndex < 0 || nextIndex >= TOTAL) return;
+                animating = true;
+
+                const outPage  = pages[current];
+                const inPage   = pages[nextIndex];
+                const isForward = direction === 'next';
+
+                // Prepare incoming page: make it visible but behind
+                inPage.style.opacity = 1;
+                inPage.style.zIndex  = 9;
+
+                // Outgoing page: on top, animate out
+                outPage.style.zIndex = 10;
+                outPage.classList.add(isForward ? 'pa-flip-out' : 'pa-flip-out-back');
+                inPage.classList.add(isForward  ? 'pa-flip-in'  : 'pa-flip-in-back');
+
+                setTimeout(() => {
+                    // Clean up
+                    outPage.classList.remove('pa-flip-out', 'pa-flip-out-back');
+                    inPage.classList.remove('pa-flip-in', 'pa-flip-in-back');
+                    outPage.style.zIndex  = 1;
+                    outPage.style.opacity = 0;
+                    inPage.style.zIndex   = 10;
+                    inPage.style.opacity  = 1;
+                    current   = nextIndex;
+                    animating = false;
+                    updateCounter();
+                }, 500);
+            }
+
+            function init() {
+                if (inited) return;
+                inited = true;
+                buildSpiral();
+                buildPages();
+                updateCounter();
+
+                // Prev / Next buttons
+                const prevBtn = document.getElementById('paPrev');
+                const nextBtn = document.getElementById('paNext');
+                if (prevBtn) prevBtn.addEventListener('click', () => flipTo(current - 1, 'prev'));
+                if (nextBtn) nextBtn.addEventListener('click', () => flipTo(current + 1, 'next'));
+
+                // Corner hint — flip forward
+                const corner = document.getElementById('paCornerHint');
+                if (corner) corner.addEventListener('click', () => flipTo(current + 1, 'next'));
+
+                // Keyboard
+                const section = document.getElementById('plastic-art-section');
+                if (section) {
+                    section.setAttribute('tabindex', '0');
+                    section.addEventListener('keydown', e => {
+                        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); flipTo(current + 1, 'next'); }
+                        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); flipTo(current - 1, 'prev'); }
+                    });
+                }
+
+                // Touch swipe on the book
+                const book = document.getElementById('paBook');
+                if (book) {
+                    let tX = 0;
+                    book.addEventListener('touchstart', e => { tX = e.changedTouches[0].clientX; }, { passive: true });
+                    book.addEventListener('touchend',   e => {
+                        const dx = e.changedTouches[0].clientX - tX;
+                        if (Math.abs(dx) > 40) {
+                            if (dx < 0) flipTo(current + 1, 'next');
+                            else        flipTo(current - 1, 'prev');
+                        }
+                    }, { passive: true });
+                }
+            }
+
+            // Show / hide
+            window.showPlasticArt = function() {
+                const section = document.getElementById('plastic-art-section');
+                // Close other open sections
+                ['video-projects','web-projects','social-media-projects'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('hidden');
                 });
-                if (!rafId) rafId = requestAnimationFrame(tick);
-            }, { passive: true });
+                document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => {
+                    section.classList.remove('hidden');
+                    reveal();
+                    section.scrollIntoView({ behavior: 'smooth' });
+                    lucide.createIcons();
+                    init();
+                }, 400);
+            };
 
-            section.addEventListener('touchend', () => {
-                active = false;
-                cards.forEach((_, i) => { state[i].tx = 0; state[i].ty = 0; });
-                if (!rafId) rafId = requestAnimationFrame(tick);
-            });
+            window.hidePlasticArt = function() {
+                const section = document.getElementById('plastic-art-section');
+                document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => { section.classList.add('hidden'); }, 600);
+            };
+        })();
 
-            // Recalc centre on resize
-            window.addEventListener('resize', updateCentre, { passive: true });
-            updateCentre();
+        // ── Performance: pause CSS animations when off-screen ────
+        (function() {
+            if (!('IntersectionObserver' in window)) return;
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const cards = entry.target.querySelectorAll('.smd-card');
+                    cards.forEach(c => {
+                        c.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+                    });
+                });
+            }, { threshold: 0.05 });
+            const smdSection = document.getElementById('social-design-hero');
+            if (smdSection) obs.observe(smdSection);
         })();
 
         // ── Dark Mode Toggle ──────────────────────────────────────
@@ -3701,6 +4682,8 @@
             }
 
             function manageVideo() {
+                // Mute any globally unmuted video when slide changes
+                if (window._muteOnSlideChange) window._muteOnSlideChange();
                 // Play only the centred item's video; pause all others
                 allItems.forEach((el, i) => {
                     const v = el.querySelector('.vcine-vid');
@@ -3823,6 +4806,67 @@
                 setTimeout(initVideoCinema, 100);
             }, 400);
         }
+
+        // ── PROJECT COMPACT CARDS SHOW/HIDE LOGIC ──
+        window.toggleProjectShowcase = function(projectType) {
+            const grid = document.getElementById('project-cards-grid');
+            const container = document.getElementById('detailed-project-showcase');
+            const petraDetails = document.getElementById('details-petra');
+            const ameedDetails = document.getElementById('details-ameed');
+            
+            // Hide the grid selection view
+            grid.classList.add('hidden');
+            // Show the main details wrapper
+            container.classList.remove('hidden');
+
+            if (projectType === 'petra') {
+                ameedDetails.classList.add('hidden');
+                petraDetails.classList.remove('hidden');
+                
+                // Play video if it exists
+                const pVid = document.getElementById('petraCaseVideo');
+                if (pVid) pVid.play().catch(() => {});
+                
+            } else if (projectType === 'ameed') {
+                petraDetails.classList.add('hidden');
+                ameedDetails.classList.remove('hidden');
+                
+                // Pause petra video if it was running
+                const pVid = document.getElementById('petraCaseVideo');
+                if (pVid) pVid.pause();
+            }
+
+            // CRITICAL: Trigger resize event to force dynamic layout elements
+            // (like track width, layout boundaries, container height) to compute accurately.
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+                // Force reveal observer checklist update
+                if (typeof reveal === 'function') reveal();
+                
+                // Smooth scroll to the featured study section header
+                document.getElementById('highlighted-projects').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 60);
+        };
+
+        window.hideProjectShowcase = function() {
+            const grid = document.getElementById('project-cards-grid');
+            const container = document.getElementById('detailed-project-showcase');
+            const petraDetails = document.getElementById('details-petra');
+            const ameedDetails = document.getElementById('details-ameed');
+            
+            // Pause videos on exit
+            const pVid = document.getElementById('petraCaseVideo');
+            if (pVid) pVid.pause();
+            
+            // Revert views
+            container.classList.add('hidden');
+            petraDetails.classList.add('hidden');
+            ameedDetails.classList.add('hidden');
+            grid.classList.remove('hidden');
+            
+            // Scroll smoothly back to top of the block
+            document.getElementById('highlighted-projects').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
     </script>
 </body>
 </html>
