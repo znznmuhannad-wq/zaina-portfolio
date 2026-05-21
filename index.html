@@ -240,8 +240,18 @@
 
         /* ── Web CTA Section ── */
         [data-theme="dark"] .web-cta-section { background-color: var(--dm-bg) !important; }
+        [data-theme="dark"] .web-cta-title { color: var(--dm-text) !important; }
         [data-theme="dark"] .web-cta-sub { color: var(--dm-text-mid) !important; }
         [data-theme="dark"] .web-cta-bold { color: var(--dm-text) !important; }
+        
+        /* Pills Dark Mode Sync */
+        [data-theme="dark"] .web-cta-pill {
+            background-color: var(--dm-surface-hi) !important;
+            border-color: var(--dm-border-hi) !important;
+            color: var(--dm-text) !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
+        }
+        [data-theme="dark"] .web-cta-pill i { color: #65C6BE !important; } /* Mint icons in dark mode */
 
         /* ── Portfolio folders ── */
         [data-theme="dark"] #portfolio                    { background-color: var(--dm-bg); }
@@ -2548,6 +2558,13 @@
                     <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
                 </svg>
 
+                <svg class="absolute left-[8%] top-[75%] w-16 h-16 text-coral/90 z-0 animate-[spin_20s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
+                    <path d="M50 0 C50 30 70 50 100 50 C70 50 50 70 50 100 C50 70 30 50 0 50 C30 50 50 30 50 0 Z" />
+                </svg>
+                <svg class="absolute right-[6%] top-[15%] w-20 h-20 text-mint/90 z-0 animate-pulse" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round">
+                    <path d="M 15 50 Q 35 15, 55 50 T 95 50" />
+                </svg>
+
                 <div class="relative z-10 animate-float flex justify-center" style="--tw-rotate: -3deg; transform-origin: top center;">
                     
                     <div class="absolute bottom-[calc(100%-24px)] left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-20">
@@ -2644,6 +2661,13 @@
         </svg>
         <svg class="absolute -right-10 bottom-20 w-48 h-48 md:w-64 md:h-64 text-mint/60 z-0 animate-[spin_30s_linear_infinite_reverse]" viewBox="0 0 100 100" fill="currentColor">
             <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
+        </svg>
+
+        <svg class="absolute left-[4%] bottom-[12%] w-20 h-20 md:w-28 md:h-28 text-teal_primary/90 z-0 animate-[spin_30s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 0 C50 30 70 50 100 50 C70 50 50 70 50 100 C50 70 30 50 0 50 C30 50 50 30 50 0 Z" />
+        </svg>
+        <svg class="absolute right-[8%] top-[22%] w-20 h-20 md:w-28 md:h-28 text-yellow_gold/90 z-0 animate-pulse transform -rotate-12" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
+            <path d="M 15 50 Q 30 10, 50 50 T 85 50" />
         </svg>
 
         <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-10 z-0" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
@@ -2794,37 +2818,44 @@
     <!-- =============================================
          HIGHLIGHTED PROJECTS — Petra Chocolate
     ============================================= -->
-    <section id="web-cta" class="web-cta-section bg-warm_beige fluid-section-py fluid-section-px relative z-20 overflow-hidden">
-        <div class="container mx-auto relative z-10 max-w-4xl flex flex-col items-center">
-            
-            <div class="relative w-full max-w-3xl mx-auto mb-10 md:mb-12 reveal">
+    <section id="web-cta" class="web-cta-section bg-warm_beige pt-0 pb-12 md:pb-16 px-4 md:px-8 relative z-20 overflow-hidden">
+        
+        <svg class="absolute -left-4 md:-left-8 top-10 md:top-16 w-32 h-32 md:w-48 md:h-48 text-yellow_gold/40 z-0 animate-[spin_30s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 5 C50 35 65 50 95 50 C65 50 50 65 50 95 C50 65 35 50 5 50 C35 50 50 35 50 5 Z" />
+        </svg>
+        <svg class="absolute -right-20 md:-right-32 bottom-0 w-64 h-64 md:w-[450px] md:h-[450px] text-mint/30 z-0 animate-[spin_40s_linear_infinite_reverse]" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 5 C50 35 65 50 95 50 C65 50 50 65 50 95 C50 65 35 50 5 50 C35 50 50 35 50 5 Z" />
+        </svg>
+
+        <div class="container mx-auto relative z-10 max-w-5xl flex flex-col items-center">
+
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 w-full mb-8 reveal" style="transition-delay: 0.1s">
                 
-                <div class="absolute -top-4 -left-2 md:-top-2 md:-left-8 z-30 bg-mint text-charcoal px-4 py-2 md:px-6 md:py-3 rounded-full font-space font-bold text-[10px] md:text-sm shadow-xl transform -rotate-6 hover:rotate-0 transition-transform cursor-default border border-white/20">
-                    UX / UI Design
-                </div>
-                
-                <div class="absolute top-1/4 -right-4 md:top-1/4 md:-right-12 z-30 bg-yellow_gold text-charcoal px-4 py-2 md:px-6 md:py-3 rounded-full font-space font-bold text-[10px] md:text-sm shadow-xl transform rotate-6 hover:rotate-0 transition-transform cursor-default border border-white/20">
-                    HTML • CSS • JS
-                </div>
-                
-                <div class="absolute bottom-1/4 -left-6 md:bottom-1/4 md:-left-16 z-30 bg-teal_primary text-white px-4 py-2 md:px-6 md:py-3 rounded-full font-space font-bold text-[10px] md:text-sm shadow-xl transform rotate-3 hover:-rotate-3 transition-transform cursor-default border border-white/20">
-                    Node.js & GitHub
-                </div>
-                
-                <div class="absolute -bottom-4 right-0 md:-bottom-2 md:-right-8 z-30 bg-coral text-white px-4 py-2 md:px-6 md:py-3 rounded-full font-space font-bold text-[10px] md:text-sm shadow-xl transform -rotate-3 hover:rotate-3 transition-transform cursor-default border border-white/20">
-                    VS Code
+                <div class="flex flex-row lg:flex-col flex-wrap justify-center lg:justify-start gap-3 w-full lg:w-1/4 order-2 lg:order-1">
+                    <div class="web-cta-pill bg-white text-charcoal px-5 py-3 rounded-xl font-space font-bold text-xs md:text-sm shadow-sm border border-sage/40 text-center lg:text-left flex items-center justify-center lg:justify-start gap-3 hover:-translate-y-1 transition-all hover:shadow-md">
+                        <i data-lucide="layout-template" size="18" class="text-teal_primary"></i> UX/UI Design
+                    </div>
+                    <div class="web-cta-pill bg-white text-charcoal px-5 py-3 rounded-xl font-space font-bold text-xs md:text-sm shadow-sm border border-sage/40 text-center lg:text-left flex items-center justify-center lg:justify-start gap-3 hover:-translate-y-1 transition-all hover:shadow-md">
+                        <i data-lucide="code" size="18" class="text-teal_primary"></i> HTML • CSS • JS
+                    </div>
+                    <div class="web-cta-pill bg-white text-charcoal px-5 py-3 rounded-xl font-space font-bold text-xs md:text-sm shadow-sm border border-sage/40 text-center lg:text-left flex items-center justify-center lg:justify-start gap-3 hover:-translate-y-1 transition-all hover:shadow-md">
+                        <i data-lucide="server" size="18" class="text-teal_primary"></i> Node.js & GitHub
+                    </div>
+                    <div class="web-cta-pill bg-white text-charcoal px-5 py-3 rounded-xl font-space font-bold text-xs md:text-sm shadow-sm border border-sage/40 text-center lg:text-left flex items-center justify-center lg:justify-start gap-3 hover:-translate-y-1 transition-all hover:shadow-md">
+                        <i data-lucide="monitor-smartphone" size="18" class="text-teal_primary"></i> Responsive Dev
+                    </div>
                 </div>
 
-                <div class="relative w-full z-20 flex justify-center drop-shadow-[0_15px_35px_rgba(0,0,0,0.25)]">
-                    <img src="https://i.ibb.co/39g1t6NS/Z-Creative-Studio-1.png" alt="Need a stunning website?" class="w-full max-w-[90%] md:max-w-full h-auto object-contain rounded-2xl">
+                <div class="relative w-full lg:w-3/4 z-20 flex justify-center drop-shadow-[0_15px_35px_rgba(0,0,0,0.25)] order-1 lg:order-2">
+                    <img src="https://i.ibb.co/39g1t6NS/Z-Creative-Studio-1.png" alt="Need a stunning website?" class="w-full max-w-[95%] md:max-w-full h-auto object-contain rounded-2xl">
                 </div>
+
             </div>
 
             <div class="text-center max-w-2xl reveal" style="transition-delay: 0.15s">
-                <p class="web-cta-sub font-inter text-sm md:text-base text-subtitle_beige leading-relaxed mb-8">
-                    I bring digital ideas to life through intuitive <strong class="web-cta-bold text-charcoal">UX/UI design</strong> and solid front-end development. Utilizing <strong class="web-cta-bold text-charcoal">HTML, CSS, JavaScript, Node.js, and GitHub</strong>, I build responsive, functional, and visually engaging websites tailored to your needs.
+                <p class="web-cta-sub font-inter text-sm md:text-base text-subtitle_beige leading-relaxed mb-6">
+                    I bring digital ideas to life through intuitive <strong class="web-cta-bold text-charcoal">UX/UI design</strong> and solid front-end development.
                 </p>
-                
                 <button onclick="showWebProjects()" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-space font-bold text-sm md:text-base text-white bg-teal_primary hover:bg-teal_primary/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 group">
                     <span>Explore The Websites I Made</span>
                     <i data-lucide="arrow-down" size="18" class="group-hover:translate-y-1 transition-transform"></i>
