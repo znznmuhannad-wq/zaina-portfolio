@@ -2,7 +2,7 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Z Creative Studio | Zaina Alissa</title>
     
     <!-- Primary Meta Tags -->
@@ -146,11 +146,41 @@
         }
 
         /* ── Global theme transition ── */
-        *, *::before, *::after {
-            transition-property: background-color, border-color, color, box-shadow, opacity;
-            transition-duration: 0.38s;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        }
+      /* Scoped theme transitions — only elements that actually change in dark mode */
+body,
+nav,
+#mobile-menu,
+#about,
+#skills,
+#education,
+#contact,
+footer,
+.skill-note,
+.skill-inner-panel,
+.petra-case-block,
+.petra-dl-card,
+.petra-tag,
+.ameed-award-badge,
+.web-project-card,
+.web-cta-pill,
+.filter-btn-folder,
+.folder-label,
+.folder-sub,
+.smd-section,
+.tear-tag,
+.tear-tag-card,
+#dm-toggle,
+.petra-section,
+.web-cta-section,
+#social-media-projects,
+#web-projects,
+#video-projects,
+#plastic-art-section,
+#packaging-projects {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.38s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
         /* Don't slow down animations that should be instant or custom */
         .reveal, .skill-note, .petra-carousel-track, .ameed-carousel-track,
         .ameed-cinema-track, .petra-case-desc, .petra-case-divider,
@@ -462,10 +492,11 @@
         /* Tear tabs background stays white-ish */
         [data-theme="dark"] .tear-tag { background: rgba(255,255,255,0.88) !important; }
 
-        /* Global bg/surface Tailwind class overrides */
-        [data-theme="dark"] .bg-white                     { background-color: var(--dm-surface) !important; }
-        [data-theme="dark"] .bg-warm_beige                { background-color: var(--dm-bg) !important; }
-
+   /* Dark mode: surface override — exclude always-white cards explicitly */
+[data-theme="dark"] .bg-white:not(.always-white-card):not(.tear-tag):not(.petra-dl-card):not(.ameed-award-badge) {
+    background-color: var(--dm-surface) !important;
+}
+[data-theme="dark"] .bg-warm_beige { background-color: var(--dm-bg) !important; }
         /* Al Ameed progress bar */
         [data-theme="dark"] .ameed-progress-bar           { background: rgba(255,255,255,0.07); }
 
@@ -526,12 +557,19 @@
  
         .custom-dashed { border-style: dashed; border-width: 2px; }
  
-        .hero-title-stacked {
-            line-height: 0.85;
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            font-size: clamp(2.6rem, 9vw + 0.5rem, 9rem);
-        }
+       .hero-title-stacked {
+    line-height: 0.88;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    font-size: clamp(2.6rem, 9vw + 0.5rem, 9rem);
+}
+
+@media (max-width: 640px) {
+    .hero-title-stacked {
+        line-height: 0.92;
+        letter-spacing: -0.03em;
+    }
+}
  
         .fluid-hero-sub   { font-size: clamp(0.85rem, 1.4vw + 0.4rem,  1.2rem); }
         .fluid-h2-section { font-size: clamp(1.6rem,  3.2vw + 0.6rem,  3.25rem); }
@@ -578,12 +616,16 @@
         }
 
         /* ── Tear tags (contact) ── */
-        @media (max-width: 767px) {
-            .tear-tag { height: 9rem !important; }
-        }
-        @media (max-width: 480px) {
-            .tear-tag { height: 7.5rem !important; }
-        }
+       @media (max-width: 767px) {
+    .tear-tag { height: 8rem !important; }
+}
+@media (max-width: 480px) {
+    .tear-tag { height: 6.5rem !important; }
+}
+@media (max-width: 380px) {
+    .tear-tag { height: 5.5rem !important; }
+    .tear-tag span { font-size: 7px !important; letter-spacing: 0.04em !important; }
+}
 
         /* ── About rounded corners ── */
         @media (max-width: 640px) {
@@ -713,13 +755,17 @@
         .skill-note { will-change: transform, box-shadow; }
         .vcine-item { will-change: opacity, box-shadow; }
         /* Defer off-screen section rendering */
-        #video-projects.hidden,
-        #web-projects.hidden,
-        #social-media-projects.hidden,
-        #plastic-art-section.hidden,
-        #packaging-projects.hidden {
-            content-visibility: hidden;
-        }
+       /* content-visibility: auto improves rendering performance for off-screen sections */
+#video-projects,
+#web-projects,
+#social-media-projects,
+#plastic-art-section,
+#packaging-projects,
+#highlighted-projects,
+#plastic-art-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 800px;
+}
         /* Reduce expensive blur repaints on inactive modals */
         #showcase-modal:not(.open) { display: none !important; }
         #showcase-modal.open { display: flex !important; }
@@ -794,7 +840,9 @@
             background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
             width: 100%;
             max-width: 220px;
-            height: 220px;
+    min-height: 200px;
+    height: auto;
+    aspect-ratio: 1 / 1.05;
             display: flex;
             position: relative;
             overflow: visible !important;
@@ -1020,14 +1068,19 @@
         }
         .filter-btn-folder:hover { opacity: 1; }
  
-        .folders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 3rem 2rem;
-            justify-items: center;
-            padding-top: 4rem;
-            padding-bottom: 2rem;
-        }
+       .folders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 30vw, 160px), 1fr));
+    gap: 3rem 2rem;
+    justify-items: center;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+}
+
+#mobile-menu {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
 
         /* =============================================
             VIDEO GRID — clickable thumbnails
@@ -1624,14 +1677,19 @@
             transition: opacity 0.6s ease;
         }
         .ameed-scroll-hint.hidden { opacity: 0; pointer-events: none; }
-        .ameed-cinema-viewport {
-            width: 100%;
-            overflow: hidden;
-            border-radius: 1rem;
-            cursor: grab;
-            position: relative;
-            box-shadow: 0 16px 48px -10px rgba(0,0,0,0.14);
-        }
+    .ameed-cinema-viewport {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 1rem;
+    cursor: grab;
+    position: relative;
+    box-shadow: 0 16px 48px -10px rgba(0,0,0,0.14);
+    background: #f8f4ee;
+}
+[data-theme="dark"] .ameed-cinema-viewport {
+    background: #1E1A14;
+    box-shadow: 0 16px 48px -10px rgba(0,0,0,0.5);
+}
         .ameed-cinema-viewport:active { cursor: grabbing; }
         .ameed-cinema-track {
             display: flex;
@@ -2543,11 +2601,27 @@
             animation: typeErase 9s steps(40, end) infinite 5s, blinkCursorMint 0.8s step-end infinite;
         }
 
-        @keyframes typeErase {
-            0%, 15% { max-width: 0; }
-            35%, 75% { max-width: 1200px; } /* عرض كافٍ لظهور النص كاملاً */
-            90%, 100% { max-width: 0; }
-        }
+        .packaging-carousel-custom {
+    aspect-ratio: 4/3;
+    max-width: 720px;
+    margin: 0 auto;
+}
+@media (max-width: 640px) {
+    .packaging-carousel-custom {
+        aspect-ratio: 3/4;
+        max-width: 100%;
+    }
+}
+
+       @keyframes typeErase {
+    0%    { max-width: 0; opacity: 0; }
+    8%    { max-width: 0; opacity: 1; }
+    40%   { max-width: 1200px; }
+    72%   { max-width: 1200px; }
+    88%   { max-width: 0; opacity: 1; }
+    96%   { max-width: 0; opacity: 0; }
+    100%  { max-width: 0; opacity: 0; }
+}
         
         /* مؤشرات كتابة ترمش بألوان الهوية */
         @keyframes blinkCursorTeal { from, to { border-right-color: transparent; } 50% { border-right-color: #428A97; } }
@@ -2594,7 +2668,7 @@
     </nav>
  
     <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-warm_beige flex-col items-center justify-center gap-6 text-2xl font-space font-bold hidden">
+    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-warm_beige flex-col items-center justify-center gap-6 text-2xl font-space font-bold hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
         <button id="menu-close" class="absolute top-5 right-5 p-2 focus:outline-none focus:ring-2 focus:ring-charcoal rounded" aria-label="Close mobile menu"><i data-lucide="x" size="28"></i></button>
         <a href="#about"     class="mobile-link text-charcoal py-3 px-8 w-full text-center">About</a>
         <a href="#skills"    class="mobile-link text-charcoal py-3 px-8 w-full text-center">Skills</a>
@@ -2626,7 +2700,7 @@
             </div>
             <div class="relative flex justify-center reveal mt-20 lg:mt-0" style="transition-delay: 0.2s">
                 
-                <svg class="absolute -left-4 md:-left-12 top-10 md:-top-6 w-48 h-48 md:w-64 md:h-64 text-[#F2B11C] z-0 animate-[spin_40s_linear_infinite] will-change-transform" viewBox="0 0 100 100" fill="currentColor">
+                <svg class="absolute -left-4 md:-left-12 top-10 md:-top-6 w-48 h-48 md:w-64 md:h-64 text-[#F2B11C] z-0 animate-[spin_40s_linear_infinite] pointer-events-none" style="isolation:isolate" viewBox="0 0 100 100" fill="currentColor">
                     <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
                 </svg>
                 <svg class="absolute -right-4 md:-right-10 -bottom-10 md:-bottom-20 w-40 h-40 md:w-64 md:h-64 text-[#F2B11C] z-0 animate-[spin_35s_linear_infinite_reverse]" viewBox="0 0 100 100" fill="currentColor">
@@ -2667,7 +2741,7 @@
                         </div>
 
                         <div class="w-36 h-36 sm:w-40 sm:h-40 md:w-44 md:h-44 bg-transparent rounded-xl overflow-hidden mb-5 relative flex items-end justify-center">
-                            <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa" class="w-full h-full object-cover object-top drop-shadow-md relative z-10" fetchpriority="high">
+                            <img src="https://i.ibb.co/zHVQT1S9/00.png" alt="Zaina Alissa — Digital Media Designer" class="w-full h-full object-cover object-top drop-shadow-md relative z-10" fetchpriority="high" width="176" height="176" decoding="async">
                         </div>
 
                         <div class="text-center mb-4 md:mb-5 flex flex-col items-center">
@@ -2850,7 +2924,7 @@
     <!-- =============================================
          SOCIAL MEDIA DESIGN — EDITORIAL HERO SECTION
     ============================================= -->
-    <section class="smd-section rounded-[3rem] sm:rounded-[4rem] md:rounded-[6rem] lg:rounded-[100px] about-card-shadow mx-4 md:mx-8 my-8 md:my-12 relative z-20" id="social-design-hero" aria-label="Social Media Design showcase">
+    <section class="smd-section rounded-[3rem] sm:rounded-[4rem] md:rounded-[6rem] lg:rounded-[100px] about-card-shadow mx-4 md:mx-8 my-8 md:my-12 relative z-20" id="social-design-hero" role="region" aria-label="Social Media Design Portfolio Showcase" aria-label="Social Media Design showcase">
 
         <div class="absolute top-6 left-8 md:top-10 md:left-14 w-[14px] h-[16px] md:w-[18px] md:h-[20px] rounded-full z-40" style="background: radial-gradient(circle at 35% 35%, #9fd5df 0%, #428A97 50%, #1a3a41 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.35), inset -2px -3px 4px rgba(0,0,0,0.3);"></div>
         <div class="absolute top-6 right-8 md:top-10 md:right-14 w-[14px] h-[16px] md:w-[18px] md:h-[20px] rounded-full z-40" style="background: radial-gradient(circle at 35% 35%, #ffe9b1 0%, #F2B11C 50%, #7c5a08 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.35), inset -2px -3px 4px rgba(0,0,0,0.3);"></div>
@@ -2921,7 +2995,7 @@
 
             <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 w-full mb-8 reveal" style="transition-delay: 0.1s">
                 
-                <div class="flex flex-row lg:flex-col flex-wrap justify-center lg:justify-start gap-3 w-full lg:w-1/4 order-2 lg:order-1">
+                <div class="flex flex-row lg:flex-col flex-wrap justify-center lg:justify-start gap-2 lg:gap-3 w-full lg:w-1/4 order-2 lg:order-1 md:grid md:grid-cols-2 lg:flex">
                     <div class="web-cta-pill bg-white text-charcoal px-5 py-3 rounded-xl font-space font-bold text-xs md:text-sm shadow-sm border border-sage/40 text-center lg:text-left flex items-center justify-center lg:justify-start gap-3 hover:-translate-y-1 transition-all hover:shadow-md">
                         <i data-lucide="layout-template" size="18" class="text-teal_primary"></i> UX/UI Design
                     </div>
@@ -2969,7 +3043,7 @@
             </div>
 
             <!-- Project Header -->
-          <div id="project-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 reveal mb-6">
+          <div id="project-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 reveal mb-6 items-stretch">
                 
                 <div class="group/card bg-white dark:bg-[#2C2620] border border-sage/30 dark:border-white/10 rounded-[1.5rem] p-5 md:p-6 shadow-sm flex flex-col justify-between transition-all hover:translate-y-[-6px] hover:shadow-xl">
                     <div>
@@ -3027,9 +3101,9 @@
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-5 md:mb-7 items-stretch">
                         <div class="petra-video-wrap" style="position:relative;">
-                            <video id="petraCaseVideo" muted loop playsinline class="petra-video">
-                                <source src="https://files.catbox.moe/paacsw.mov" type="video/mp4">
-                            </video>
+                           <video id="petraCaseVideo" muted loop playsinline class="petra-video">
+    <source src="https://files.catbox.moe/paacsw.mov" type="video/mp4">
+</video>
                             <button class="vid-mute-btn" data-muted="true" aria-label="Unmute video" onclick="toggleMute(this)">
                                 <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
                                 <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
@@ -3121,7 +3195,7 @@
                         </div>
                     </div>
                 </div>
-
+<div class="petra-project-divider" aria-hidden="true"></div>
                 <div id="details-ameed" class="hidden space-y-6 md:space-y-8">
                     <div class="petra-project-header mb-5 md:mb-7">
                         <div class="flex flex-wrap items-center gap-3 mb-4">
@@ -3403,8 +3477,11 @@
                     <div class="vcine-track" id="vcineTrack">
 
                         <!-- 16 video items -->
-                        <div class="vcine-item" data-idx="0">
-                            <video muted loop preload="none" playsinline class="vcine-vid"><source src="https://files.catbox.moe/pa8t76.mp4" type="video/mp4"></video>
+                   <div class="vcine-item" data-idx="0" data-src="https://files.catbox.moe/pa8t76.mp4">
+    <video muted loop preload="none" playsinline class="vcine-vid"></video>
+    <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+    <button class="vcine-open-btn" onclick="openModal('video',0)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
+</div>
                             <div class="vcine-overlay"><div class="vcine-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2C2C2C"><polygon points="5,3 19,12 5,21"/></svg></div></div>
                             <button class="vcine-open-btn" onclick="openModal('video',0)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Full View</button>
                         </div>
@@ -3561,13 +3638,8 @@
 
                 <!-- Project 3: Z Creative Studio (this portfolio) -->
                 <div class="web-project-card bg-white p-5 rounded-2xl shadow border border-sage/30" onclick="openModal('web', 2)">
-                    <div class="relative rounded-xl overflow-hidden mb-4 bg-warm_beige" style="height: clamp(140px, 22vw, 200px);">
-                        <iframe src="about:blank" title="Z Creative Studio preview" class="w-full h-full border-0 pointer-events-none" style="transform: scale(0.6); transform-origin: top left; width: 166.66%; height: 166.66%;" loading="lazy" scrolling="no"></iframe>
-                        <!-- Fallback visual for self-referencing page -->
-                        <div class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal_primary/10 to-mint/10 gap-2">
-                            <img src="https://i.ibb.co/PZ7PVdpT/22.png" alt="Z Creative Studio" class="w-12 h-12 object-contain">
-                            <span class="font-space font-bold text-sm text-teal_primary">Z Creative Studio</span>
-                        </div>
+<iframe src="about:blank" title="Z Creative Studio preview" class="w-full h-full border-0 pointer-events-none" ...></iframe>
+
                         <div class="absolute inset-0 flex items-end justify-end p-3">
                             <span class="bg-yellow_gold text-charcoal text-[9px] font-space font-bold uppercase tracking-widest px-2 py-1 rounded-full">This Site</span>
                         </div>
@@ -3815,7 +3887,7 @@
                     <div class="relative z-10">
                         <h3 class="text-xl md:text-3xl font-space font-bold mb-2 uppercase tracking-tighter">Take what you need</h3>
                         <p class="text-xs md:text-sm font-bold opacity-70 mb-6 md:mb-10 italic">Feel free to grab a service to start our journey...</p>
-                        <div class="grid grid-cols-4 md:grid-cols-7 gap-px bg-charcoal/10 rounded-xl overflow-visible">
+                        <div class="grid grid-cols-4 md:grid-cols-7 gap-px bg-charcoal/10 rounded-xl overflow-hidden">
                             <div class="tear-tag bg-white/90 p-2 md:p-3 flex items-center justify-center h-36 sm:h-44 md:h-52 border-t border-dashed border-charcoal/20">
                                 <span class="text-[8px] md:text-[9px] font-bold rotate-90 whitespace-nowrap uppercase tracking-widest opacity-80">Graphic Design</span>
                             </div>
@@ -3863,7 +3935,11 @@
     </footer>
  
     <script>
-        lucide.createIcons();
+        // Smart icon init — only process un-rendered icons
+function initIcons(container) {
+    const target = container || document;
+    lucide.createIcons({ attrs: { class: ['lucide'] }, nameAttr: 'data-lucide' });
+};
 
         // ── Al Ameed Cinema Drag-Scroll ───────────────────────────
         (function() {
@@ -4025,17 +4101,16 @@
             });
         }
         
-        let isScrolling = false;
-        // Use requestAnimationFrame to sync with the browser's refresh rate
-        window.addEventListener("scroll", () => {
-            if (!isScrolling) {
-                window.requestAnimationFrame(() => {
-                    reveal();
-                    isScrolling = false;
-                });
-                isScrolling = true;
-            }
-        }, { passive: true }); // passive: true prevents scroll blocking
+      let rafScheduled = false;
+window.addEventListener("scroll", () => {
+    if (!rafScheduled) {
+        rafScheduled = true;
+        window.requestAnimationFrame(() => {
+            reveal();
+            rafScheduled = false;
+        });
+    }
+}, { passive: true });// passive: true prevents scroll blocking
         
         window.addEventListener("load", reveal);
  
@@ -4125,7 +4200,11 @@
                 section.classList.remove('hidden');
                 reveal();
                 section.scrollIntoView({ behavior: 'smooth' });
-                lucide.createIcons();
+                // Smart icon init — only process un-rendered icons
+function initIcons(container) {
+    const target = container || document;
+    lucide.createIcons({ attrs: { class: ['lucide'] }, nameAttr: 'data-lucide' });
+};
                 setTimeout(initSmCarousel, 80);
             }, 400);
         }
@@ -4147,7 +4226,11 @@
                 section.classList.remove('hidden');
                 reveal();
                 section.scrollIntoView({ behavior: 'smooth' });
-                lucide.createIcons();
+                // Smart icon init — only process un-rendered icons
+function initIcons(container) {
+    const target = container || document;
+    lucide.createIcons({ attrs: { class: ['lucide'] }, nameAttr: 'data-lucide' });
+};
                 // Init packaging carousel
                 makeCarousel({ carouselId:'packagingCarousel', trackId:'packagingTrack', counterId:'packCounter', dotsSelector:'#packDots', prevId:'packPrev', nextId:'packNext', slideClass:'petra-slide', dotClass:'petra-dot', autoDelay:5000 });
             }, 400);
@@ -4348,12 +4431,21 @@
         });
 
         // Touch swipe for modal navigation
-        let touchStartX = 0;
-        let touchStartY = 0;
-        document.getElementById('modal-media-container').addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, { passive: true });
+      let modalTouchStartX = 0;
+let modalTouchStartY = 0;
+document.getElementById('modal-media-container').addEventListener('touchstart', e => {
+    modalTouchStartX = e.changedTouches[0].screenX;
+    modalTouchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+document.getElementById('modal-media-container').addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].screenX - modalTouchStartX;
+    const dy = e.changedTouches[0].screenY - modalTouchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 44) {
+        if (document.getElementById('showcase-modal').classList.contains('open')) {
+            modalNav(dx < 0 ? 1 : -1);
+        }
+    }
+}, { passive: true });
         document.getElementById('modal-media-container').addEventListener('touchend', e => {
             const dx = e.changedTouches[0].screenX - touchStartX;
             const dy = e.changedTouches[0].screenY - touchStartY;
@@ -4677,7 +4769,11 @@
                     section.classList.remove('hidden');
                     reveal();
                     section.scrollIntoView({ behavior: 'smooth' });
-                    lucide.createIcons();
+                    // Smart icon init — only process un-rendered icons
+function initIcons(container) {
+    const target = container || document;
+    lucide.createIcons({ attrs: { class: ['lucide'] }, nameAttr: 'data-lucide' });
+};
                     init();
                 }, 400);
             };
@@ -4873,22 +4969,23 @@
             }
 
             // ── 9. Navigate ───────────────────────────────────────
-            function goBy(delta) {
-                allIndex   += delta;
-                realIndex   = ((allIndex - BUFFER) % total + total) % total;
-                updateClasses();
-                manageVideo();
-                animateTo(offsetFor(allIndex));
-            }
+          function goBy(delta) {
+            allIndex   += delta;
+            realIndex   = ((allIndex - BUFFER) % total + total) % total;
+            updateClasses();
+            loadVideoSrc(allIndex);
+            manageVideo();
+            animateTo(offsetFor(allIndex));
+        }
 
-            function jumpTo(ri) {
-                // Jump to a specific real index (from dot click)
-                allIndex  = ri + BUFFER;
-                realIndex = ri;
-                updateClasses();
-                manageVideo();
-                animateTo(offsetFor(allIndex));
-            }
+          function jumpTo(ri) {
+            allIndex  = ri + BUFFER;
+            realIndex = ri;
+            updateClasses();
+            loadVideoSrc(allIndex);
+            manageVideo();
+            animateTo(offsetFor(allIndex));
+        }
 
             // ── 10. Click non-active items to focus them ──────────
             allItems.forEach((el, i) => {
@@ -4956,16 +5053,35 @@
                 }, 100);
             });
 
-            // ── 15. Init — defer by two rAFs so layout is fully painted ──
-            // Without this, getBoundingClientRect returns 0 for items not yet rendered.
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    currentOffset = targetOffset = offsetFor(allIndex);
-                    track.style.transform = 'translateX(' + currentOffset + 'px)';
-                    updateClasses();
-                    manageVideo();
-                });
+          // ── Lazy video source loader — injects src only for current ± 1 ──
+        function loadVideoSrc(allIdx) {
+            const toLoad = [allIdx - 1, allIdx, allIdx + 1];
+            toLoad.forEach(i => {
+                const el = allItems[i];
+                if (!el) return;
+                const src = el.getAttribute('data-src') ||
+                    (realItems[((i - BUFFER) % total + total) % total] || el).getAttribute('data-src');
+                const vid = el.querySelector('.vcine-vid');
+                if (vid && src && !vid.querySelector('source')) {
+                    const s = document.createElement('source');
+                    s.src  = src;
+                    s.type = 'video/mp4';
+                    vid.appendChild(s);
+                    vid.load();
+                }
             });
+        }
+
+        // ── 15. Init — defer by two rAFs so layout is fully painted ──
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                currentOffset = targetOffset = offsetFor(allIndex);
+                track.style.transform = 'translateX(' + currentOffset + 'px)';
+                updateClasses();
+                loadVideoSrc(allIndex);
+                manageVideo();
+            });
+        });
         }
 
         // Override showVideoProjects to init carousel each time
@@ -4978,7 +5094,11 @@
                 section.classList.remove('hidden');
                 reveal();
                 section.scrollIntoView({ behavior: 'smooth' });
-                lucide.createIcons();
+                // Smart icon init — only process un-rendered icons
+function initIcons(container) {
+    const target = container || document;
+    lucide.createIcons({ attrs: { class: ['lucide'] }, nameAttr: 'data-lucide' });
+};
                 // Remove any clones injected by a previous initVideoCinema call
                 const track = document.getElementById('vcineTrack');
                 if (track) track.querySelectorAll('[data-clone]').forEach(el => el.remove());
@@ -5027,15 +5147,15 @@
             }, 60);
         };
 
-        window.hideProjectShowcase = function() {
-            const grid = document.getElementById('project-cards-grid');
-            const container = document.getElementById('detailed-project-showcase');
-            const petraDetails = document.getElementById('details-petra');
-            const ameedDetails = document.getElementById('details-ameed');
-            
-            // Pause videos on exit
-            const pVid = document.getElementById('petraCaseVideo');
-            if (pVid) pVid.pause();
+   window.hideProjectShowcase = function() {
+    const grid = document.getElementById('project-cards-grid');
+    const container = document.getElementById('detailed-project-showcase');
+    const petraDetails = document.getElementById('details-petra');
+    const ameedDetails = document.getElementById('details-ameed');
+    
+    // Pause AND reset video on exit to free memory
+    const pVid = document.getElementById('petraCaseVideo');
+    if (pVid) { pVid.pause(); pVid.currentTime = 0; pVid.src = ''; pVid.load(); }
             
             // Revert views
             container.classList.add('hidden');
