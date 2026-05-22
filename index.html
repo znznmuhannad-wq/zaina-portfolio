@@ -18,7 +18,8 @@
     <script>
         (function(){
             var s = localStorage.getItem('zcreative-theme');
-            if (s === 'dark') {
+            var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (s === 'dark' || (!s && systemDark)) {
                 document.documentElement.setAttribute('data-theme','dark');
             }
         })();
@@ -267,12 +268,14 @@
         /* Project titles — max legibility */
         [data-theme="dark"] .petra-project-title          { color: var(--dm-text) !important; }
         [data-theme="dark"] .petra-project-subtitle       { color: var(--dm-text-mid) !important; }
-        [data-theme="dark"] .petra-tag                    {
-            color: #65C6BE !important;
-            border-color: rgba(101,198,190,0.3) !important;
-            background: rgba(101,198,190,0.08) !important;
+        /* Unified elevated pill theme for Highlighted Project tags in dark mode */
+        [data-theme="dark"] .petra-tag,
+        [data-theme="dark"] .ameed-award-badge {
+            background-color: var(--dm-surface-hi) !important;
+            border-color: var(--dm-border-hi) !important;
+            color: var(--dm-text) !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
         }
-        [data-theme="dark"] .ameed-award-badge            { background: #F2B11C; color: #1E1A15 !important; }
 
         /* Section label (Featured Case Study) */
         [data-theme="dark"] .petra-section .text-subtitle_beige { color: var(--dm-text-mid) !important; }
@@ -427,10 +430,15 @@
         }
         [data-theme="dark"] .tear-tag-card h3,
         [data-theme="dark"] .tear-tag-card p { color: #1E1A14 !important; }
-        /* Tear tab text — currently near-invisible on dark */
-        [data-theme="dark"] .tear-tag span {
-            color: rgba(30,26,20,0.75) !important;
+        /* Tear tab text — fixed specificity to override #contact span */
+        [data-theme="dark"] #contact .tear-tag span {
+            color: rgba(30,26,20,0.85) !important;
             opacity: 1 !important;
+        }
+        
+        /* Preserve the teal accent for the UX/UI tab in dark mode */
+        [data-theme="dark"] #contact .tear-tag span.text-teal_primary {
+            color: #428A97 !important;
         }
         /* Tear tabs background stays white-ish */
         [data-theme="dark"] .tear-tag { background: rgba(255,255,255,0.88) !important; }
@@ -513,8 +521,9 @@
         .fluid-body-lg    { font-size: clamp(0.95rem, 1.4vw + 0.3rem,  1.35rem); }
         .fluid-body       { font-size: clamp(0.875rem,1.1vw + 0.25rem, 1.05rem); }
 
-        .fluid-section-py { padding-top: clamp(2.5rem, 6vw, 8rem); padding-bottom: clamp(2.5rem, 6vw, 8rem); }
-        .fluid-section-px { padding-left: clamp(1rem, 5vw, 3rem); padding-right: clamp(1rem, 5vw, 3rem); }
+        /* Unified tighter padding standards for a professional, compact feel */
+        .fluid-section-py { padding-top: clamp(3rem, 5vw, 5.5rem); padding-bottom: clamp(3rem, 5vw, 5.5rem); }
+        .fluid-section-px { padding-left: clamp(1.25rem, 5vw, 2.5rem); padding-right: clamp(1.25rem, 5vw, 2.5rem); }
  
         /* =============================================
             COMPREHENSIVE RESPONSIVE STYLES
@@ -1186,17 +1195,25 @@
             line-height: 1.6;
         }
         .petra-tag {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             padding: 4px 14px;
-            border-radius: 999px;
-            border: 1px solid #B7C7C9;
+            border-radius: 0.75rem; /* Matches the rounded-xl of Web CTA pills */
+            border: 1px solid rgba(183, 199, 201, 0.4); /* border-sage/40 */
             font-family: 'Space Grotesk', sans-serif;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: #428A97;
-            background: rgba(66,138,151,0.06);
+            color: #2C2C2C;
+            background: #ffffff;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .petra-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* hover:shadow-md */
         }
 
         /* Video */
@@ -1477,14 +1494,22 @@
             align-items: center;
             gap: 5px;
             padding: 4px 14px;
-            border-radius: 999px;
-            background: #F2B11C;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(183, 199, 201, 0.4);
+            background: #ffffff;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: #2C2C2C;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .ameed-award-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         /* ── Petra Download Files ── */
@@ -2477,7 +2502,38 @@
             .pa-book:hover { transform: none; }
             .pa-spiral-ring { width: 8px; height: 8px; }
         }
+/* =============================================
+            CODING TYPING BACKGROUND (WEB CTA SECTION)
+        ============================================= */
+        .typing-bg, .typing-bg-delay-1, .typing-bg-delay-2 {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 4px solid transparent;
+            max-width: 0;
+            vertical-align: bottom;
+        }
+        
+        .typing-bg {
+            animation: typeErase 8s steps(40, end) infinite, blinkCursorTeal 0.8s step-end infinite;
+        }
+        .typing-bg-delay-1 {
+            animation: typeErase 10s steps(40, end) infinite 2.5s, blinkCursorGold 0.8s step-end infinite;
+        }
+        .typing-bg-delay-2 {
+            animation: typeErase 9s steps(40, end) infinite 5s, blinkCursorMint 0.8s step-end infinite;
+        }
 
+        @keyframes typeErase {
+            0%, 15% { max-width: 0; }
+            35%, 75% { max-width: 1200px; } /* عرض كافٍ لظهور النص كاملاً */
+            90%, 100% { max-width: 0; }
+        }
+        
+        /* مؤشرات كتابة ترمش بألوان الهوية */
+        @keyframes blinkCursorTeal { from, to { border-right-color: transparent; } 50% { border-right-color: #428A97; } }
+        @keyframes blinkCursorGold { from, to { border-right-color: transparent; } 50% { border-right-color: #F2B11C; } }
+        @keyframes blinkCursorMint { from, to { border-right-color: transparent; } 50% { border-right-color: #65C6BE; } }
         
     </style>
 </head>
@@ -2512,7 +2568,7 @@
                 </svg>
             </button>
             <!-- Mobile hamburger -->
-            <button id="menu-toggle" class="md:hidden text-charcoal">
+            <button id="menu-toggle" class="md:hidden text-charcoal focus:outline-none focus:ring-2 focus:ring-teal_primary rounded p-1" aria-label="Open mobile menu" aria-expanded="false" aria-controls="mobile-menu">
                 <i data-lucide="menu"></i>
             </button>
         </div>
@@ -2520,7 +2576,7 @@
  
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-warm_beige flex-col items-center justify-center gap-6 text-2xl font-space font-bold hidden">
-        <button id="menu-close" class="absolute top-5 right-5 p-2"><i data-lucide="x" size="28"></i></button>
+        <button id="menu-close" class="absolute top-5 right-5 p-2 focus:outline-none focus:ring-2 focus:ring-charcoal rounded" aria-label="Close mobile menu"><i data-lucide="x" size="28"></i></button>
         <a href="#about"     class="mobile-link text-charcoal py-3 px-8 w-full text-center">About</a>
         <a href="#skills"    class="mobile-link text-charcoal py-3 px-8 w-full text-center">Skills</a>
         <a href="#portfolio" class="mobile-link text-charcoal py-3 px-8 w-full text-center">Portfolio</a>
@@ -2551,7 +2607,7 @@
             </div>
             <div class="relative flex justify-center reveal mt-20 lg:mt-0" style="transition-delay: 0.2s">
                 
-                <svg class="absolute -left-4 md:-left-12 top-10 md:-top-6 w-48 h-48 md:w-64 md:h-64 text-[#F2B11C] z-0 animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
+                <svg class="absolute -left-4 md:-left-12 top-10 md:-top-6 w-48 h-48 md:w-64 md:h-64 text-[#F2B11C] z-0 animate-[spin_40s_linear_infinite] will-change-transform" viewBox="0 0 100 100" fill="currentColor">
                     <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
                 </svg>
                 <svg class="absolute -right-4 md:-right-10 -bottom-10 md:-bottom-20 w-40 h-40 md:w-64 md:h-64 text-[#F2B11C] z-0 animate-[spin_35s_linear_infinite_reverse]" viewBox="0 0 100 100" fill="currentColor">
@@ -2565,7 +2621,7 @@
                     <path d="M 15 50 Q 35 15, 55 50 T 95 50" />
                 </svg>
 
-                <div class="relative z-10 animate-float flex justify-center" style="--tw-rotate: -3deg; transform-origin: top center;">
+                <div id="draggable-card-wrap" class="relative z-10 animate-float flex justify-center cursor-grab" style="--tw-rotate: -3deg; transform-origin: top center; touch-action: none;">
                     
                     <div class="absolute bottom-[calc(100%-24px)] left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-20">
                         <div class="w-12 h-32 md:w-14 md:h-48 bg-[#E36A67] shadow-md flex items-center justify-center relative overflow-hidden">
@@ -2625,7 +2681,7 @@
     </section>
  
     <!-- About Section -->
-    <section id="about" class="py-10 md:py-14 fluid-section-px bg-white rounded-[3rem] sm:rounded-[4rem] md:rounded-[6rem] lg:rounded-[100px] -mt-10 relative z-20 about-card-shadow">
+    <section id="about" class="fluid-section-py fluid-section-px bg-white rounded-[3rem] sm:rounded-[4rem] md:rounded-[6rem] lg:rounded-[100px] -mt-10 relative z-20 about-card-shadow">
         <div class="container mx-auto max-w-5xl">
             <div class="reveal">
                 <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">Who am I?</h3>
@@ -2655,7 +2711,7 @@
     </section>
  
     <!-- Skills Section -->
- <section id="skills" class="fluid-section-py fluid-section-px -mt-16 md:-mt-24 relative z-10 overflow-visible overflow-x-hidden">
+ <section id="skills" class="fluid-section-py fluid-section-px -mt-8 md:-mt-12 relative z-10 overflow-visible overflow-x-hidden">
         <svg class="absolute -left-10 top-40 w-40 h-40 md:w-52 md:h-52 text-yellow_gold/60 z-0 animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
             <polygon points="50,0 60,35 95,20 70,50 95,80 60,65 50,100 40,65 5,80 30,50 5,20 40,35" />
         </svg>
@@ -2679,7 +2735,7 @@
             <circle cx="620" cy="450" r="3" fill="#2C2C2C"/>
         </svg>
         <div class="container mx-auto pt-10 relative z-10">
-            <div class="mb-12 md:mb-20 reveal">
+            <div class="mb-10 md:mb-12 reveal">
                 <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-2 text-subtitle_beige">What I do best</h3>
                 <h2 class="fluid-h2-section font-bold font-space text-charcoal">My Expertise</h2>
             </div>
@@ -2781,8 +2837,8 @@
         <div class="absolute top-6 right-8 md:top-10 md:right-14 w-[14px] h-[16px] md:w-[18px] md:h-[20px] rounded-full z-40" style="background: radial-gradient(circle at 35% 35%, #ffe9b1 0%, #F2B11C 50%, #7c5a08 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.35), inset -2px -3px 4px rgba(0,0,0,0.3);"></div>
 
         <!-- Floating image cards — idle float + parallax via JS -->
-       <div class="smd-cards" id="smdCards" aria-hidden="true">
-            <div class="smd-card smd-c1"  data-speed="0.035" data-float-anim="smdFloat1"><img src="https://i.ibb.co/zhD2XDQZ/al-hayat-17.jpg"          alt="" loading="lazy"></div>
+       <div class="smd-cards" id="smdCards">
+            <div class="smd-card smd-c1"  data-speed="0.035" data-float-anim="smdFloat1"><img src="https://i.ibb.co/zhD2XDQZ/al-hayat-17.jpg"          alt="Social Media Campaign for Al Hayat" loading="lazy"></div>
             <div class="smd-card smd-c2"  data-speed="0.055" data-float-anim="smdFloat2"><img src="https://i.ibb.co/Kzpp40wv/armaniiiiiiiiiiiiii-10.jpg" alt="" loading="lazy"></div>
             <div class="smd-card smd-c3"  data-speed="0.025" data-float-anim="smdFloat3"><img src="https://i.ibb.co/VYXCR45G/IMG-5286.png"              alt="" loading="lazy"></div>
             <div class="smd-card smd-c4"  data-speed="0.045" data-float-anim="smdFloat4"><img src="https://i.ibb.co/0jSHZvx4/badges-Bahrin.png"         alt="" loading="lazy"></div>
@@ -2820,12 +2876,27 @@
     ============================================= -->
     <section id="web-cta" class="web-cta-section bg-warm_beige pt-0 pb-12 md:pb-16 px-4 md:px-8 relative z-20 overflow-hidden">
         
-        <svg class="absolute -left-4 md:-left-8 top-10 md:top-16 w-32 h-32 md:w-48 md:h-48 text-yellow_gold/40 z-0 animate-[spin_30s_linear_infinite]" viewBox="0 0 100 100" fill="currentColor">
-            <path d="M50 5 C50 35 65 50 95 50 C65 50 50 65 50 95 C50 65 35 50 5 50 C35 50 50 35 50 5 Z" />
-        </svg>
-        <svg class="absolute -right-20 md:-right-32 bottom-0 w-64 h-64 md:w-[450px] md:h-[450px] text-mint/30 z-0 animate-[spin_40s_linear_infinite_reverse]" viewBox="0 0 100 100" fill="currentColor">
-            <path d="M50 5 C50 35 65 50 95 50 C65 50 50 65 50 95 C50 65 35 50 5 50 C35 50 50 35 50 5 Z" />
-        </svg>
+        <!-- Animated Coding Background -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden select-none z-0 flex flex-col justify-around py-12 md:py-20 opacity-[0.05] dark:opacity-[0.03]" aria-hidden="true">
+            <!-- Line 1 -->
+            <div class="w-full flex justify-start px-4 md:px-10">
+                <div class="font-mono font-bold text-3xl md:text-6xl text-charcoal dark:text-white">
+                    <span class="typing-bg">&lt;div class="creative"&gt;</span>
+                </div>
+            </div>
+            <!-- Line 2 -->
+            <div class="w-full flex justify-end px-4 md:px-20">
+                <div class="font-mono font-bold text-xl md:text-4xl text-charcoal dark:text-white">
+                    <span class="typing-bg-delay-1">const design = new Vision();</span>
+                </div>
+            </div>
+            <!-- Line 3 -->
+            <div class="w-full flex justify-start px-10 md:px-32">
+                <div class="font-mono font-bold text-4xl md:text-7xl text-charcoal dark:text-white">
+                    <span class="typing-bg-delay-2">await build(design);</span>
+                </div>
+            </div>
+        </div>
 
         <div class="container mx-auto relative z-10 max-w-5xl flex flex-col items-center">
 
@@ -2865,7 +2936,7 @@
         </div>
     </section>
 
-    <section id="highlighted-projects" class="petra-section fluid-section-px relative z-20 overflow-hidden" style="padding-top:clamp(2rem,5vw,4rem);padding-bottom:clamp(2rem,5vw,4rem);">
+    <section id="highlighted-projects" class="petra-section fluid-section-py fluid-section-px relative z-20 overflow-hidden">
 
         <!-- Atmospheric background image overlay -->
         <div class="petra-bg-overlay" aria-hidden="true"></div>
@@ -2873,7 +2944,7 @@
         <div class="container mx-auto relative z-10">
 
             <!-- Section Label -->
-            <div class="mb-6 md:mb-8 reveal">
+            <div class="mb-10 md:mb-12 reveal">
                 <h3 class="text-xs sm:text-sm uppercase tracking-widest font-bold mb-1 text-subtitle_beige">Featured Case Study</h3>
                 <h2 class="fluid-h2-section font-bold font-space text-charcoal">Highlighted Projects</h2>
             </div>
@@ -2892,10 +2963,10 @@
                             <span class="petra-tag">UI/UX</span>
                         </div>
                         <h3 class="font-fredoka font-bold text-2xl md:text-3xl text-charcoal dark:text-[#F0E6D4] mb-2 group-hover/card:text-teal_primary transition-colors">Petra Chocolate</h3>
-                        <p class="font-inter text-xs md:text-sm text-subtitle_beige dark:text-[#C4B49A] leading-relaxed mb-6">A luxury chocolate brand rooted in Jordanian identity — where heritage architecture meets modern visual storytelling.</p>
+                        <p class="font-inter text-xs md:text-sm text-subtitle_beige dark:text-[#C4B49A] leading-relaxed mb-6">A luxury chocolate brand rooted in Jordanian identity where heritage architecture meets modern visual storytelling.</p>
                     </div>
                     <button onclick="toggleProjectShowcase('petra')" class="w-full py-3.5 rounded-full font-space font-bold text-sm text-white bg-teal_primary hover:bg-teal_primary/90 transition-all flex items-center justify-center gap-2 group shadow-md">
-                        <span>Explore Case Study</span>
+                        <span>Explore More</span>
                         <i data-lucide="arrow-right" size="16" class="group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </div>
@@ -2914,7 +2985,7 @@
                         <p class="font-inter text-xs md:text-sm text-subtitle_beige dark:text-[#C4B49A] leading-relaxed mb-6">A visual journey through Jordanian civilisation, translating heritage architecture and symbolic storytelling into a continuous flow.</p>
                     </div>
                     <button onclick="toggleProjectShowcase('ameed')" class="w-full py-3.5 rounded-full font-space font-bold text-sm text-white bg-teal_primary hover:bg-teal_primary/90 transition-all flex items-center justify-center gap-2 group shadow-md">
-                        <span>Explore Case Study</span>
+                        <span>Explore More</span>
                         <i data-lucide="arrow-right" size="16" class="group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </div>
@@ -2932,7 +3003,7 @@
                             <span class="petra-tag">Visual Direction</span>
                         </div>
                         <h3 class="petra-project-title">Petra Chocolate</h3>
-                        <p class="petra-project-subtitle">A luxury chocolate brand rooted in Jordanian identity — where heritage architecture meets modern visual storytelling.</p>
+                        <p class="petra-project-subtitle">A luxury chocolate brand rooted in Jordanian identity where heritage architecture meets modern visual storytelling.</p>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-5 md:mb-7 items-stretch">
@@ -3271,7 +3342,7 @@
             </div>
 
             <!-- Close button -->
-            <div class="mt-8 md:mt-10 flex justify-center reveal">
+            <div class="mt-10 md:mt-12 flex justify-center reveal">
                 <button onclick="hidePlasticArt()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-teal_primary hover:text-teal_primary transition-all flex items-center gap-2 text-sm md:text-base group">
                     <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i>
                     Close Sketchbook
@@ -3420,7 +3491,7 @@
         <div class="container mx-auto">
 
             <!-- Header -->
-            <div class="mb-12 reveal">
+            <div class="mb-10 md:mb-12 reveal">
                 <h3 class="text-xs uppercase tracking-widest font-bold text-mint mb-2">Showcase</h3>
                 <h2 class="fluid-h2-section font-bold font-space text-charcoal">Web Design & Development</h2>
                 <p class="fluid-body-lg text-subtitle_beige max-w-2xl">
@@ -3496,7 +3567,7 @@
             </div>
 
             <!-- Close -->
-            <div class="mt-12 md:mt-16 flex justify-center reveal">
+            <div class="mt-10 md:mt-12 flex justify-center reveal">
                 <button onclick="hideWebProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-coral hover:text-coral transition-all flex items-center gap-2 text-sm md:text-base group">
                     <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i> 
                     Close Showcase
@@ -3559,7 +3630,7 @@
                 </a>
             </div>
 
-            <div class="mt-8 flex justify-center reveal">
+            <div class="mt-10 md:mt-12 flex justify-center reveal">
                 <button onclick="hidePackagingProjects()" class="px-6 md:px-8 py-3 rounded-full font-space font-bold text-charcoal bg-transparent border-2 border-sage hover:border-yellow_gold hover:text-yellow_gold transition-all flex items-center gap-2 text-sm md:text-base group">
                     <i data-lucide="chevron-up" size="20" class="group-hover:-translate-y-1 transition-transform"></i>
                     Close Showcase
@@ -3662,7 +3733,7 @@
     </div>
 
     <!-- Education Section -->
-    <section id="education" class="py-10 md:py-14 fluid-section-px bg-warm_beige relative z-20">
+    <section id="education" class="fluid-section-py fluid-section-px bg-warm_beige relative z-20">
         <div class="container mx-auto max-w-4xl reveal">
             <div class="mb-6 md:mb-8">
                 <h2 class="fluid-h2-section font-bold font-fredoka text-charcoal">Education</h2>
@@ -3927,13 +3998,26 @@
             : (initPetraCarousel(), initAmeedCarousel(), initCardAnimations());
 
         function reveal() {
-            document.querySelectorAll(".reveal").forEach(el => {
+            // Only query elements that haven't been revealed yet to save memory
+            document.querySelectorAll(".reveal:not(.active)").forEach(el => {
                 if (el.getBoundingClientRect().top < window.innerHeight - 150) {
                     el.classList.add("active");
                 }
             });
         }
-        window.addEventListener("scroll", reveal);
+        
+        let isScrolling = false;
+        // Use requestAnimationFrame to sync with the browser's refresh rate
+        window.addEventListener("scroll", () => {
+            if (!isScrolling) {
+                window.requestAnimationFrame(() => {
+                    reveal();
+                    isScrolling = false;
+                });
+                isScrolling = true;
+            }
+        }, { passive: true }); // passive: true prevents scroll blocking
+        
         window.addEventListener("load", reveal);
  
         // ── Mobile menu ────────────────────────────────────────────
@@ -4943,6 +5027,85 @@
             // Scroll smoothly back to top of the block
             document.getElementById('highlighted-projects').scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
+
+        // ── DRAGGABLE HERO CARD (SPRING EFFECT) ────────────────────
+        (function() {
+            const cardWrap = document.getElementById('draggable-card-wrap');
+            if (!cardWrap) return;
+
+            let isDragging = false;
+            let startX = 0, startY = 0;
+
+            // منع سلوك السحب الافتراضي للصور حتى لا يتعارض مع سحب البطاقة
+            cardWrap.querySelectorAll('img').forEach(img => img.draggable = false);
+
+            const onGrab = (e) => {
+                isDragging = true;
+                // استخدام طريقة أكثر دقة للتعرف على اللمس أو الماوس
+                startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                cardWrap.style.transition = 'none';
+                // الحل السحري: إزالة الأنيميشن بالكامل للسماح للجافاسكريبت بالتحكم في الـ transform
+                cardWrap.style.animation = 'none'; 
+                cardWrap.style.cursor = 'grabbing';
+            };
+
+            const onMove = (e) => {
+                if (!isDragging) return;
+                
+                const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                const dx = x - startX;
+                const dy = y - startY;
+                
+                // 1. الاحتكاك: جعل الكرت يقاوم السحب ليعطي إحساس بالوزن
+                const pullX = dx * 0.4;
+                const pullY = dy > 0 ? dy * 0.35 : dy * 0.5;
+                
+                // 2. تأرجح البندول: ميلان يعتمد على السحب الأفقي
+                const rotation = -3 + (dx * 0.04);
+                
+                // 3. التمدد (المط): يتمدد الكرت عندما تسحبه للأسفل
+                let scaleX = 1;
+                let scaleY = 1;
+                
+                if (dy > 0) {
+                    const tension = Math.min(dy, 400); 
+                    scaleY = 1 + (tension * 0.0008);
+                    scaleX = 1 - (tension * 0.0003); 
+                }
+                
+                cardWrap.style.transform = `translate(${pullX}px, ${pullY}px) rotate(${rotation}deg) scale(${scaleX}, ${scaleY})`;
+            };
+
+            const onRelease = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                cardWrap.style.cursor = 'grab';
+                
+                // الارتداد للخلف بشكل مرن
+                cardWrap.style.transition = 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                cardWrap.style.transform = `translate(0px, 0px) rotate(-3deg) scale(1, 1)`;
+                
+                // إعادة تشغيل أنيميشن الطفو التلقائي بعد الاستقرار
+                setTimeout(() => {
+                    if (!isDragging) {
+                        cardWrap.style.transition = '';
+                        cardWrap.style.animation = ''; // إرجاع الأنيميشن للعمل بناءً على كلاس الـ CSS
+                    }
+                }, 800);
+            };
+
+            cardWrap.addEventListener('mousedown', onGrab);
+            cardWrap.addEventListener('touchstart', onGrab, {passive: true});
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('touchmove', onMove, {passive: true});
+            window.addEventListener('mouseup', onRelease);
+            window.addEventListener('touchend', onRelease);
+        })();
+        
     </script>
 </body>
 </html>
