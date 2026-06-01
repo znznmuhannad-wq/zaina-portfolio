@@ -1,0 +1,25 @@
+{
+  "name": "z-creative-studio",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Z Creative Studio — portfolio of Zaina Alissa. Migrated from a single-file static site to a structure-preserving Next.js (App Router) architecture.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^16.2.7",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/react": "19.0.2",
+    "@types/react-dom": "19.0.2",
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.7.2"
+  }
+}
