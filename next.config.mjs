@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // External media (i.ibb.co images, files.catbox.moe videos) is referenced via
-  // plain <img>/<video> inside verbatim markup, so next/image remote patterns are
-  // not required. They are listed here so the assets can be migrated to next/image
-  // incrementally without touching config.
+  // The site is a single, fully static page, so we emit a plain static export
+  // (an `out/` folder of HTML/CSS/JS). This mirrors the original static Netlify
+  // deployment exactly — Netlify just serves files, with no Next.js server
+  // runtime or adapter to misconfigure.
+  output: 'export',
   images: {
+    // Required for `output: 'export'` (the optimizing loader needs a server).
+    // External media is referenced via plain <img>/<video> in the verbatim
+    // markup, so no optimization is in play today; patterns are kept for a
+    // future incremental next/image migration.
+    unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'i.ibb.co' },
       { protocol: 'https', hostname: 'files.catbox.moe' },

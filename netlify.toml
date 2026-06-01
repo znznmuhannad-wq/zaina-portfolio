@@ -1,20 +1,22 @@
-# Netlify configuration for the Next.js (App Router) build.
-# The official @netlify/plugin-nextjs runtime is auto-installed by Netlify when a
-# Next.js site is detected; it provisions SSR/ISR, the Image CDN and routing, so
-# no `publish` directory is set manually here.
+# Netlify configuration.
+# The app is built as a static export (next.config.mjs -> output: 'export'),
+# which produces an `out/` folder of plain static files. Netlify simply serves
+# that directory — no Next.js runtime/adapter required (mirrors the original
+# static deployment).
 [build]
   command = "npm run build"
+  publish = "out"
 
 [build.environment]
   NODE_VERSION = "20"
 
-# Long-cache the verbatim runtime script and Next static assets.
+# Long-cache immutable build assets.
 [[headers]]
-  for = "/portfolio.runtime.js"
+  for = "/_next/static/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
-  for = "/_next/static/*"
+  for = "/portfolio.runtime.js"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
