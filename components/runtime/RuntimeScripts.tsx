@@ -3,30 +3,13 @@
 import Script from 'next/script';
 
 /**
- * Loads the icon library and the verbatim portfolio runtime.
+ * Loads the verbatim portfolio runtime (carousels, lightbox, mute registry,
+ * dark-mode, plastic-art book, draggable hero card, reveal-on-scroll).
  *
- * - Lucide is loaded from its CDN and, once ready, we explicitly call
- *   createIcons(). The legacy page relied on Lucide's own DOMContentLoaded
- *   auto-init; under Next's afterInteractive timing that event has already
- *   fired, so the explicit onLoad call is what guarantees every `data-lucide`
- *   icon in the server-rendered markup is rendered. (Idempotent — safe.)
- * - portfolio.runtime.js is the original behaviour script, byte-for-byte,
- *   running in global scope so inline onclick handlers resolve exactly as before.
+ * Icons are now inlined as static SVG at build time, so the Lucide library is
+ * no longer loaded at all — this removes ~402 KB of third-party JavaScript and
+ * one cross-origin connection.
  */
 export default function RuntimeScripts() {
-  return (
-    <>
-      <Script
-        src="https://unpkg.com/lucide@latest"
-        strategy="afterInteractive"
-        onLoad={() => {
-          window.lucide?.createIcons({
-            attrs: { class: ['lucide'] },
-            nameAttr: 'data-lucide',
-          });
-        }}
-      />
-      <Script src="/portfolio.runtime.js" strategy="afterInteractive" />
-    </>
-  );
+  return <Script src="/portfolio.runtime.js" strategy="afterInteractive" />;
 }

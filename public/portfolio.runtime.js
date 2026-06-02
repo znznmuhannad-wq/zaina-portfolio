@@ -320,6 +320,13 @@ function initIcons(container) {
             document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
                 section.classList.remove('hidden');
+                // Lazy-load the external preview iframes only when the section is
+                // first opened (avoids loading full third-party sites on page load).
+                section.querySelectorAll('iframe[data-src]').forEach(f => {
+                    if (!f.getAttribute('src') || f.getAttribute('src') === 'about:blank') {
+                        f.setAttribute('src', f.getAttribute('data-src'));
+                    }
+                });
                 reveal();
                 section.scrollIntoView({ behavior: 'smooth' });
             }, 400);

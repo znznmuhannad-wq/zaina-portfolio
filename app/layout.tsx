@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import { siteConfig } from '@/config/site';
 import RuntimeScripts from '@/components/runtime/RuntimeScripts';
+import './fonts.css';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -44,16 +45,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        {/* Preconnect / dns-prefetch to media + font CDNs (verbatim from legacy head) */}
+        {/* Preconnect / dns-prefetch to the media CDNs. Fonts are now self-hosted
+            (app/fonts.css + /public/fonts), so the Google Fonts CDN is no longer used. */}
         <link rel="preconnect" href="https://i.ibb.co" />
         <link rel="preconnect" href="https://files.catbox.moe" />
         <link rel="dns-prefetch" href="https://i.ibb.co" />
         <link rel="dns-prefetch" href="https://files.catbox.moe" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        {/* Preload the LCP hero image for a faster Largest Contentful Paint. */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap"
-          rel="stylesheet"
+          rel="preload"
+          as="image"
+          href="https://i.ibb.co/zHVQT1S9/00.png"
+          fetchPriority="high"
         />
         <Script
           id="theme-init"
