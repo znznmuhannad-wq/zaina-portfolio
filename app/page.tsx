@@ -7,6 +7,7 @@ import Skills from '@/components/sections/Skills';
 import SocialDesignHero from '@/components/sections/SocialDesignHero';
 import WebCta from '@/components/sections/WebCta';
 import HighlightedProjects from '@/components/sections/HighlightedProjects';
+import BrandIdentity from '@/components/sections/BrandIdentity';
 import Portfolio from '@/components/sections/Portfolio';
 import PlasticArt from '@/components/sections/PlasticArt';
 import VideoProjects from '@/components/sections/VideoProjects';
@@ -30,6 +31,7 @@ export default function Home() {
       <SocialDesignHero />
       <WebCta />
       <HighlightedProjects />
+      <BrandIdentity />
       <Portfolio />
       <PlasticArt />
       <VideoProjects />

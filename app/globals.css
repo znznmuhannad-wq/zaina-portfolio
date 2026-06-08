@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Brand Identity carousel — hide scrollbar while keeping horizontal scroll. */
+.brand-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.brand-track::-webkit-scrollbar {
+  display: none;
+}
+
 /* =========================================================================
    Verbatim global styles migrated from legacy index.html <style> block.
    Theme tokens, dark-mode palette, keyframes, component & responsive rules.
