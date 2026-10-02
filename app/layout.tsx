@@ -48,9 +48,7 @@ export default function RootLayout({
         {/* Preconnect / dns-prefetch to the media CDNs. Fonts are now self-hosted
             (app/fonts.css + /public/fonts), so the Google Fonts CDN is no longer used. */}
         <link rel="preconnect" href="https://i.ibb.co" />
-        <link rel="preconnect" href="https://files.catbox.moe" />
         <link rel="dns-prefetch" href="https://i.ibb.co" />
-        <link rel="dns-prefetch" href="https://files.catbox.moe" />
         {/* Preload the LCP hero image for a faster Largest Contentful Paint. */}
         <link
           rel="preload"

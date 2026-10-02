@@ -356,22 +356,22 @@ function initIcons(container) {
 
         // ── MODAL / LIGHTBOX SYSTEM ───────────────────────────────
         const videoSources = [
-            'https://files.catbox.moe/pa8t76.mp4',
-            'https://files.catbox.moe/2o1zfh.mp4',
-            'https://files.catbox.moe/g2efjs.mov',
-            'https://files.catbox.moe/jm1myj.mov',
-            'https://files.catbox.moe/1gt1z1.mp4',
-            'https://files.catbox.moe/yh28as.mov',
-            'https://files.catbox.moe/efjltu.mov',
-            'https://files.catbox.moe/93ka56.mov',
-            'https://files.catbox.moe/wd82z3.mov',
-            'https://files.catbox.moe/22ulfd.mov',
-            'https://files.catbox.moe/x1vkd5.mov',
-            'https://files.catbox.moe/sgsour.mov',
-            'https://files.catbox.moe/93n59s.mov',
-            'https://files.catbox.moe/g48z06.mov',
-            'https://files.catbox.moe/czr2jr.mov',
-            'https://files.catbox.moe/2pe51e.mov',
+            '/videos/pa8t76.mp4',
+            '/videos/2o1zfh.mp4',
+            '/videos/g2efjs.mp4',
+            '/videos/jm1myj.mp4',
+            '/videos/1gt1z1.mp4',
+            '/videos/yh28as.mp4',
+            '/videos/efjltu.mp4',
+            '/videos/93ka56.mp4',
+            '/videos/wd82z3.mp4',
+            '/videos/22ulfd.mp4',
+            '/videos/x1vkd5.mp4',
+            '/videos/sgsour.mp4',
+            '/videos/93n59s.mp4',
+            '/videos/g48z06.mp4',
+            '/videos/czr2jr.mp4',
+            '/videos/2pe51e.mp4',
         ];
 
         // Web projects data — used by the modal iframe viewer
