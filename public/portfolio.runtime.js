@@ -391,6 +391,11 @@ function initIcons(container) {
                 title: 'Z Creative Studio',
                 desc:  'My personal creative portfolio — designed and developed entirely by me, from concept to code.',
             },
+            {
+                url:   'https://lustraden.netlify.app/',
+                title: 'Lustradent',
+                desc:  'A bilingual (English / Arabic) website for a Jordanian dental community connecting dentists and dental technicians, with a membership application flow.',
+            },
         ];
 
         let modalCurrentIndex = 0;
