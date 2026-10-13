@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
 import Skills from '@/components/sections/Skills';
+import Tools from '@/components/sections/Tools';
 import SocialDesignHero from '@/components/sections/SocialDesignHero';
 import WebCta from '@/components/sections/WebCta';
 import HighlightedProjects from '@/components/sections/HighlightedProjects';
@@ -28,6 +29,7 @@ export default function Home() {
       <Hero />
       <About />
       <Skills />
+      <Tools />
       <SocialDesignHero />
       <WebCta />
       <HighlightedProjects />

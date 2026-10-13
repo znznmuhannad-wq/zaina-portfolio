@@ -533,22 +533,13 @@ footer,
 
         /* ── Folders grid ── */
         @media (max-width: 480px) {
-            .folders-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2rem 1rem;
-                padding-top: 2.5rem;
-            }
-            .folder-back { width: 90px; height: 72px; }
-            .folder-back::after { width: 28px; height: 10px; }
-            .folder-label { font-size: 10px; }
-            .folder-sub   { font-size: 9px; }
+            .folder-back { width: 120px; }
+            .folder-back::after { height: 11px; }
+            .folder-label { font-size: 12px; }
+            .folder-sub   { font-size: 10px; }
         }
         @media (min-width: 481px) and (max-width: 767px) {
-            .folders-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 2.5rem 1.5rem;
-                padding-top: 3rem;
-            }
+            .folder-back { width: 120px; }
         }
 
         /* ── Tear tags (contact) ── */
@@ -672,7 +663,6 @@ footer,
         /* ── Tablet: 768–1023px ── */
         @media (min-width: 768px) and (max-width: 1023px) {
             .hero-title-stacked { font-size: clamp(3.5rem, 7vw, 6rem); }
-            .folders-grid { grid-template-columns: repeat(4, 1fr); gap: 2.5rem 1.5rem; }
             #video-projects .grid { grid-template-columns: repeat(3, 1fr) !important; }
             #web-projects .grid   { grid-template-columns: repeat(2, 1fr) !important; }
         }
@@ -861,19 +851,29 @@ footer,
  
         .folder-label {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 11px;
+            font-size: 14px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #8A7E72;
+            color: #2C2C2C;
             text-align: center;
+            transition: color 0.2s;
         }
+        .folder-wrap:hover .folder-label { color: #428A97; }
         .folder-sub {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 10px;
-            color: #B7C7C9;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: #8A7E72;
             text-align: center;
             margin-top: -8px;
+        }
+        .folders-hint {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            color: #8A7E72;
+            margin-top: 6px;
         }
  
         .folder {
@@ -882,7 +882,7 @@ footer,
             transform-origin: bottom center;
         }
         .folder:hover:not(.open) { transform: translateY(-10px); }
-        .folder:hover:not(.open) .paper { transform: translate(-50%, 0%); }
+        .folder:hover:not(.open) .paper { transform: translate(-50%, -52%); }
         .folder:hover:not(.open) .folder-front { transform: skew(15deg) scaleY(0.6); }
         .folder:hover:not(.open) .folder-front.right { transform: skew(-15deg) scaleY(0.6); }
  
@@ -898,9 +898,10 @@ footer,
  
         .folder-back {
             position: relative;
-            width: 120px;
-            height: 96px;
-            border-radius: 0 10px 10px 10px;
+            width: clamp(130px, 15vw, 175px);
+            aspect-ratio: 5 / 4;
+            border-radius: 0 12px 12px 12px;
+            box-shadow: 0 14px 28px -12px rgba(44,44,44,0.35);
         }
         .folder-back::after {
             position: absolute;
@@ -908,16 +909,17 @@ footer,
             bottom: 98%;
             left: 0;
             content: '';
-            width: 36px;
-            height: 12px;
-            border-radius: 5px 5px 0 0;
+            width: 30%;
+            height: 13px;
+            border-radius: 6px 6px 0 0;
         }
         .paper {
             position: absolute;
             z-index: 2;
             bottom: 10%;
             left: 50%;
-            transform: translate(-50%, 10%);
+            /* Papers peek out of the folder at rest so it reads as "full of work" */
+            transform: translate(-50%, -34%);
             width: 70%;
             height: 80%;
             border-radius: 8px;
@@ -932,11 +934,11 @@ footer,
  
         .paper-content {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: rgba(0,0,0,0.2);
+            color: rgba(0,0,0,0.28);
             text-align: center;
             padding: 4px;
         }
@@ -1006,12 +1008,22 @@ footer,
  
        .folders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 30vw, 160px), 1fr));
-    gap: 3rem 2rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3.5rem 2rem;
     justify-items: center;
-    padding-top: 4rem;
-    padding-bottom: 2rem;
+    /* Soft "desk" panel so the archive reads as its own block */
+    margin-top: 1.5rem;
+    padding: 5rem 2rem 3rem;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(183,199,201,0.45);
+    border-radius: 2rem;
 }
+[data-theme="dark"] .folders-grid { background: var(--dm-surface); border-color: var(--dm-border); }
+[data-theme="dark"] .folders-hint { color: var(--dm-text-sub); }
+/* Responsive folder grid: kept after the base rule so these win the cascade */
+@media (min-width: 768px) and (max-width: 1023px) { .folders-grid { grid-template-columns: repeat(3, 1fr); gap: 3.5rem 1.5rem; } }
+@media (min-width: 481px) and (max-width: 767px) { .folders-grid { grid-template-columns: repeat(3, 1fr); gap: 3rem 1rem; padding: 4rem 1rem 2.5rem; } }
+@media (max-width: 480px) { .folders-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem 0.75rem; padding: 3.5rem 0.75rem 2rem; border-radius: 1.5rem; } }
 
 #mobile-menu {
     overflow-y: auto;
@@ -2569,3 +2581,167 @@ footer,
 #u17Carousel { background: linear-gradient(160deg, #002F5B 0%, #005E7A 55%, #00C896 100%); }
 #u17Carousel .petra-slide { flex: 0 0 100%; max-width: 100%; }
 #u17Carousel .petra-slide img { padding: 5%; }
+
+/* =============================================
+    TOOLS — "starter pack" blister cards
+============================================= */
+#tools { --tools-bg: #F5EFE6; background-color: var(--tools-bg); }
+[data-theme="dark"] #tools { --tools-bg: var(--dm-bg); }
+[data-theme="dark"] #tools h2 { color: var(--dm-text) !important; }
+[data-theme="dark"] #tools .text-subtitle_beige { color: var(--dm-text-mid) !important; }
+
+.tools-packs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 360px));
+    justify-content: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+}
+@media (max-width: 767px) {
+    .tools-packs { grid-template-columns: minmax(0, 340px); gap: 3rem; }
+}
+
+.tool-pack {
+    --pack-a: #F08A87;
+    --pack-b: #E36A67;
+    --pack-ink: #B54F4D;
+    position: relative;
+    padding: 3.25rem 1.5rem 1.5rem;
+    border-radius: 1.75rem;
+    background:
+        radial-gradient(120% 60% at 20% 0%, rgba(255,255,255,0.35), transparent 60%),
+        linear-gradient(160deg, var(--pack-a), var(--pack-b));
+    box-shadow: 0 30px 50px -24px rgba(44,44,44,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.tool-pack:hover { transform: translateY(-6px) rotate(-0.6deg); box-shadow: 0 36px 60px -24px rgba(44,44,44,0.5), inset 0 1px 0 rgba(255,255,255,0.4); }
+.pack-teal { --pack-a: #6FB3BE; --pack-b: #428A97; --pack-ink: #2D6874; }
+
+/* Hang-tab slot punched through the card */
+.pack-hang {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    width: 70px;
+    height: 16px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: var(--tools-bg);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.18);
+}
+
+.pack-title {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 0.85;
+    margin-bottom: 1.4rem;
+    text-align: center;
+}
+.pack-t1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 5vw, 3rem);
+    letter-spacing: -0.04em;
+    color: rgba(255,255,255,0.92);
+}
+.pack-t2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: clamp(2.4rem, 5vw, 3rem);
+    letter-spacing: -0.05em;
+    color: var(--pack-ink);
+}
+.pack-sticker {
+    position: absolute;
+    right: 0.25rem;
+    bottom: -0.9rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1.5px solid #2C2C2C;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #2C2C2C;
+    transform: rotate(-6deg);
+}
+
+/* Clear plastic blister */
+.pack-blister {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.1rem 1rem;
+    padding: 1.4rem 1rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(145deg, rgba(255,255,255,0.42), rgba(255,255,255,0.1));
+    border: 2px solid rgba(255,255,255,0.55);
+    box-shadow:
+        inset 0 0 0 6px rgba(255,255,255,0.1),
+        inset 0 12px 28px rgba(255,255,255,0.22),
+        0 10px 20px -10px rgba(0,0,0,0.25);
+}
+
+.tool-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(56px, 6.5vw, 70px);
+    aspect-ratio: 1;
+    border-radius: 24%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+    letter-spacing: -0.02em;
+    box-shadow: 0 8px 14px -6px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: transform 0.25s ease;
+    cursor: default;
+}
+.tool-tile.tile-word { font-size: clamp(0.85rem, 1.3vw, 1rem); }
+.tool-tile.tile-script { font-family: 'Fredoka', sans-serif; font-style: italic; }
+/* Loose, hand-placed look like loose pins in a blister */
+.tool-tile:nth-child(3n+1) { transform: rotate(-7deg); }
+.tool-tile:nth-child(3n+2) { transform: rotate(5deg) translateY(-6px); }
+.tool-tile:nth-child(3n)   { transform: rotate(-3deg) translateY(4px); }
+.tool-tile:hover { transform: rotate(0) scale(1.12); }
+
+.pack-caption {
+    margin-top: 1.1rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    text-align: center;
+    color: rgba(255,255,255,0.92);
+}
+
+/* Starburst sticker */
+.pack-burst {
+    position: absolute;
+    left: -1.1rem;
+    bottom: 4.2rem;
+    width: 78px;
+    height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F2B11C;
+    clip-path: polygon(50% 0%, 61% 15%, 79% 10%, 79% 29%, 96% 35%, 86% 50%, 96% 65%, 79% 71%, 79% 90%, 61% 85%, 50% 100%, 39% 85%, 21% 90%, 21% 71%, 4% 65%, 14% 50%, 4% 35%, 21% 29%, 21% 10%, 39% 15%);
+    transform: rotate(-12deg);
+}
+.pack-teal .pack-burst { background: #E36A67; }
+.pack-burst span {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    color: #2C2C2C;
+}
+.pack-teal .pack-burst span { color: #fff; }
