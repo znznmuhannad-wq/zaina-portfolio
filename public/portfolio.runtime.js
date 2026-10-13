@@ -342,6 +342,45 @@ function initIcons(container) {
             setTimeout(() => { section.classList.add('hidden'); }, 600);
         }
 
+        // ── Mini game (Deadline Dash) — its code loads only on first open ──
+        const SHOWCASE_IDS = ['video-projects','web-projects','social-media-projects','plastic-art-section','packaging-projects'];
+        function loadDeadlineDash() {
+            const stage = document.getElementById('dashStage');
+            if (window.DeadlineDash) { window.DeadlineDash.mount(stage); return; }
+            if (document.getElementById('dashScript')) return;
+            const s = document.createElement('script');
+            s.id = 'dashScript';
+            s.src = '/game/deadline-dash.js';
+            s.onload = () => window.DeadlineDash.mount(stage);
+            document.body.appendChild(s);
+        }
+        function showGameSection() {
+            const section = document.getElementById('game-section');
+            SHOWCASE_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                section.classList.remove('hidden');
+                reveal();
+                section.scrollIntoView({ behavior: 'smooth' });
+                loadDeadlineDash();
+            }, 400);
+        }
+        function hideGameSection() {
+            if (window.DeadlineDash) window.DeadlineDash.stop();
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => { document.getElementById('game-section').classList.add('hidden'); }, 600);
+        }
+        // Opening any other folder closes the game (the other showcases only know about each other)
+        document.addEventListener('click', e => {
+            const folder = e.target.closest('.folder');
+            if (!folder || folder.closest('[data-cat="fun"]')) return;
+            const game = document.getElementById('game-section');
+            if (game && !game.classList.contains('hidden')) {
+                if (window.DeadlineDash) window.DeadlineDash.stop();
+                game.classList.add('hidden');
+            }
+        }, true);
+
         // ── Portfolio folder filter ────────────────────────────────
         document.querySelectorAll('.filter-btn-folder').forEach(btn => {
             btn.onclick = () => {

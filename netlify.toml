@@ -16,7 +16,14 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# The runtime and game files keep the same URL across deploys, so they must be
+# revalidated (cheap 304 via ETag) instead of cached as immutable for a year.
 [[headers]]
   for = "/portfolio.runtime.js"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/game/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

@@ -15,6 +15,7 @@ import VideoProjects from '@/components/sections/VideoProjects';
 import WebProjects from '@/components/sections/WebProjects';
 import PackagingProjects from '@/components/sections/PackagingProjects';
 import SocialMediaProjects from '@/components/sections/SocialMediaProjects';
+import GameSection from '@/components/sections/GameSection';
 import Education from '@/components/sections/Education';
 import Contact from '@/components/sections/Contact';
 import Modal from '@/components/overlays/Modal';
@@ -40,6 +41,7 @@ export default function Home() {
       <WebProjects />
       <PackagingProjects />
       <SocialMediaProjects />
+      <GameSection />
       <Modal />
       <Education />
       <Contact />
