@@ -134,6 +134,10 @@ function initIcons(container) {
         }
 
         // ── Init Al Ameed supporting carousel ────────────────────
+        function initU17Carousel() {
+            makeCarousel({ carouselId:'u17Carousel', trackId:'u17Track', counterId:'u17Counter', dotsSelector:'#u17Dots', prevId:'u17Prev', nextId:'u17Next', slideClass:'petra-slide', dotClass:'petra-dot', autoDelay:5000 });
+        }
+
         function initAmeedCarousel() {
             makeCarousel({ carouselId:'ameedCarousel', trackId:'ameedCarouselTrack', counterId:'ameedCarouselCounter', dotsSelector:'#ameedCarouselDots', prevId:'ameedPrev', nextId:'ameedNext', slideClass:'ameed-slide', dotClass:'ameed-dot', autoDelay:6000 });
         }
@@ -160,8 +164,8 @@ function initIcons(container) {
         }
 
         document.readyState === 'loading'
-            ? document.addEventListener('DOMContentLoaded', () => { initPetraCarousel(); initAmeedCarousel(); initCardAnimations(); })
-            : (initPetraCarousel(), initAmeedCarousel(), initCardAnimations());
+            ? document.addEventListener('DOMContentLoaded', () => { initPetraCarousel(); initAmeedCarousel(); initU17Carousel(); initCardAnimations(); })
+            : (initPetraCarousel(), initAmeedCarousel(), initU17Carousel(), initCardAnimations());
 
         function reveal() {
             // Only query elements that haven't been revealed yet to save memory
@@ -1196,30 +1200,18 @@ function initIcons(container) {
         window.toggleProjectShowcase = function(projectType) {
             const grid = document.getElementById('project-cards-grid');
             const container = document.getElementById('detailed-project-showcase');
-            const petraDetails = document.getElementById('details-petra');
-            const ameedDetails = document.getElementById('details-ameed');
-            
-            // Hide the grid selection view
+
+            // Hide the grid selection view and show the main details wrapper
             grid.classList.add('hidden');
-            // Show the main details wrapper
             container.classList.remove('hidden');
 
-            if (projectType === 'petra') {
-                ameedDetails.classList.add('hidden');
-                petraDetails.classList.remove('hidden');
-                
-                // Play video if it exists
-                const pVid = document.getElementById('petraCaseVideo');
-                if (pVid) pVid.play().catch(() => {});
-                
-            } else if (projectType === 'ameed') {
-                petraDetails.classList.add('hidden');
-                ameedDetails.classList.remove('hidden');
-                
-                // Pause petra video if it was running
-                const pVid = document.getElementById('petraCaseVideo');
-                if (pVid) pVid.pause();
-            }
+            // Show only the requested project; play its case video, pause the others
+            container.querySelectorAll('[id^="details-"]').forEach(block => {
+                const active = block.id === 'details-' + projectType;
+                block.classList.toggle('hidden', !active);
+                const vid = block.querySelector('video');
+                if (vid) { if (active) vid.play().catch(() => {}); else vid.pause(); }
+            });
 
             // CRITICAL: Trigger resize event to force dynamic layout elements
             // (like track width, layout boundaries, container height) to compute accurately.
@@ -1227,28 +1219,27 @@ function initIcons(container) {
                 window.dispatchEvent(new Event('resize'));
                 // Force reveal observer checklist update
                 if (typeof reveal === 'function') reveal();
-                
+
                 // Smooth scroll to the featured study section header
                 document.getElementById('highlighted-projects').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 60);
         };
 
-   window.hideProjectShowcase = function() {
-    const grid = document.getElementById('project-cards-grid');
-    const container = document.getElementById('detailed-project-showcase');
-    const petraDetails = document.getElementById('details-petra');
-    const ameedDetails = document.getElementById('details-ameed');
-    
-    // Pause AND reset video on exit to free memory
-    const pVid = document.getElementById('petraCaseVideo');
-    if (pVid) { pVid.pause(); pVid.currentTime = 0; pVid.src = ''; pVid.load(); }
-            
+        window.hideProjectShowcase = function() {
+            const grid = document.getElementById('project-cards-grid');
+            const container = document.getElementById('detailed-project-showcase');
+
+            // Pause and rewind case videos on exit (keep their source so they replay next time)
+            container.querySelectorAll('[id^="details-"]').forEach(block => {
+                const vid = block.querySelector('video');
+                if (vid) { vid.pause(); vid.currentTime = 0; }
+                block.classList.add('hidden');
+            });
+
             // Revert views
             container.classList.add('hidden');
-            petraDetails.classList.add('hidden');
-            ameedDetails.classList.add('hidden');
             grid.classList.remove('hidden');
-            
+
             // Scroll smoothly back to top of the block
             document.getElementById('highlighted-projects').scrollIntoView({ behavior: 'smooth', block: 'start' });
         };

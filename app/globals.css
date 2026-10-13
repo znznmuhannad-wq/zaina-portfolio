@@ -2565,3 +2565,7 @@ footer,
         @keyframes blinkCursorMint { from, to { border-right-color: transparent; } 50% { border-right-color: #65C6BE; } }
         
     
+/* WAFF U17 gallery: brand-gradient frame so landscape artwork sits intentionally inside the 2:3 carousel */
+#u17Carousel { background: linear-gradient(160deg, #002F5B 0%, #005E7A 55%, #00C896 100%); }
+#u17Carousel .petra-slide { flex: 0 0 100%; max-width: 100%; }
+#u17Carousel .petra-slide img { padding: 5%; }
