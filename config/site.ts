@@ -8,7 +8,7 @@ export const siteConfig = {
   title: 'Z Creative Studio | Zaina Alissa',
   description:
     'Digital Designer & Developer specializing in brand identity, UX/UI, web development, social media and paid campaigns.',
-  url: 'https://zcreative.studio/',
+  url: 'https://zainaalissa.com/',
   ogImage: 'https://i.ibb.co/zHVQT1S9/00.png',
   favicon: 'https://i.ibb.co/PZ7PVdpT/22.png',
   locale: 'en',

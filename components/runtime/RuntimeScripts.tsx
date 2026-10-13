@@ -11,5 +11,6 @@ import Script from 'next/script';
  * one cross-origin connection.
  */
 export default function RuntimeScripts() {
-  return <Script src="/portfolio.runtime.js" strategy="afterInteractive" />;
+  // ?v= changes whenever the runtime file changes (see next.config.mjs), busting stale caches.
+  return <Script src={`/portfolio.runtime.js?v=${process.env.NEXT_PUBLIC_RUNTIME_VERSION}`} strategy="afterInteractive" />;
 }
