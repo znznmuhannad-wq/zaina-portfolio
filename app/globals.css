@@ -533,13 +533,13 @@ footer,
 
         /* ── Folders grid ── */
         @media (max-width: 480px) {
-            .folder-back { width: 120px; }
+            .folder-back { width: min(120px, 100%); }
             .folder-back::after { height: 11px; }
             .folder-label { font-size: 12px; }
             .folder-sub   { font-size: 10px; }
         }
         @media (min-width: 481px) and (max-width: 767px) {
-            .folder-back { width: 120px; }
+            .folder-back { width: min(120px, 100%); }
         }
 
         /* ── Tear tags (contact) ── */
@@ -877,6 +877,9 @@ footer,
         }
  
         .folder {
+            width: 100%;
+            display: flex;
+            justify-content: center;
             transition: all 0.25s ease-in;
             cursor: pointer;
             transform-origin: bottom center;
@@ -898,7 +901,8 @@ footer,
  
         .folder-back {
             position: relative;
-            width: clamp(130px, 15vw, 175px);
+            /* Size from the grid column (not the viewport) so 5 folders always fit the panel */
+            width: min(175px, 100%);
             aspect-ratio: 5 / 4;
             border-radius: 0 12px 12px 12px;
             box-shadow: 0 14px 28px -12px rgba(44,44,44,0.35);
@@ -1008,9 +1012,9 @@ footer,
  
        .folders-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 3.5rem 2rem;
-    justify-items: center;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 3.5rem clamp(1rem, 2.5vw, 2rem);
+    justify-items: stretch;
     /* Soft "desk" panel so the archive reads as its own block */
     margin-top: 1.5rem;
     padding: 5rem 2rem 3rem;
@@ -2151,9 +2155,10 @@ footer,
             .smd-c3 { width:clamp(80px,20vw,135px); left:14%; }
             .smd-c4 { width:clamp(95px,22vw,160px); left:10%; }
             .smd-c5 { width:clamp(80px,20vw,135px); right:14%; }
-            .smd-c6 { width:clamp(95px,22vw,160px); right:8%;  }
+            /* c6/c8 sit lower on phones so they don't cover the "DESIGN" headline */
+            .smd-c6 { width:clamp(95px,22vw,160px); right:8%; top:62%; }
             .smd-c7 { width:clamp(75px,18vw,125px); right:-2%; }
-            .smd-c8 { width:clamp(70px,17vw, 115px); }
+            .smd-c8 { width:clamp(70px,17vw, 115px); top:79%; }
             .smd-c9 { width:clamp(70px,17vw, 115px); left:28%; }
         }
 
@@ -2611,10 +2616,12 @@ footer,
         radial-gradient(120% 60% at 20% 0%, rgba(255,255,255,0.35), transparent 60%),
         linear-gradient(160deg, var(--pack-a), var(--pack-b));
     box-shadow: 0 30px 50px -24px rgba(44,44,44,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
-    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    /* Packs hang tilted in opposite directions; `rotate` composes with the reveal transform */
+    rotate: -2.5deg;
+    transition: transform 0.35s ease, rotate 0.35s ease, box-shadow 0.35s ease;
 }
-.tool-pack:hover { transform: translateY(-6px) rotate(-0.6deg); box-shadow: 0 36px 60px -24px rgba(44,44,44,0.5), inset 0 1px 0 rgba(255,255,255,0.4); }
-.pack-teal { --pack-a: #6FB3BE; --pack-b: #428A97; --pack-ink: #2D6874; }
+.tool-pack:hover { rotate: 0deg; box-shadow: 0 36px 60px -24px rgba(44,44,44,0.5), inset 0 1px 0 rgba(255,255,255,0.4); }
+.pack-teal { --pack-a: #6FB3BE; --pack-b: #428A97; --pack-ink: #2D6874; rotate: 2.5deg; }
 
 /* Hang-tab slot punched through the card */
 .pack-hang {
@@ -2656,7 +2663,7 @@ footer,
 .pack-sticker {
     position: absolute;
     right: 0.25rem;
-    bottom: -0.9rem;
+    bottom: -1.35rem;
     padding: 3px 10px;
     border-radius: 999px;
     background: #fff;
@@ -2704,6 +2711,13 @@ footer,
 }
 .tool-tile.tile-word { font-size: clamp(0.85rem, 1.3vw, 1rem); }
 .tool-tile.tile-script { font-family: 'Fredoka', sans-serif; font-style: italic; }
+/* Logo tiles drawn as inline SVG */
+/* (sized via --logo, not padding: % padding resolves against the blister's width) */
+.tool-tile.svg-tile { --logo: 92%; background: var(--bg, transparent); box-shadow: none; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.3)); }
+.tool-tile.svg-tile svg { width: var(--logo); height: var(--logo); display: block; overflow: visible; }
+.tool-tile.svg-tile[style*="--bg"] { --logo: 70%; box-shadow: 0 8px 14px -6px rgba(0,0,0,0.45); filter: none; }
+.tool-tile.tile-light { --logo: 64%; background: #fff; box-shadow: 0 8px 14px -6px rgba(0,0,0,0.35); filter: none; }
+.tool-tile.tile-round { --logo: 100%; border-radius: 50%; }
 /* Loose, hand-placed look like loose pins in a blister */
 .tool-tile:nth-child(3n+1) { transform: rotate(-7deg); }
 .tool-tile:nth-child(3n+2) { transform: rotate(5deg) translateY(-6px); }
