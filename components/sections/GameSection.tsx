@@ -4,7 +4,7 @@ export default function GameSection() {
   return (
     <section
       id="game-section"
-      className="fluid-section-py fluid-section-px relative z-20 hidden"
+      className="fluid-section-py fluid-section-px relative z-20"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
