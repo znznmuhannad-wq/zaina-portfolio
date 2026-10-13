@@ -356,6 +356,9 @@ function initIcons(container) {
 
         // ── MODAL / LIGHTBOX SYSTEM ───────────────────────────────
         const videoSources = [
+            '/videos/waff-mental-health-day.mp4',
+            '/videos/waff-intro.mp4',
+            '/videos/waff-u17-branding.mp4',
             '/videos/pa8t76.mp4',
             '/videos/2o1zfh.mp4',
             '/videos/g2efjs.mp4',
