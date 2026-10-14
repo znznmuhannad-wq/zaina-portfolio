@@ -14,6 +14,7 @@ import PlasticArt from '@/components/sections/PlasticArt';
 import VideoProjects from '@/components/sections/VideoProjects';
 import WebProjects from '@/components/sections/WebProjects';
 import PackagingProjects from '@/components/sections/PackagingProjects';
+import BrandingProjects from '@/components/sections/BrandingProjects';
 import SocialMediaProjects from '@/components/sections/SocialMediaProjects';
 import GameSection from '@/components/sections/GameSection';
 import Education from '@/components/sections/Education';
@@ -40,6 +41,7 @@ export default function Home() {
       <VideoProjects />
       <WebProjects />
       <PackagingProjects />
+      <BrandingProjects />
       <SocialMediaProjects />
       <GameSection />
       <Modal />

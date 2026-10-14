@@ -134,8 +134,8 @@ function initIcons(container) {
         }
 
         // ── Init Al Ameed supporting carousel ────────────────────
-        function initU17Carousel() {
-            makeCarousel({ carouselId:'u17Carousel', trackId:'u17Track', counterId:'u17Counter', dotsSelector:'#u17Dots', prevId:'u17Prev', nextId:'u17Next', slideClass:'petra-slide', dotClass:'petra-dot', autoDelay:5000 });
+        function initU20Carousel() {
+            makeCarousel({ carouselId:'u20Carousel', trackId:'u20Track', counterId:'u20Counter', dotsSelector:'#u20Dots', prevId:'u20Prev', nextId:'u20Next', slideClass:'petra-slide', dotClass:'petra-dot', autoDelay:5000 });
         }
 
         function initAmeedCarousel() {
@@ -164,8 +164,8 @@ function initIcons(container) {
         }
 
         document.readyState === 'loading'
-            ? document.addEventListener('DOMContentLoaded', () => { initPetraCarousel(); initAmeedCarousel(); initU17Carousel(); initCardAnimations(); })
-            : (initPetraCarousel(), initAmeedCarousel(), initU17Carousel(), initCardAnimations());
+            ? document.addEventListener('DOMContentLoaded', () => { initPetraCarousel(); initAmeedCarousel(); initU20Carousel(); initCardAnimations(); })
+            : (initPetraCarousel(), initAmeedCarousel(), initU20Carousel(), initCardAnimations());
 
         function reveal() {
             // Only query elements that haven't been revealed yet to save memory
@@ -369,6 +369,35 @@ function initIcons(container) {
             }, { rootMargin: '300px 0px' });
             obs.observe(section);
         })();
+
+        // ── Branding showcase (WAFF U20 + U17 identities) ──
+        let brandingCarouselsReady = false;
+        function showBrandingProjects() {
+            const section = document.getElementById('branding-projects');
+            ['video-projects','web-projects','social-media-projects','plastic-art-section','packaging-projects'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                section.classList.remove('hidden');
+                reveal();
+                section.scrollIntoView({ behavior: 'smooth' });
+                if (!brandingCarouselsReady) {
+                    brandingCarouselsReady = true;
+                    makeCarousel({ carouselId:'brU20Carousel', trackId:'brU20Track', counterId:'brU20Counter', dotsSelector:'#brU20Dots', prevId:'brU20Prev', nextId:'brU20Next', slideClass:'petra-slide', dotClass:'petra-dot', autoDelay:5000 });
+                    makeCarousel({ carouselId:'brU17Carousel', trackId:'brU17Track', counterId:'brU17Counter', dotsSelector:'#brU17Dots', prevId:'brU17Prev', nextId:'brU17Next', slideClass:'petra-slide', dotClass:'petra-dot', autoDelay:6000 });
+                }
+            }, 400);
+        }
+        function hideBrandingProjects() {
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => { document.getElementById('branding-projects').classList.add('hidden'); }, 600);
+        }
+        // Opening any other folder closes the Branding showcase (the older showcases only know about each other)
+        document.addEventListener('click', e => {
+            const folder = e.target.closest('.folder');
+            if (!folder || folder.closest('[data-folder="branding"]')) return;
+            const section = document.getElementById('branding-projects');
+            if (section) section.classList.add('hidden');
+        }, true);
 
         // ── Portfolio folder filter ────────────────────────────────
         document.querySelectorAll('.filter-btn-folder').forEach(btn => {

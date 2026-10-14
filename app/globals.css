@@ -1010,11 +1010,14 @@ footer,
         }
         .filter-btn-folder:hover { opacity: 1; }
  
-       .folders-grid {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 3.5rem clamp(1rem, 2.5vw, 2rem);
-    justify-items: stretch;
+/* Folders: flex rows so an uneven last row stays centred. --cols = folders per row */
+.folders-grid {
+    --cols: 7;
+    --gapx: clamp(1rem, 2.5vw, 2rem);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3.5rem var(--gapx);
     /* Soft "desk" panel so the archive reads as its own block */
     margin-top: 1.5rem;
     padding: 5rem 2rem 3rem;
@@ -1022,12 +1025,14 @@ footer,
     border: 1px solid rgba(183,199,201,0.45);
     border-radius: 2rem;
 }
+.folders-grid > .folder-wrap { flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gapx)) / var(--cols)); min-width: 0; }
 [data-theme="dark"] .folders-grid { background: var(--dm-surface); border-color: var(--dm-border); }
 [data-theme="dark"] .folders-hint { color: var(--dm-text-sub); }
-/* Responsive folder grid: kept after the base rule so these win the cascade */
-@media (min-width: 768px) and (max-width: 1023px) { .folders-grid { grid-template-columns: repeat(3, 1fr); gap: 3.5rem 1.5rem; } }
-@media (min-width: 481px) and (max-width: 767px) { .folders-grid { grid-template-columns: repeat(3, 1fr); gap: 3rem 1rem; padding: 4rem 1rem 2.5rem; } }
-@media (max-width: 480px) { .folders-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem 0.75rem; padding: 3.5rem 0.75rem 2rem; border-radius: 1.5rem; } }
+/* Responsive folder rows: kept after the base rule so these win the cascade */
+@media (min-width: 1024px) and (max-width: 1279px) { .folders-grid { --cols: 4; } }
+@media (min-width: 768px) and (max-width: 1023px) { .folders-grid { --cols: 4; gap: 3.5rem 1.5rem; --gapx: 1.5rem; } }
+@media (min-width: 481px) and (max-width: 767px) { .folders-grid { --cols: 3; --gapx: 1rem; gap: 3rem 1rem; padding: 4rem 1rem 2.5rem; } }
+@media (max-width: 480px) { .folders-grid { --cols: 2; --gapx: 0.75rem; gap: 3rem 0.75rem; padding: 3.5rem 0.75rem 2rem; border-radius: 1.5rem; } }
 
 #mobile-menu {
     overflow-y: auto;
@@ -2582,10 +2587,6 @@ footer,
         @keyframes blinkCursorMint { from, to { border-right-color: transparent; } 50% { border-right-color: #65C6BE; } }
         
     
-/* WAFF U17 gallery: brand-gradient frame so landscape artwork sits intentionally inside the 2:3 carousel */
-#u17Carousel { background: linear-gradient(160deg, #002F5B 0%, #005E7A 55%, #00C896 100%); }
-#u17Carousel .petra-slide { flex: 0 0 100%; max-width: 100%; }
-#u17Carousel .petra-slide img { padding: 5%; }
 
 /* =============================================
     TOOLS — "starter pack" blister cards
@@ -2814,3 +2815,31 @@ footer,
 .f-lilac .paper:nth-child(1)   { background: #ECEBFF; }
 .f-lilac .paper:nth-child(2)   { background: #F4F3FF; }
 .f-lilac .paper:nth-child(3)   { background: #ffffff; }
+
+/* =============================================
+    BRANDING showcase + U20 case study
+============================================= */
+#branding-projects { background-color: #F5EFE6; }
+[data-theme="dark"] #branding-projects { background-color: var(--dm-bg); }
+[data-theme="dark"] #branding-projects h2 { color: var(--dm-text) !important; }
+[data-theme="dark"] #branding-projects .text-subtitle_beige { color: var(--dm-text-mid) !important; }
+.brand-block { max-width: 980px; margin: 0 auto 1rem; }
+.brand-gallery { max-width: 980px; margin-left: auto; margin-right: auto; }
+/* 16:9 brand-book pages: wide carousel, slides pinned to the frame width */
+#u20Carousel, #brU20Carousel, #brU17Carousel { aspect-ratio: 16 / 9; }
+#u20Carousel .petra-slide, #brU20Carousel .petra-slide, #brU17Carousel .petra-slide { flex: 0 0 100%; max-width: 100%; }
+#u20Carousel, #brU20Carousel { background: #201060; }
+#brU17Carousel { background: linear-gradient(160deg, #002F5B 0%, #005E7A 55%, #00C896 100%); }
+#brU17Carousel .petra-slide img { padding: 3%; }
+.brand-actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 1.25rem; }
+.brand-actions .petra-dl-card { max-width: 380px; flex: 1 1 280px; }
+.brand-reel-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .85rem 1.4rem; border-radius: 999px; border: 2px solid #2C2C2C; background: #2C2C2C; color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: transform .2s; }
+.brand-reel-btn:hover { transform: translateY(-2px); }
+[data-theme="dark"] .brand-reel-btn { background: var(--dm-surface-hi); border-color: var(--dm-border-hi); }
+/* Branding folder colours (U20 indigo) */
+.f-indigo .folder-back          { background: #2B1870; }
+.f-indigo .folder-back::after   { background: #2B1870; }
+.f-indigo .folder-front         { background: #45258F; }
+.f-indigo .paper:nth-child(1)   { background: #FFE2D6; }
+.f-indigo .paper:nth-child(2)   { background: #FFF0E9; }
+.f-indigo .paper:nth-child(3)   { background: #ffffff; }
